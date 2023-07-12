@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Navbar from "./commons/Navbar";
+import Home from "./Pages/Home";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import Navbar from "./components/Navbar";
 import { useSelector } from "react-redux";
+
 function App() {
   const user = useSelector((state) => state.user);
 

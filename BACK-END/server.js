@@ -12,6 +12,9 @@ const projectNewsModel = require("./schemas/ProjectNews");
 const apiRouter = require("./routes/index.routes");
 
 const app = express();
+
+//Middlewares
+
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
@@ -22,7 +25,9 @@ app.use(
   })
 );
 
+//Routes
 app.use("/api", apiRouter);
+
 
 app.listen(SERVER_PORT, () => {
   console.log(`servidor conectado puerto http://localhost:${SERVER_PORT}`);
