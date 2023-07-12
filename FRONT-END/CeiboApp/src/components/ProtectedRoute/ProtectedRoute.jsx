@@ -19,8 +19,8 @@ export const ProtectedRoute = ({
   }
 
   if (onlyAdmin && !isAdmin) return <Navigate to="/" replace/>;
-  if (onlyManager && (!isAdmin || !isManager)) return <Navigate to="/" replace/>;
-  if (onlyContributor && (!isAdmin || !isManager || !isContributor))
+  if (onlyManager && (!isAdmin && !isManager)) return <Navigate to="/" replace/>;
+  if (onlyContributor && (!isAdmin && !isManager && !isContributor))
     return <Navigate to="/" replace/>;
 
   return children ? children : <Outlet />;

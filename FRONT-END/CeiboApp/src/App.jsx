@@ -6,6 +6,7 @@ import Navbar from "./commons/Navbar";
 import { useSelector } from "react-redux";
 import Members from "./components/Members";
 import { ProtectedRoute } from "./components";
+import { Manager } from "./pages/Manager";
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -29,7 +30,7 @@ function App() {
 
         {/* Manager Routes */}
         <Route path="/manager" element={<ProtectedRoute onlyManager />}>
-          {/* Routes */}
+          <Route path="/manager" exact element={<Manager />} />
         </Route>
 
         {/* Manager Routes */}
