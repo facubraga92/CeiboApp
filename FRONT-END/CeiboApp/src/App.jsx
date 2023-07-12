@@ -4,8 +4,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./commons/Navbar";
 import Members from "./pages/Members";
-import { ProtectedRoute } from "./components";
 import { Manager } from "./pages/Manager";
+import { ProtectedRoute } from "./components";
+import AddProject from "./components/AddProject";
 function App() {
 
   return (
@@ -31,10 +32,11 @@ function App() {
           <Route path="/manager" exact element={<Manager />} />
         </Route>
 
-        {/* Manager Routes */}
-        <Route path="/contributor" element={<ProtectedRoute onlyContributor />}>
-          {/* Routes */}
+        {/* Contributes Routes */}
+        <Route path="/projects" element={<ProtectedRoute onlyContributor />}>
+           <Route path="/projects/add" exact element={<AddProject />} />
         </Route>
+
       </Routes>
     </>
   );

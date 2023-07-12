@@ -2,9 +2,7 @@ const projectModel = require("../schemas/Project");
 
 const getAllProjects = async (req, res) => {
   try {
-    const projects = await projectModel
-      .find()
-      .populate("customer", "projectnews", "projects", "users");
+    const projects = await projectModel.find();
     res.json(projects);
   } catch (error) {
     console.log(error);
@@ -22,8 +20,18 @@ const createOneProject = async (req, res) => {
   }
 };
 
-const getOneProject = (req, res) => {
-  res.json(res.project);
+const getOneProject = async (req, res) => {
+  try {
+    const project = await projectModel
+      .findById(req.params.id)
+      .populate("customer consultors managers partners");
+    if (project == null) {
+      return res.status(404).json({ message: "Proyecto no encontrado" });
+    }
+    res.json(project);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
