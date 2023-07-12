@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require('cors')
 
-const costumerModel = require("./schemas/Costumer");
+const customerModel = require("./schemas/Customer");
 const projectModel = require("./schemas/Project");
 const userModel = require("./schemas/User");
 const projectNewsModel = require("./schemas/ProjectNews");
@@ -31,9 +31,9 @@ app.listen(SERVER_PORT, () => {
 //CONEXION A LA BD
 db();
 
-// Crear un nuevo costumer
-// const costumer = new costumerModel({
-//   name: "Ejemplo Costumer",
+// Crear un nuevo customer
+// const customer = new customerModel({
+//   name: "Ejemplo Customer",
 //   address: "Dirección de Ejemplo",
 //   contactInfo: "Información de contacto de Ejemplo",
 // });
@@ -42,7 +42,7 @@ db();
 // const project = new projectModel({
 //   name: "Ejemplo Proyecto",
 //   description: "Descripción de Ejemplo",
-//   customer: costumer._id, // Asignar el ID del costumer creado anteriormente
+//   customer: customer._id, // Asignar el ID del customer creado anteriormente
 // });
 
 // Crear un nuevo usuario
@@ -50,7 +50,7 @@ db();
 //   name: "Ejemplo Usuario",
 //   email: "ejemplo@usuario.com",
 //   password: "contraseña",
-// associatedCostumer: costumer._id, // Asignar el ID del costumer creado anteriormente
+// associatedCustomer: customer._id, // Asignar el ID del customer creado anteriormente
 // associatedProject: [project._id], // Asignar el ID del proyecto creado anteriormente
 // });
 
@@ -70,7 +70,7 @@ db();
 
 // Guardar los documentos en la base de datos
 // Promise.all([
-// costumer.save(),
+// customer.save(),
 //   project.save(),
 //   user.save(),
 //   projectNews.save(),
