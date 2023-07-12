@@ -44,8 +44,10 @@ const Login = () => {
             credentials: "include",
           })
           .then((tokenVerifyResponse) => {
-            dispatch(setUser(tokenVerifyResponse.data));
-
+            const user = tokenVerifyResponse.data;
+            delete user.status;
+            dispatch(setUser(user));
+            localStorage.setItem('user', JSON.stringify(user))
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
