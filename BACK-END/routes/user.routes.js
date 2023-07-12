@@ -10,6 +10,7 @@ const {
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
 const isAdmin = require("../middlewares/isAdmin");
+const isAdminOrManager = require("../middlewares/isAdminOrManager");
 
 const userRouter = express.Router();
 
@@ -27,7 +28,7 @@ userRouter.get("/me", validateUser, (req, res) => {
   res.status(200).send({ status: "OK", ...req.user });
 });
 
-userRouter.get("/admin/members", isAdmin, getAllMembers);
+userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 
 userRouter.get("/admin/members/:id", isAdmin, changeUserRole);
 

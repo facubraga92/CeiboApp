@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Navbar from "./commons/Navbar";
 import { useSelector } from "react-redux";
 import Members from "./components/Members";
+import AddProject from "./components/AddProject";
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -15,9 +16,15 @@ function App() {
         <Route path="/" element={user.email ? <Home /> : <Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        {/* RUTAS DE ADMIN */}
         <Route
           path="/admin/members"
           element={user.role == "admin" ? <Members /> : <Login />}
+        />
+        {/* RUTAS DE MANAGER */}
+        <Route
+          path="/projects/add"
+          element={user.role == "manager" ? <AddProject /> : <Login />}
         />
       </Routes>
     </>
