@@ -1,0 +1,6 @@
+SERVER_PORT = 3000
+DB_URI = "mongodb+srv://ceiboapp:V0ETRgb2wB7fjpOz@ceiboapp.j1dtnip.mongodb.net/CeiboApp?retryWrites=true&w=majority"
+SECRET_TOKEN = 'CEIBODIGITAL'
+
+
+crear un archivo .env en la la raiz del back end y pegar las variables que estan arriba.
