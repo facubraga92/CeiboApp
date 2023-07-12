@@ -1,18 +1,23 @@
-const projectModel = require("../schemas/Project");
+const userModel = require("../schemas/User");
 
-async function getProject(req, res, next) {
+async function validateManager(req, res, next) {
+  const managerId = req.body.managers;
+  console.log(managerId);
   try {
-    const project = await projectModel
-      .findById(req.params.id)
-      .populate("customer consultors managers partners");
-    if (project == null) {
-      return res.status(404).json({ message: "Proyecto no encontrado" });
+    const isManager = await userModel.exists({
+      _id: managerId,
+      role: "manager",
+    });
+
+    if (!isManager) {
+      return res
+        .status(403)
+        .json({ message: "Solo los managers pueden crear proyectos." });
     }
-    res.project = project;
     next();
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 }
 
-module.exports = getProject;
+module.exports = validateManager;

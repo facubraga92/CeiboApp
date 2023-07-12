@@ -11,8 +11,8 @@ const getValidationProject = require("../middlewares/validateProject");
 
 projectRouter.get("/getAll", getAllProjects);
 
-projectRouter.post("/create", createOneProject);
+projectRouter.post("/create", getValidationProject, createOneProject);
 
-projectRouter.get("/getOne/:id", getValidationProject, getOneProject);
+projectRouter.get("/getOne/:id", getOneProject);
 
 module.exports = projectRouter;
