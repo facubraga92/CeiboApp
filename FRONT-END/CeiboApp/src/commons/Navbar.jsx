@@ -2,13 +2,13 @@ import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setUser } from "../state/user";
-import { useNavigate } from "react-router-dom";
+import { setUser, userInitialState } from "../state/user";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const navigate = useNavigate()
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/users/me", {
@@ -16,9 +16,21 @@ const Navbar = () => {
         credentials: "include",
       })
       .then((response) => {
-        dispatch(setUser(response.data))
+        dispatch(setUser(response.data));
       });
   }, []);
+
+  const handleLogout = () => {
+    axios
+      .post("http://localhost:3000/api/users/logout", null, {
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then((user) => {
+        dispatch(setUser(userInitialState));
+        navigate("/");
+      });
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
@@ -36,13 +48,24 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div
+          className="collapse navbar-collapse justify-content-between"
+          id="navbarNav"
+        >
+          {" "}
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <a className="nav-link" href="/">
                 Inicio
               </a>
             </li>
+            {user.role == "admin" && (
+              <li className="nav-item">
+                <Link to="/admin/members" className="nav-link">
+                  Administrar Miembros
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <a className="nav-link" href="/about">
                 Acerca de
@@ -54,6 +77,13 @@ const Navbar = () => {
               </a>
             </li>
           </ul>
+          <div>
+            {user.email && (
+              <button className="btn btn-danger" onClick={handleLogout}>
+                Logout
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </nav>

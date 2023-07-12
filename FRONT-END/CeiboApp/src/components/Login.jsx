@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -44,7 +44,6 @@ const Login = () => {
             credentials: "include",
           })
           .then((tokenVerifyResponse) => {
-            console.log(tokenVerifyResponse.data)
             dispatch(setUser(tokenVerifyResponse.data));
 
             message.success(
