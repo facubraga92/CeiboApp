@@ -8,7 +8,7 @@ export const userInitialState = {
   lastName: null,
   email: null,
   role: null,
-  associatedCostumer: null,
+  associatedCustomer: null,
   associatedProjects: null,
 };
 

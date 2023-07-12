@@ -43,7 +43,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         lastName: user.lastName,
         role: user.role,
-        associatedCostumer: user.associatedCostumer,
+        associatedCustomer: user.associatedCustomer,
         associatedProjects: user.associatedProjects,
       };
       const token = generateToken(payload);

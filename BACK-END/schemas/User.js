@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     enum: ["consultor", "manager", "socio", "admin"],
     default: "socio",
   },
-  associatedCostumer: { type: mongoose.Schema.Types.ObjectId, ref: "Costumer" },
+  associatedCustomer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
   associatedProjects: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
   ],
