@@ -4,6 +4,8 @@ import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
+import Layout from "../components/layouts/Layout";
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -47,7 +49,7 @@ const Login = () => {
             const user = tokenVerifyResponse.data;
             delete user.status;
             dispatch(setUser(user));
-            localStorage.setItem('user', JSON.stringify(user))
+            localStorage.setItem("user", JSON.stringify(user));
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
@@ -76,40 +78,42 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Correo electrónico
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Contraseña
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Iniciar sesión
-        </button>
-      </form>
-    </div>
+    <Layout title='Login'>
+      <div className="container">
+        <h2>Iniciar sesión</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    </Layout>
   );
 };
 

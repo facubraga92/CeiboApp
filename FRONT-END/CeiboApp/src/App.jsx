@@ -2,16 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Navbar from "./commons/Navbar";
 import Members from "./pages/Members";
 import { Manager } from "./pages/Manager";
 import { ProtectedRoute } from "./components";
-import AddProject from "./components/AddProject";
+import AddProject from "./pages/AddProject";
 function App() {
-
   return (
     <>
-      <Navbar />
       <Routes>
         {/* User routes */}
         <Route path="/" element={<ProtectedRoute />}>
@@ -23,20 +20,18 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<ProtectedRoute onlyAdmin />}>
+        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
           <Route path="/admin/members" exact element={<Members />} />
         </Route>
 
         {/* Manager Routes */}
-        <Route path="/manager" element={<ProtectedRoute onlyManager />}>
+        <Route path="/" element={<ProtectedRoute onlyManager />}>
           <Route path="/manager" exact element={<Manager />} />
+          <Route path="/projects/add" exact element={<AddProject />} />
         </Route>
 
         {/* Contributes Routes */}
-        <Route path="/projects" element={<ProtectedRoute onlyContributor />}>
-           <Route path="/projects/add" exact element={<AddProject />} />
-        </Route>
-
+        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
       </Routes>
     </>
   );

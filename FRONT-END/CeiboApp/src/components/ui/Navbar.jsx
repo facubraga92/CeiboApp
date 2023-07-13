@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setUser, userInitialState } from "../state/user";
+import { setUser, userInitialState } from "../../state/user";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
