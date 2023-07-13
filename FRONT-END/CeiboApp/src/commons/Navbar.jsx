@@ -67,11 +67,18 @@ const Navbar = () => {
               </li>
             )}
             {user.role == "manager" && (
+              <>
               <li className="nav-item">
                 <Link to="/projects/add" className="nav-link">
                   Crear Proyecto
                 </Link>
               </li>
+              <li className="nav-item">
+              <Link to="/partners" className="nav-link">
+                Socios
+              </Link>
+            </li>
+              </>
             )}
             <li className="nav-item">
               <a className="nav-link" href="/about">

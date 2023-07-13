@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { SECRET_TOKEN } = require("../config");
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -21,7 +20,11 @@ const userSchema = new mongoose.Schema({
     enum: ["consultor", "manager", "socio", "admin"],
     default: "socio",
   },
-  associatedCustomer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+  associatedCustomer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customer",
+    default: null,
+  },
   associatedProjects: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
   ],

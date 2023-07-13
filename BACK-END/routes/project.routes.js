@@ -1,18 +1,23 @@
 const express = require("express");
-//const { createProject } = require("../controllers/project.controllers")
 
 const projectRouter = express.Router();
 const {
   getAllProjects,
   getOneProject,
   createOneProject,
+  deleteOneProject,
+  updateOneProject,
 } = require("../controllers/project.controllers");
-const getValidationProject = require("../middlewares/validateProject");
+const isManager = require("../middlewares/isManager");
 
 projectRouter.get("/getAll", getAllProjects);
 
-projectRouter.post("/create", getValidationProject, createOneProject);
+projectRouter.post("/create", isManager, createOneProject);
 
-projectRouter.get("/getOne/:id", getOneProject);
+projectRouter.get("/:id", getOneProject);
+
+projectRouter.delete("/:id", isManager, deleteOneProject);
+
+projectRouter.put("/:id", isManager, updateOneProject);
 
 module.exports = projectRouter;

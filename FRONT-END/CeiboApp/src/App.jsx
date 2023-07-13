@@ -6,6 +6,7 @@ import Navbar from "./commons/Navbar";
 import { useSelector } from "react-redux";
 import Members from "./components/Members";
 import AddProject from "./components/AddProject";
+import Partners from "./components/Partners";
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -25,6 +26,10 @@ function App() {
         <Route
           path="/projects/add"
           element={user.role == "manager" ? <AddProject /> : <Login />}
+        />
+        <Route
+          path="/partners"
+          element={user.role == "manager" ? <Partners /> : <Login />}
         />
       </Routes>
     </>

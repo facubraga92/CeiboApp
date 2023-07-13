@@ -64,7 +64,10 @@ const logOut = (req, res) => {
 
 const getAllMembers = async (req, res) => {
   try {
-    const members = await userModel.find({});
+    const members = await userModel.find(
+      {},
+      "name lastName email role associatedCustomer associatedProjects"
+    );
     if (members.length === 0) {
       return res.status(404).send("No se encontraron miembros.");
     }
@@ -99,6 +102,43 @@ const changeUserRole = async (req, res) => {
   }
 };
 
+const updateUserCustomer = async (req, res, next) => {
+  const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
+  const {
+    name,
+    lastName,
+    email,
+    role,
+    associatedCustomer,
+    associatedProjects,
+  } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
+
+  try {
+    // Buscar el usuario por ID
+    const user = await userModel.findById(id);
+
+    // Si no se encuentra el usuario, devolver un error
+    if (!user) {
+      const error = new Error("El usuario no existe");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Actualizar los campos del usuario con los nuevos datos
+    user.associatedCustomer = associatedCustomer;
+
+    // Guardar los cambios en la base de datos
+    const result = await user.save();
+
+    // Devolver el resultado actualizado
+    res.status(200).json({
+      message: "Usuario actualizado exitosamente.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
@@ -121,4 +161,5 @@ module.exports = {
   getAllMembers,
   changeUserRole,
   deleteUser,
+  updateUserCustomer,
 };
