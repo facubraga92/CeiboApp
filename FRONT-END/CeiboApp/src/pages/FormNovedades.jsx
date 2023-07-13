@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
 import { redirect, useNavigate } from "react-router-dom";
+import Layout from "../components/layouts/Layout";
 
 /**
  * Componente FormNovedades
@@ -76,7 +77,7 @@ export default function FormNovedades() {
     setTimeout(() => {
       // hacer la redireccion
       // ahora redirige al home
-      //navigate("/");
+      navigate("/");
     }, 1000);
   };
 
@@ -93,144 +94,150 @@ export default function FormNovedades() {
 
   if (cancelado)
     return (
-      <div className="container">
-        <div className="text-center mt-3">
-          <h3 className="display-4">
-            ¿ Estas seguro de <strong>cancelar ?</strong>
-          </h3>
-          <p className="text-muted display-5 lead">
-            Perderas todos los cambios
-          </p>
+      <Layout title={"¿Cancelar?"}>
+        <div className="container">
+          <div className="text-center mt-3">
+            <h3 className="display-4">
+              ¿ Estas seguro de <strong>cancelar ?</strong>
+            </h3>
+            <p className="text-muted display-5 lead">
+              Perderas todos los cambios
+            </p>
+          </div>
+          <div className="d-flex justify-content-center">
+            <input
+              className="btn btn-danger col-sm-3 col-md-2 mx-2"
+              value={"Si, cancelar"}
+              type="submit"
+              onClick={handleCancelOk}
+            />
+            <input
+              type="submit"
+              className="btn btn-primary col-sm-3 col-md-2"
+              value={"Volver"}
+              onClick={handleCancel}
+            />
+          </div>
         </div>
-        <div className="d-flex justify-content-center">
-          <input
-            className="btn btn-danger col-sm-3 col-md-2 mx-2"
-            value={"Si, cancelar"}
-            type="submit"
-            onClick={handleCancelOk}
-          />
-          <input
-            type="submit"
-            className="btn btn-primary col-sm-3 col-md-2"
-            value={"Volver"}
-            onClick={handleCancel}
-          />
-        </div>
-      </div>
+      </Layout>
     );
   if (formOk)
     return (
-      <div className="container">
-        <div className="text-center mt-5">
-          <h2 className="text-primary display-4">
-            Novedad creada satisfactoriamente
-          </h2>
+      <Layout title={"Novedad creada"}>
+        <div className="container">
+          <div className="text-center mt-5">
+            <h2 className="text-primary display-4">
+              Novedad creada satisfactoriamente
+            </h2>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   return (
-    <div className="mt-4 p-4">
-      <div className="row">
-        <div className="container col-sm-12 col-md-8 col-lg-6">
-          <div className="d-flex flex-wrap flex-md-nowrap justify-content-between">
-            <div>
-              <h5>Nombre_Proyecto</h5>
-              <h2>Proyecto_XXXXXXXX</h2>
+    <Layout title={"Crear Novedad"}>
+      <div className="mt-4 p-4">
+        <div className="row">
+          <div className="container col-sm-12 col-md-8 col-lg-6">
+            <div className="d-flex flex-wrap flex-md-nowrap justify-content-between">
+              <div>
+                <h5>Nombre_Proyecto</h5>
+                <h2>Proyecto_XXXXXXXX</h2>
+              </div>
+              <h5>XX/XX/XXXX</h5>
             </div>
-            <h5>XX/XX/XXXX</h5>
+
+            <form method="post" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="detalles">Detalles</label>
+                <textarea
+                  type="text"
+                  className="form-control"
+                  id="detalles"
+                  name="detalles"
+                  rows={4}
+                  placeholder="Detalles acerca de la novedad"
+                  value={inputs.detalles || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="comentarios">Comentarios</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="comentarios"
+                  name="comentarios"
+                  placeholder="Comentarios de la novedad"
+                  value={inputs.comentarios || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="tipoNovedad">Tipo de Novedad</label>
+                <select
+                  className="form-control"
+                  id="tipoNovedad"
+                  name="tipoNovedad"
+                  value={selectInput}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="default" disabled>
+                    Seleccione tipo de novedad
+                  </option>
+                  <option value="Novedad prueba">Novedad prueba</option>
+                </select>
+                {formSubmitted && selectInput === "default" && (
+                  <span className="text-danger">
+                    Debe seleccionar un tipo de novedad.
+                  </span>
+                )}
+              </div>
+
+              <label>Prioridad</label>
+              <div className="d-flex justify-content-center">
+                {[1, 2, 3, 4, 5].map((option) => (
+                  <label key={option} className="form-check">
+                    <input
+                      type="checkbox"
+                      id={`checkbox-${option}`}
+                      name="prioridad"
+                      value={option}
+                      checked={selectedOption >= option}
+                      onChange={handleChange}
+                      className="d-none"
+                    />
+                    <div className="checkbox-icon pb-4 display-4">
+                      {selectedOption >= option ? (
+                        <TiStarFullOutline />
+                      ) : (
+                        <TiStarOutline />
+                      )}
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              <div className="d-flex justify-content-center">
+                <input
+                  className="btn btn-danger col-sm-3 col-md-2 mx-2"
+                  value={"Cancel"}
+                  type="submit"
+                  onClick={handleCancel}
+                />
+                <input
+                  type="submit"
+                  className="btn btn-primary col-sm-3 col-md-2"
+                  value={"Submit"}
+                />
+              </div>
+            </form>
           </div>
-
-          <form method="post" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="detalles">Detalles</label>
-              <textarea
-                type="text"
-                className="form-control"
-                id="detalles"
-                name="detalles"
-                rows={4}
-                placeholder="Detalles acerca de la novedad"
-                value={inputs.detalles || ""}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="comentarios">Comentarios</label>
-              <input
-                type="text"
-                className="form-control"
-                id="comentarios"
-                name="comentarios"
-                placeholder="Comentarios de la novedad"
-                value={inputs.comentarios || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="tipoNovedad">Tipo de Novedad</label>
-              <select
-                className="form-control"
-                id="tipoNovedad"
-                name="tipoNovedad"
-                value={selectInput}
-                onChange={handleChange}
-                required
-              >
-                <option value="default" disabled>
-                  Seleccione tipo de novedad
-                </option>
-                <option value="Novedad prueba">Novedad prueba</option>
-              </select>
-              {formSubmitted && selectInput === "default" && (
-                <span className="text-danger">
-                  Debe seleccionar un tipo de novedad.
-                </span>
-              )}
-            </div>
-
-            <label>Prioridad</label>
-            <div className="d-flex justify-content-center">
-              {[1, 2, 3, 4, 5].map((option) => (
-                <label key={option} className="form-check">
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${option}`}
-                    name="prioridad"
-                    value={option}
-                    checked={selectedOption >= option}
-                    onChange={handleChange}
-                    className="d-none"
-                  />
-                  <div className="checkbox-icon pb-4 display-4">
-                    {selectedOption >= option ? (
-                      <TiStarFullOutline />
-                    ) : (
-                      <TiStarOutline />
-                    )}
-                  </div>
-                </label>
-              ))}
-            </div>
-
-            <div className="d-flex justify-content-center">
-              <input
-                className="btn btn-danger col-sm-3 col-md-2 mx-2"
-                value={"Cancel"}
-                type="submit"
-                onClick={handleCancel}
-              />
-              <input
-                type="submit"
-                className="btn btn-primary col-sm-3 col-md-2"
-                value={"Submit"}
-              />
-            </div>
-          </form>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
