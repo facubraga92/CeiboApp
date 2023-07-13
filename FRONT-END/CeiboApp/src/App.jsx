@@ -6,6 +6,8 @@ import Members from "./pages/Members";
 import { Manager } from "./pages/Manager";
 import { ProtectedRoute } from "./components";
 import AddProject from "./pages/AddProject";
+import FormNovedades from "./pages/FormNovedades";
+
 function App() {
   return (
     <>
@@ -31,7 +33,10 @@ function App() {
         </Route>
 
         {/* Contributes Routes */}
-        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
+        <Route path="/" element={<ProtectedRoute onlyContributor />}>
+          <Route path="/formNovedades" exact element={<FormNovedades />} /> //
+          ruta formNovedades
+        </Route>
       </Routes>
     </>
   );
