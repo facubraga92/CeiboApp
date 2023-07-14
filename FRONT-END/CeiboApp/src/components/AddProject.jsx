@@ -71,7 +71,6 @@ const ProjectForm = () => {
       name,
       description,
       customer: customer.value._id,
-      customer: null,
       consultors: consultors.map((consultor) => consultor.value._id),
       managers: managers.map((manager) => manager.value._id),
       partners: partners.map((manager) => manager.value._id),

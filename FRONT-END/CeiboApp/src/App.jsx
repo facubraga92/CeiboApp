@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import Members from "./components/Members";
 import AddProject from "./components/AddProject";
 import Partners from "./components/Partners";
+import Customers from "./components/Customers";
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -30,6 +31,10 @@ function App() {
         <Route
           path="/partners"
           element={user.role == "manager" ? <Partners /> : <Login />}
+        />
+        <Route
+          path="/customers"
+          element={user.role == "manager" ? <Customers /> : <Login />}
         />
       </Routes>
     </>

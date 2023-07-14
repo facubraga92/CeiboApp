@@ -5,12 +5,10 @@ import { message } from "antd";
 import Select from "react-select";
 
 const Partners = () => {
-  const user = useSelector((state) => state.user);
   const [partners, setPartners] = useState([]);
   const [filteredPartners, setFilteredPartners] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [customersList, setCustomersList] = useState([]);
-  const [customer, setCustomer] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // Nuevo estado
 
   useEffect(() => {
@@ -48,10 +46,6 @@ const Partners = () => {
         setCustomersList(sortedCustomers);
       });
   }, []);
-
-  const handleCustomerChange = (selectedOption) => {
-    setCustomer(selectedOption);
-  };
 
   const handleSearch = (e) => {
     const value = e.target.value;
