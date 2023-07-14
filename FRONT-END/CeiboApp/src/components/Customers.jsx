@@ -162,7 +162,7 @@ const Customers = () => {
         credentials: "include",
       })
       .then((response) => {
-        message.success(response.data.message);
+        message.success(response.data);
         setCreateModalVisible(false);
         setNewCustomer({
           name: "",
