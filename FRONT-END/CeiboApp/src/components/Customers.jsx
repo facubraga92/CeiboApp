@@ -5,7 +5,8 @@ import { message, Modal, Button } from "antd";
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [projectModalVisible, setProjectModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
@@ -137,9 +138,13 @@ const Customers = () => {
     setEditingCustomer(null);
   };
 
-  const openModal = (projectIds) => {
+  const openCreateModal = () => {
+    setCreateModalVisible(true);
+  };
+
+  const openProjectModal = (projectIds) => {
     setSelectedProject(projectIds);
-    setModalVisible(true);
+    setProjectModalVisible(true);
   };
 
   const handleNewCustomerChange = (e) => {
@@ -157,8 +162,8 @@ const Customers = () => {
         credentials: "include",
       })
       .then((response) => {
-        message.success(response.data);
-        setModalVisible(false);
+        message.success(response.data.message);
+        setCreateModalVisible(false);
         setNewCustomer({
           name: "",
           address: "",
@@ -181,7 +186,12 @@ const Customers = () => {
 
   const getAssociatedProjects = (customer) => {
     return (
-      <span onClick={() => openModal(customer.associatedProjects)}>📋</span>
+      <Button
+        type="link"
+        onClick={() => openProjectModal(customer.associatedProjects)}
+      >
+        📋
+      </Button>
     );
   };
 
@@ -204,12 +214,9 @@ const Customers = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setModalVisible(true)}
-                >
+                <Button type="primary" onClick={openCreateModal}>
                   Crear Cliente
-                </button>
+                </Button>
               </li>
             </ul>
             <form className="d-flex">
@@ -333,10 +340,10 @@ const Customers = () => {
 
       <Modal
         title="Crear Cliente"
-        open={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        open={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
         footer={[
-          <Button key="cancel" onClick={() => setModalVisible(false)}>
+          <Button key="cancel" onClick={() => setCreateModalVisible(false)}>
             Cancelar
           </Button>,
           <Button key="create" type="primary" onClick={handleCreateCustomer}>
@@ -376,6 +383,22 @@ const Customers = () => {
             />
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        title="Associated Projects"
+        open={projectModalVisible}
+        onCancel={() => setProjectModalVisible(false)}
+        footer={null}
+      >
+        {selectedProject && (
+          <ul>
+            {selectedProject.map((projectId) => {
+              const project = projects.find((p) => p._id === projectId);
+              return <li key={projectId}>{project && project.name}</li>;
+            })}
+          </ul>
+        )}
       </Modal>
     </div>
   );
