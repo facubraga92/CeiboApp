@@ -59,6 +59,13 @@ const Navbar = () => {
                 Inicio
               </Link>
             </li>
+            {!user.id && (
+              <li className="nav-item">
+                <Link to="/register" className="nav-link">
+                  Registrarse
+                </Link>
+              </li>
+            )}
             {user.role == "admin" && (
               <li className="nav-item">
                 <Link to="/admin/members" className="nav-link">

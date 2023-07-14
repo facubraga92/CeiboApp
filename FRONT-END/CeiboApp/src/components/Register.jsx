@@ -1,4 +1,7 @@
+import { message } from "antd";
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -6,6 +9,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -30,12 +34,24 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Lógica para enviar los datos de registro
-    // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
-    console.log("Nombre:", name);
-    console.log("Apellido:", lastName);
-    console.log("Correo electrónico:", email);
-    console.log("Contraseña:", password);
-    console.log("Confirmar contraseña:", confirmPassword);
+    if (password === confirmPassword) {
+      axios
+        .post("http://localhost:3000/api/users/register", {
+          name,
+          lastName,
+          email,
+          password,
+        })
+        .then(() => {
+          message.success("Usuario registrado correctamente!");
+          navigate("/login");
+        })
+        .catch(() => {
+          message.error("error al registrarte");
+        });
+    } else {
+      message.warning("Las contraseñas no coinciden.");
+    }
   };
 
   return (
@@ -99,7 +115,7 @@ const Register = () => {
             Confirmar contraseña
           </label>
           <br />
-          
+
           <input
             type="password"
             className="form-control"
@@ -108,11 +124,7 @@ const Register = () => {
             onChange={handleConfirmPasswordChange}
             required
           />
-          {password != confirmPassword && (
-            <p>
-              Las contraseñas no coinciden
-            </p>
-          )}
+          {password != confirmPassword && <p>Las contraseñas no coinciden</p>}
         </div>
         <button type="submit" className="btn btn-primary">
           Registrarse
