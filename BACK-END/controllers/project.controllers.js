@@ -1,3 +1,4 @@
+const customerModel = require("../schemas/Customer");
 const projectModel = require("../schemas/Project");
 const userModel = require("../schemas/User");
 
@@ -16,6 +17,7 @@ const createOneProject = async (req, res) => {
 
   try {
     const newProject = await project.save();
+    const projectId = newProject._id;
 
     // Obtener los IDs de los usuarios asociados al proyecto
     const userIds = [
@@ -27,10 +29,16 @@ const createOneProject = async (req, res) => {
     // Actualizar el campo associatedProjects de cada usuario correspondiente
     await userModel.updateMany(
       { _id: { $in: userIds } },
-      { $push: { associatedProjects: newProject._id } }
+      { $push: { associatedProjects: projectId } }
     );
 
-    res.status(201).send("Proyecto creado con Éxito!");
+    // Asociar el proyecto al cliente correspondiente
+    await customerModel.updateOne(
+      { _id: req.body.customer },
+      { $push: { associatedProjects: projectId } }
+    );
+
+    res.status(201).send("Proyecto creado con éxito!");
   } catch (error) {
     // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
@@ -59,12 +67,21 @@ const deleteOneProject = async (req, res) => {
       ...project.partners,
     ];
 
+    // Obtener el ID del cliente asociado al proyecto
+    const customerId = project.customer;
+
     // Eliminar el proyecto
     await projectModel.deleteOne({ _id: projectId });
 
     // Eliminar el ID del proyecto del campo associatedProjects de cada usuario correspondiente
     await userModel.updateMany(
       { _id: { $in: userIds } },
+      { $pull: { associatedProjects: projectId } }
+    );
+
+    // Eliminar el ID del proyecto del campo associatedProjects del cliente correspondiente
+    await customerModel.updateOne(
+      { _id: customerId },
       { $pull: { associatedProjects: projectId } }
     );
 
@@ -152,5 +169,5 @@ module.exports = {
   getOneProject,
   createOneProject,
   deleteOneProject,
-  updateOneProject
+  updateOneProject,
 };

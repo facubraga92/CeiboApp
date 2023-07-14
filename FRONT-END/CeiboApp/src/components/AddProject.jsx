@@ -126,6 +126,7 @@ const ProjectForm = () => {
           <input
             type="text"
             className="form-control"
+            required
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -142,6 +143,7 @@ const ProjectForm = () => {
         <div className="mb-3">
           <label className="form-label">Cliente</label>
           <Select
+            required
             options={customerOptions}
             value={customer}
             onChange={handleCustomerChange}

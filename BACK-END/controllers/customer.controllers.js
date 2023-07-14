@@ -17,7 +17,7 @@ const createCustomer = async (req, res) => {
   const customer = new customerModel(req.body);
   try {
     const newCustomer = await customer.save();
-    res.status(201).send(newCustomer);
+    res.status(201).send('Cliente creado con Éxito.');
   } catch (error) {
     // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
