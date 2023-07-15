@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
 import { redirect, useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
+import { Axios } from "axios";
 
 /**
  * Componente FormNovedades
@@ -14,6 +15,7 @@ export default function FormNovedades() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formOk, setFormOk] = useState(false);
   const [cancelado, setCancelado] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
 
   const navigate = useNavigate();
 
@@ -100,6 +102,10 @@ export default function FormNovedades() {
     return navigate("/");
   };
 
+  const toggleDisable = (e) => {
+    setIsEditable(!isEditable);
+  };
+
   if (cancelado)
     return (
       <Layout title={"¿Cancelar?"}>
@@ -167,6 +173,7 @@ export default function FormNovedades() {
                   value={inputs.detalles || ""}
                   onChange={handleChange}
                   required
+                  disabled={!isEditable}
                 />
               </div>
 
@@ -180,6 +187,7 @@ export default function FormNovedades() {
                   placeholder="Comentarios de la novedad"
                   value={inputs.comentarios || ""}
                   onChange={handleChange}
+                  disabled={!isEditable}
                 />
               </div>
 
@@ -192,6 +200,7 @@ export default function FormNovedades() {
                   value={selectInput}
                   onChange={handleChange}
                   required
+                  disabled={!isEditable}
                 >
                   <option value="default" disabled>
                     Seleccione tipo de novedad
@@ -217,6 +226,7 @@ export default function FormNovedades() {
                       checked={selectedOption >= option}
                       onChange={handleChange}
                       className="d-none"
+                      disabled={!isEditable}
                     />
                     <div className="checkbox-icon pb-4 display-4">
                       {selectedOption >= option ? (
@@ -245,11 +255,20 @@ export default function FormNovedades() {
                     onClick={handleCancel}
                   />
                 )}
-                <input
-                  type="submit"
-                  className="btn btn-primary col-sm-3 col-md-2"
-                  value={"Submit"}
-                />
+                {isEditable ? (
+                  <input
+                    type="submit"
+                    className="btn btn-primary col-sm-3 col-md-2"
+                    value={"Guardar"}
+                  />
+                ) : (
+                  <input
+                    type="submit"
+                    className="btn btn-primary col-sm-3 col-md-2"
+                    value={"Editar"}
+                    onClick={toggleDisable}
+                  />
+                )}
               </div>
             </form>
           </div>
