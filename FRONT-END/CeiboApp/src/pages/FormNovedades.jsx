@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
 import { redirect, useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
@@ -42,11 +42,19 @@ export default function FormNovedades() {
    * @param {Event} event - Evento del cambio en los campos del formulario.
    */
   const handleChange = (event) => {
-    const name = event.target.name;
-    if (name == "tipoNovedad") setSelectInput(event.target.value);
-    if (name == "prioridad") handleOptionChange(event);
     const value = event.target.value;
-    return setInputs((values) => ({ ...values, [name]: value }));
+    const name = event.target.name;
+    if (value === "") {
+      setInputs((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      if (name == "tipoNovedad") setSelectInput(value);
+      if (name == "prioridad") handleOptionChange(event);
+      return setInputs((values) => ({ ...values, [name]: value }));
+    }
+    return;
   };
 
   /**
@@ -83,7 +91,7 @@ export default function FormNovedades() {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    if (!inputs.detalles) return navigate("/");
+    if (Object.keys(inputs).length === 1) return navigate("/");
     return setCancelado(!cancelado);
   };
 
@@ -222,12 +230,21 @@ export default function FormNovedades() {
               </div>
 
               <div className="d-flex justify-content-center">
-                <input
-                  className="btn btn-danger col-sm-3 col-md-2 mx-2"
-                  value={"Cancel"}
-                  type="submit"
-                  onClick={handleCancel}
-                />
+                {Object.keys(inputs).length === 1 ? (
+                  <input
+                    className="btn btn-outline-warning col-sm-3 col-md-2 mx-2 "
+                    value={"Volver"}
+                    type="submit"
+                    onClick={handleCancel}
+                  />
+                ) : (
+                  <input
+                    className="btn btn-danger col-sm-3 col-md-2 mx-2"
+                    value={"Cancelar"}
+                    type="submit"
+                    onClick={handleCancel}
+                  />
+                )}
                 <input
                   type="submit"
                   className="btn btn-primary col-sm-3 col-md-2"
