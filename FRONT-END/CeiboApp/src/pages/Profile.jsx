@@ -4,6 +4,7 @@ import { redirect, useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
+  const [formOk, setFormOk] = useState(false);
 
   const navigate = useNavigate();
 
@@ -21,7 +22,9 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    setIsChanges(JSON.stringify(inputs) !== JSON.stringify(initialState));
+    return setIsChanges(
+      JSON.stringify(inputs) !== JSON.stringify(initialState)
+    );
   }, [inputs]);
 
   const [disabled, setDisabled] = useState(true);
@@ -40,7 +43,7 @@ export default function Profile() {
   };
 
   const handleDisabled = () => {
-    setDisabled(false);
+    return setDisabled(false);
   };
 
   const handleCancel = (e) => {
@@ -58,15 +61,31 @@ export default function Profile() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setFormSubmitted(true);
-
-    if (selectInput === "default") return;
-
+    if (!isChanges) return;
     // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para editar perfil
-    console.log(inputs);
     return handleRedirect();
   };
 
+  const handleRedirect = () => {
+    setFormOk(true);
+    return setTimeout(() => {
+      // hacer la redireccion
+      // ahora redirige al home
+      navigate("/");
+    }, 1000);
+  };
+  if (formOk)
+    return (
+      <Layout title={"Edit Ok"}>
+        <div className="container">
+          <div className="text-center mt-5">
+            <h2 className="text-primary display-4">
+              Usuario editado correctamente
+            </h2>
+          </div>
+        </div>
+      </Layout>
+    );
   return (
     <Layout title="Profile">
       <div className="mt-4 p-4">
@@ -114,7 +133,7 @@ export default function Profile() {
                   />
                 </div>
 
-                <div className="text-center p-3">
+                <div className="d-flex justify-content-center">
                   {disabled ? (
                     <>
                       <input
@@ -140,8 +159,9 @@ export default function Profile() {
                       />
                       <input
                         type="submit"
-                        value="Guardar"
+                        value={"Guardar"}
                         className="btn btn-primary col-sm-3 col-md-2 mx-2"
+                        disabled={!isChanges}
                       />
                     </>
                   )}
