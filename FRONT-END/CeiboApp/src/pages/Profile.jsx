@@ -12,8 +12,6 @@ export default function Profile() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    console.log(inputs);
-
     return setInputs((values) => ({ ...values, [name]: value }));
   };
 
