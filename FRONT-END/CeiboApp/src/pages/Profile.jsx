@@ -74,6 +74,7 @@ export default function Profile() {
       navigate("/");
     }, 1000);
   };
+
   if (formOk)
     return (
       <Layout title={"Edit Ok"}>
@@ -90,7 +91,7 @@ export default function Profile() {
     <Layout title="Profile">
       <div className="mt-4 p-4">
         <div className="row">
-          <div className="container col-sm-12 col-md-8 col-lg-6">
+          <div className="container col-sm-12 col-md-8 col-lg-4">
             <div>
               <h2>Editar Perfil</h2>
             </div>
