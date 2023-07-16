@@ -1,10 +1,12 @@
 import Layout from "../components/layouts/Layout";
 import React, { useEffect, useState } from "react";
 import { redirect, useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
   const [formOk, setFormOk] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,15 +50,18 @@ export default function Profile() {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    // por ahora vuelve al home
-    return navigate("/");
+    if (isChanges) {
+      return setShowModal(true);
+    } else {
+      setInputs(initialState);
+      setDisabled(!disabled);
+    }
   };
 
   const handleCancelChanges = (e) => {
     e.preventDefault();
-    setDisabled(true);
-    setIsChanges(false);
-    return setInputs(initialState);
+    if (isChanges) return setShowModal(true);
+    return handleCancel(e);
   };
 
   const handleSubmit = (event) => {
@@ -67,12 +72,23 @@ export default function Profile() {
   };
 
   const handleRedirect = () => {
-    setFormOk(true);
-    return setTimeout(() => {
-      // hacer la redireccion
-      // ahora redirige al home
-      navigate("/");
-    }, 1000);
+    if (isChanges) {
+      setFormOk(true);
+      return setTimeout(() => {
+        navigate("/"); // redirige al home por ahora
+      }, 1000);
+    } else {
+      navigate("/"); // redirige al home por ahora
+    }
+  };
+
+  const handleModalDropChanges = () => {
+    setInputs(initialState);
+    setShowModal(false);
+  };
+
+  const handleModalToggle = () => {
+    setShowModal(!showModal);
   };
 
   if (formOk)
@@ -141,7 +157,7 @@ export default function Profile() {
                         className="btn btn-outline-warning col-sm-3 col-md-2 mx-2 "
                         value={"Volver"}
                         type="button"
-                        onClick={handleCancel} // hacer handle para volver
+                        onClick={handleRedirect}
                       />
                       <input
                         type="button"
@@ -155,7 +171,7 @@ export default function Profile() {
                       <input
                         type="button"
                         value="Cancelar"
-                        onClick={handleCancelChanges}
+                        onClick={handleCancel}
                         className="btn btn-danger col-sm-3 col-md-2 mx-2"
                       />
                       <input
@@ -172,6 +188,22 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <Modal show={showModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancelar cambios</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se perderan todos los cambios</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalToggle}>
+            Volver
+          </Button>
+          <Button variant="secondary" onClick={handleModalDropChanges}>
+            Perder cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Layout>
   );
 }
