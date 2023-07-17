@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
 import { Axios } from "axios";
-
+import { Modal, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -13,11 +14,21 @@ export default function FormNovedades() {
   const [selectInput, setSelectInput] = useState("default");
   const [inputs, setInputs] = useState({ prioridad: "1" });
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [formOk, setFormOk] = useState(false);
-  const [cancelado, setCancelado] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [isChangesOk, setIsChangesOk] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsChangesOk(
+      Object.keys(inputs).length > 1 &&
+        inputs.name &&
+        inputs.detalles &&
+        inputs.tipoNovedad
+    );
+    console.log(isChangesOk);
+  }, [inputs]);
 
   /**
    * Maneja el cambio de opción.
@@ -68,85 +79,44 @@ export default function FormNovedades() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setFormSubmitted(true);
+    if (selectInput === "default") return setFormSubmitted(false);
 
-    if (selectInput === "default") return;
+    toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
+      position: "top-right", // Posición de la notificación
+      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
+      hideProgressBar: false, // Mostrar la barra de progreso
+      closeOnClick: true, // Cerrar al hacer clic en la notificación
+      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
+      draggable: true, // Hacer arrastrable la notificación
+    });
 
     // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para crear novedades
     console.log(inputs);
-    return handleRedirect();
-  };
-
-  /**
-   * Maneja la redirección después de un evento exitoso.
-   * Establece el estado de formOk a true para mostrar un mensaje de éxito.
-   * Luego, realiza la redirección después de un breve retraso.
-   */
-  const handleRedirect = () => {
-    setFormOk(true);
-
-    setTimeout(() => {
-      // hacer la redireccion
-      // ahora redirige al home
-      navigate("/");
-    }, 1000);
+    return setTimeout(() => {
+      return navigate("/");
+    }, 2000);
   };
 
   const handleCancel = (e) => {
     e.preventDefault();
     if (Object.keys(inputs).length === 1) return navigate("/");
-    return setCancelado(!cancelado);
-  };
-
-  const handleCancelOk = (e) => {
-    e.preventDefault();
-    return navigate("/");
+    return;
   };
 
   const toggleDisable = (e) => {
     setIsEditable(!isEditable);
   };
 
-  if (cancelado)
-    return (
-      <Layout title={"¿Cancelar?"}>
-        <div className="container">
-          <div className="text-center mt-3">
-            <h3 className="display-4">
-              ¿ Estas seguro de <strong>cancelar ?</strong>
-            </h3>
-            <p className="text-muted display-5 lead">
-              Perderas todos los cambios
-            </p>
-          </div>
-          <div className="d-flex justify-content-center">
-            <input
-              className="btn btn-danger col-sm-3 col-md-2 mx-2"
-              value={"Si, cancelar"}
-              type="submit"
-              onClick={handleCancelOk}
-            />
-            <input
-              type="submit"
-              className="btn btn-primary col-sm-3 col-md-2"
-              value={"Volver"}
-              onClick={handleCancel}
-            />
-          </div>
-        </div>
-      </Layout>
-    );
-  if (formOk)
-    return (
-      <Layout title={"Novedad creada"}>
-        <div className="container">
-          <div className="text-center mt-5">
-            <h2 className="text-primary display-4">
-              Novedad creada satisfactoriamente
-            </h2>
-          </div>
-        </div>
-      </Layout>
-    );
+  const handleModalToggle = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleModalDropChanges = () => {
+    setInputs({ prioridad: 1 });
+    setSelectInput("default");
+    setShowModal(false);
+  };
+
   return (
     <Layout title={"Crear Novedad"}>
       <div className="mt-4 p-4">
@@ -173,7 +143,7 @@ export default function FormNovedades() {
                   value={inputs.detalles || ""}
                   onChange={handleChange}
                   required
-                  disabled={!isEditable}
+                  disabled={!isEditable || formSubmitted}
                 />
               </div>
 
@@ -187,7 +157,7 @@ export default function FormNovedades() {
                   placeholder="Comentarios de la novedad"
                   value={inputs.comentarios || ""}
                   onChange={handleChange}
-                  disabled={!isEditable}
+                  disabled={!isEditable || formSubmitted}
                 />
               </div>
 
@@ -200,7 +170,7 @@ export default function FormNovedades() {
                   value={selectInput}
                   onChange={handleChange}
                   required
-                  disabled={!isEditable}
+                  disabled={!isEditable || formSubmitted}
                 >
                   <option value="default" disabled>
                     Seleccione tipo de novedad
@@ -226,7 +196,7 @@ export default function FormNovedades() {
                       checked={selectedOption >= option}
                       onChange={handleChange}
                       className="d-none"
-                      disabled={!isEditable}
+                      disabled={!isEditable || formSubmitted}
                     />
                     <div className="checkbox-icon pb-4 display-4">
                       {selectedOption >= option ? (
@@ -244,15 +214,17 @@ export default function FormNovedades() {
                   <input
                     className="btn btn-outline-warning col-sm-3 col-md-2 mx-2 "
                     value={"Volver"}
-                    type="submit"
+                    type="button"
                     onClick={handleCancel}
+                    disabled={formSubmitted}
                   />
                 ) : (
                   <input
                     className="btn btn-danger col-sm-3 col-md-2 mx-2"
                     value={"Cancelar"}
-                    type="submit"
-                    onClick={handleCancel}
+                    type="button"
+                    onClick={handleModalToggle}
+                    disabled={formSubmitted}
                   />
                 )}
                 {isEditable ? (
@@ -260,13 +232,15 @@ export default function FormNovedades() {
                     type="submit"
                     className="btn btn-primary col-sm-3 col-md-2"
                     value={"Guardar"}
+                    disabled={formSubmitted && !isChangesOk}
                   />
                 ) : (
                   <input
-                    type="submit"
+                    type="button"
                     className="btn btn-primary col-sm-3 col-md-2"
                     value={"Editar"}
                     onClick={toggleDisable}
+                    disabled={formSubmitted}
                   />
                 )}
               </div>
@@ -274,6 +248,22 @@ export default function FormNovedades() {
           </div>
         </div>
       </div>
+      <Modal show={showModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancelar cambios</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se perderan todos los cambios</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalToggle}>
+            Volver
+          </Button>
+          <Button variant="secondary" onClick={handleModalDropChanges}>
+            Perder cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Layout>
   );
 }
