@@ -8,8 +8,7 @@ export const userInitialState = {
   lastName: null,
   email: null,
   role: null,
-  associatedCustomer: null,
-  associatedProjects: null,
+  associatedCustomers: null,
 };
 
 export const userReducer = createReducer(userInitialState, (builder) => {
