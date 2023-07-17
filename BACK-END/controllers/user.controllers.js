@@ -43,8 +43,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         lastName: user.lastName,
         role: user.role,
-        associatedCustomer: user.associatedCustomer,
-        associatedProjects: user.associatedProjects,
+        associatedCustomers: user.associatedCustomers,
       };
       const token = generateToken(payload);
       res.cookie("token", token);
@@ -66,7 +65,7 @@ const getAllMembers = async (req, res) => {
   try {
     const members = await userModel.find(
       {},
-      "name lastName email role associatedCustomer associatedProjects"
+      "name lastName email role associatedCustomers"
     );
     if (members.length === 0) {
       return res.status(404).send("No se encontraron miembros.");
@@ -109,8 +108,7 @@ const updateUserCustomer = async (req, res, next) => {
     lastName,
     email,
     role,
-    associatedCustomer,
-    associatedProjects,
+    associatedCustomers,
   } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
 
   try {
@@ -125,7 +123,7 @@ const updateUserCustomer = async (req, res, next) => {
     }
 
     // Actualizar los campos del usuario con los nuevos datos
-    user.associatedCustomer = associatedCustomer;
+    user.associatedCustomers = associatedCustomers;
 
     // Guardar los cambios en la base de datos
     const result = await user.save();

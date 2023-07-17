@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import { message } from "antd";
 import Select from "react-select";
 
@@ -38,8 +37,8 @@ const Partners = () => {
       })
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
-          if (a.lastName && b.lastName) {
-            return a.lastName.localeCompare(b.lastName);
+          if (a.name && b.name) {
+            return a.name.localeCompare(b.name);
           }
           return 0;
         });
@@ -62,12 +61,16 @@ const Partners = () => {
         partner.email &&
         partner.email.toLowerCase().includes(value.toLowerCase());
       const isCustomerMatch =
-        partner.associatedCustomer &&
-        customersList.some(
-          (customer) =>
-            customer._id === partner.associatedCustomer &&
+        partner.associatedCustomers &&
+        partner.associatedCustomers.some((customerId) => {
+          const customer = customersList.find(
+            (customer) => customer._id === customerId
+          );
+          return (
+            customer &&
             customer.name.toLowerCase().includes(value.toLowerCase())
-        );
+          );
+        });
 
       return isNameMatch || isLastNameMatch || isEmailMatch || isCustomerMatch;
     });
@@ -84,8 +87,8 @@ const Partners = () => {
 
   const handleUpdateClick = (partnerId) => {
     const updatedPartner = {
-      associatedCustomer: selectedCustomer
-        ? selectedCustomer?.value?.value
+      associatedCustomers: selectedCustomer
+        ? selectedCustomer.value.map((customer) => customer.value)
         : null,
     };
 
@@ -105,7 +108,7 @@ const Partners = () => {
             if (partner._id === partnerId) {
               return {
                 ...partner,
-                associatedCustomer: updatedPartner.associatedCustomer,
+                associatedCustomers: updatedPartner.associatedCustomers,
               };
             }
             return partner;
@@ -116,7 +119,7 @@ const Partners = () => {
             if (partner._id === partnerId) {
               return {
                 ...partner,
-                associatedCustomer: updatedPartner.associatedCustomer,
+                associatedCustomers: updatedPartner.associatedCustomers,
               };
             }
             return partner;
@@ -131,30 +134,6 @@ const Partners = () => {
       });
 
     // No es necesario restablecer el estado de selectedCustomer aquí
-  };
-
-  const handleDeleteClick = (partnerId) => {
-    const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
-
-    if (confirmed) {
-      axios
-        .delete(`http://localhost:3000/api/users/admin/members/${partnerId}`, {
-          withCredentials: true,
-          credentials: "include",
-        })
-        .then(() => {
-          // Eliminar el usuario de los estados locales
-          setPartners((prevPartners) =>
-            prevPartners.filter((partner) => partner._id !== partnerId)
-          );
-          setFilteredPartners((prevFilteredPartners) =>
-            prevFilteredPartners.filter((partner) => partner._id !== partnerId)
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
   };
 
   return (
@@ -187,11 +166,14 @@ const Partners = () => {
                 <td>{partner.lastName}</td>
                 <td>{partner.email}</td>
                 <td>
-                  {partner.associatedCustomer
-                    ? customersList.find(
-                        (customer) =>
-                          customer._id === partner.associatedCustomer
-                      )?.name || ""
+                  {partner.associatedCustomers &&
+                  partner.associatedCustomers.length > 0
+                    ? partner.associatedCustomers.map((customerId) => {
+                        const customer = customersList.find(
+                          (customer) => customer._id === customerId
+                        );
+                        return customer ? ` "${customer.name}"; ` : "";
+                      })
                     : ""}
                 </td>
                 <td>
@@ -209,12 +191,13 @@ const Partners = () => {
                       })
                     }
                     isClearable={true}
+                    isMulti={true}
                     placeholder="Selecciona un Cliente"
                   />
                 </td>
                 <td>
                   {partner._id == selectedCustomer?.partnerId &&
-                  selectedCustomer?.value?.value == null ? (
+                  selectedCustomer?.value?.value == "" ? (
                     <button
                       title="Quitar Cliente al Usuario Seleccionado"
                       className="btn btn-danger"
@@ -231,15 +214,6 @@ const Partners = () => {
                       Asignar Cliente
                     </button>
                   )}
-                </td>
-                <td>
-                  <button
-                    title="Eliminar Usuario"
-                    className="btn btn-danger"
-                    onClick={() => handleDeleteClick(partner._id)}
-                  >
-                    🗑️
-                  </button>
                 </td>
               </tr>
             ))}

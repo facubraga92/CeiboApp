@@ -17,7 +17,7 @@ const createCustomer = async (req, res) => {
   const customer = new customerModel(req.body);
   try {
     const newCustomer = await customer.save();
-    res.status(201).send('Cliente creado con Éxito.');
+    res.status(201).send("Cliente creado con Éxito.");
   } catch (error) {
     // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
@@ -45,10 +45,9 @@ const deleteCustomer = async (req, res) => {
 
     // Actualizar los usuarios asociados al customer eliminado
     await userModel.updateMany(
-      { associatedCustomer: customerId },
+      { associatedCustomers: customerId },
       {
-        $unset: { associatedCustomer: 1 },
-        $pull: { associatedProjects: { $in: projects } },
+        $unset: { associatedCustomers: 1 },
       }
     );
 

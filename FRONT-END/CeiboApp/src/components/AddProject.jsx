@@ -6,10 +6,10 @@ import { message } from "antd";
 const ProjectForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [code, setCode] = useState("");
   const [customer, setCustomer] = useState("");
   const [consultors, setConsultors] = useState([]);
   const [managers, setManagers] = useState([]);
-  const [partners, setPartners] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
 
@@ -38,8 +38,8 @@ const ProjectForm = () => {
       })
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
-          if (a.lastName && b.lastName) {
-            return a.lastName.localeCompare(b.lastName);
+          if (a.name && b.name) {
+            return a.name.localeCompare(b.name);
           }
           return 0;
         });
@@ -59,10 +59,6 @@ const ProjectForm = () => {
     setManagers(selectedOptions);
   };
 
-  const handlePartnerChange = (selectedOptions) => {
-    setPartners(selectedOptions);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -70,10 +66,10 @@ const ProjectForm = () => {
     const project = {
       name,
       description,
+      code,
       customer: customer.value._id,
       consultors: consultors.map((consultor) => consultor.value._id),
       managers: managers.map((manager) => manager.value._id),
-      partners: partners.map((manager) => manager.value._id),
     };
     axios
       .post("http://localhost:3000/api/projects/create", project, {
@@ -87,10 +83,10 @@ const ProjectForm = () => {
         // Restablecer los campos del formulario
         setName("");
         setDescription("");
+        setCode("");
         setCustomer("");
         setConsultors([]);
         setManagers([]);
-        setPartners([]);
       })
       .catch((error) => {
         message.error(error);
@@ -106,15 +102,6 @@ const ProjectForm = () => {
 
   const userOptions = membersList.map((member) => {
     return { value: member, label: `${member.name} ${member.lastName}` };
-  });
-
-  const filteredUserOptions = userOptions.filter((option) => {
-    const partnerId = option.value._id;
-    return (
-      option.value.role.includes("socio") &&
-      partners.every((partner) => partner.value._id !== partnerId) &&
-      option.value.associatedCustomer === customer?.value?._id
-    );
   });
 
   return (
@@ -139,6 +126,16 @@ const ProjectForm = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Código</label>
+          <input
+            type="text"
+            className="form-control"
+            required
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
         </div>
         <div className="mb-3">
           <label className="form-label">Cliente</label>
@@ -173,16 +170,6 @@ const ProjectForm = () => {
             value={managers}
             onChange={handleManagerChange}
             placeholder="Seleccionar managers..."
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Socios</label>
-          <Select
-            options={filteredUserOptions}
-            isMulti
-            value={partners}
-            onChange={handlePartnerChange}
-            placeholder="Seleccionar socios..."
           />
         </div>
         <button type="submit" className="btn btn-primary">

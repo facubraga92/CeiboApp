@@ -34,7 +34,7 @@ userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 
 userRouter.get("/admin/members/:id", isAdmin, changeUserRole);
 
-userRouter.delete("/admin/members/:id", isManager, deleteUser);
+userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 
 userRouter.put("/admin/members/:id", isManager, updateUserCustomer);
 
