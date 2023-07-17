@@ -71,7 +71,7 @@ const Register = () => {
     // Lógica para enviar los datos de registro
     setBloqInputs(true);
     setTimeout(() => {
-      return navigate("/");
+      return navigate("/login");
     }, 2000);
     handleToast();
     return setIsSubmitOk(true);
@@ -209,7 +209,7 @@ const Register = () => {
           </div>
         </form>
       </div>
-      <Modal show={showModal}>
+      <Modal show={showModal} centered onHide={handleModalToggle}>
         <Modal.Header closeButton>
           <Modal.Title>Cancelar cambios</Modal.Title>
         </Modal.Header>
@@ -217,10 +217,10 @@ const Register = () => {
           <p>Se perderan todos los cambios</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalToggle}>
+          <Button variant="warning" onClick={handleModalToggle}>
             Volver
           </Button>
-          <Button variant="secondary" onClick={handleModalDropChanges}>
+          <Button variant="primary" onClick={handleModalDropChanges}>
             Perder cambios
           </Button>
         </Modal.Footer>
