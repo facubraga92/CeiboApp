@@ -160,4 +160,5 @@ module.exports = {
   getAllMembers,
   changeUserRole,
   deleteUser,
+  updateUserCustomer
 };

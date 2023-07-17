@@ -7,11 +7,11 @@ const {
   getOneProject,
   createOneProject,
 } = require("../controllers/project.controllers");
-const getValidationProject = require("../middlewares/validateProject");
+const isManager = require("../middlewares/isManager");
 
 projectRouter.get("/getAll", getAllProjects);
 
-projectRouter.post("/create", getValidationProject, createOneProject);
+projectRouter.post("/create", isManager, createOneProject);
 
 projectRouter.get("/getOne/:id", getOneProject);
 

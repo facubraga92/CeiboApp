@@ -6,11 +6,14 @@ const {
   getAllMembers,
   changeUserRole,
   deleteUser,
+  updateUserCustomer,
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isAdminOrManager = require("../middlewares/isAdminOrManager");
+const isManager = require("../middlewares/isManager");
+
 
 const userRouter = express.Router();
 
