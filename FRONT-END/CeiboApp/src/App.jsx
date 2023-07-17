@@ -7,6 +7,7 @@ import { Manager } from "./pages/Manager";
 import { ProtectedRoute } from "./components";
 import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -15,11 +16,14 @@ function App() {
         {/* User routes */}
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="/" exact element={<Home />} />
+          <Route path="/formNovedades" exact element={<FormNovedades />} />
         </Route>
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route path="/perfil" exact element={<Profile />} />
 
         {/* Admin Routes */}
         <Route path="/" element={<ProtectedRoute onlyAdmin />}>
@@ -33,10 +37,7 @@ function App() {
         </Route>
 
         {/* Contributes Routes */}
-        <Route path="/" element={<ProtectedRoute onlyContributor />}>
-          <Route path="/formNovedades" exact element={<FormNovedades />} /> //
-          ruta formNovedades
-        </Route>
+        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
       </Routes>
     </>
   );
