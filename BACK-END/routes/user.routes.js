@@ -4,7 +4,6 @@ const {
   loginUser,
   logOut,
   getAllMembers,
-  changeUserRole,
   deleteUser,
   updateUserCustomer,
 } = require("../controllers/user.controllers");
@@ -33,10 +32,8 @@ userRouter.get("/me", validateUser, (req, res) => {
 
 userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 
-userRouter.get("/admin/members/:id", isAdmin, changeUserRole);
-
 userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 
-userRouter.put("/admin/members/:id", isManager, updateUserCustomer);
+userRouter.put("/admin/members/:id", isAdminOrManager, updateUserCustomer);
 
 module.exports = userRouter;
