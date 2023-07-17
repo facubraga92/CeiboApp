@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { useDispatch } from "react-redux";
@@ -6,19 +6,29 @@ import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
 
-
 const Login = () => {
+  const [inputs, setInputs] = useState({});
+  const [isFormOk, setIsFormOk] = useState(false);
+  const [disableInputs, setDisableInputs] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  useEffect(() => {
+    return setIsFormOk(inputs.email && inputs.password);
+  }, [inputs]);
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+  const handleChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    if (value === "") {
+      setInputs((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      return setInputs((values) => ({ ...values, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -29,8 +39,7 @@ const Login = () => {
       .post(
         "http://localhost:3000/api/users/login",
         {
-          email,
-          password,
+          inputs, // SE HIZO CAMBIO, CHEQUEAR
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -77,9 +86,19 @@ const Login = () => {
       });
   };
 
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setDisableInputs(true);
+
+    setTimeout(() => {
+      // ahora va al home, podria ir a la vista anterior
+      navigate("/");
+    }, 200);
+  };
+
   return (
-    <Layout title='Login'>
-      <div className="container">
+    <Layout title="Login">
+      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
         <h2>Iniciar sesión</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -90,8 +109,10 @@ const Login = () => {
               type="email"
               className="form-control"
               id="email"
-              value={email}
-              onChange={handleEmailChange}
+              name="email"
+              value={inputs.email}
+              onChange={handleChange}
+              disabled={disableInputs}
               required
             />
           </div>
@@ -103,14 +124,27 @@ const Login = () => {
               type="password"
               className="form-control"
               id="password"
-              value={password}
-              onChange={handlePasswordChange}
+              name="password"
+              value={inputs.password}
+              onChange={handleChange}
+              disabled={disableInputs}
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary">
-            Iniciar sesión
-          </button>
+          <div className="d-flex justify-content-center">
+            <input
+              type="button"
+              className="btn btn-outline-warning col-sm-4 mx-2"
+              value={"Volver"}
+              onClick={handleCancel}
+            />
+            <input
+              type="submit"
+              className="btn btn-primary col-sm-4"
+              value={"Iniciar sesión"}
+              disabled={!isFormOk || disableInputs}
+            />
+          </div>
         </form>
       </div>
     </Layout>
