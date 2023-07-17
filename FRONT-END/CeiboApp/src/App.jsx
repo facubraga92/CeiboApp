@@ -1,41 +1,43 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Navbar from "./commons/Navbar";
-import { useSelector } from "react-redux";
-import Members from "./components/Members";
-import AddProject from "./components/AddProject";
-import Partners from "./components/Partners";
-import Customers from "./components/Customers";
-function App() {
-  const user = useSelector((state) => state.user);
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Members from "./pages/Members";
+import { Manager } from "./pages/Manager";
+import { ProtectedRoute } from "./components";
+import AddProject from "./pages/AddProject";
+import FormNovedades from "./pages/FormNovedades";
+import Profile from "./pages/Profile";
 
+function App() {
   return (
     <>
-      <Navbar />
       <Routes>
-        <Route path="/" element={user.email ? <Home /> : <Login />} />
+        {/* User routes */}
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/" exact element={<Home />} />
+          <Route path="/formNovedades" exact element={<FormNovedades />} />
+        </Route>
+
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={!user.id ? <Register /> : <Home />} />
-        {/* RUTAS DE ADMIN */}
-        <Route
-          path="/admin/members"
-          element={user.role == "admin" ? <Members /> : <Login />}
-        />
-        {/* RUTAS DE MANAGER */}
-        <Route
-          path="/projects/add"
-          element={user.role == "manager" ? <AddProject /> : <Login />}
-        />
-        <Route
-          path="/partners"
-          element={user.role == "manager" ? <Partners /> : <Login />}
-        />
-        <Route
-          path="/customers"
-          element={user.role == "manager" ? <Customers /> : <Login />}
-        />
+        <Route path="/register" element={<Register />} />
+
+        <Route path="/perfil" exact element={<Profile />} />
+
+        {/* Admin Routes */}
+        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
+          <Route path="/admin/members" exact element={<Members />} />
+        </Route>
+
+        {/* Manager Routes */}
+        <Route path="/" element={<ProtectedRoute onlyManager />}>
+          <Route path="/manager" exact element={<Manager />} />
+          <Route path="/projects/add" exact element={<AddProject />} />
+        </Route>
+
+        {/* Contributes Routes */}
+        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
       </Routes>
     </>
   );

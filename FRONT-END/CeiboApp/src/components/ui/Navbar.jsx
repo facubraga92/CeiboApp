@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setUser, userInitialState } from "../state/user";
+import { setUser, userInitialState } from "../../state/user";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -28,6 +28,7 @@ const Navbar = () => {
       })
       .then((user) => {
         dispatch(setUser(userInitialState));
+        localStorage.removeItem('user');
         navigate("/");
       });
   };
@@ -59,13 +60,6 @@ const Navbar = () => {
                 Inicio
               </Link>
             </li>
-            {!user.id && (
-              <li className="nav-item">
-                <Link to="/register" className="nav-link">
-                  Registrarse
-                </Link>
-              </li>
-            )}
             {user.role == "admin" && (
               <li className="nav-item">
                 <Link to="/admin/members" className="nav-link">
@@ -74,23 +68,11 @@ const Navbar = () => {
               </li>
             )}
             {user.role == "manager" && (
-              <>
-                <li className="nav-item">
-                  <Link to="/projects/add" className="nav-link">
-                    Crear Proyecto
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/partners" className="nav-link">
-                    Socios
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/customers" className="nav-link">
-                    Clientes
-                  </Link>
-                </li>
-              </>
+              <li className="nav-item">
+                <Link to="/projects/add" className="nav-link">
+                  Crear Proyecto
+                </Link>
+              </li>
             )}
             <li className="nav-item">
               <a className="nav-link" href="/about">

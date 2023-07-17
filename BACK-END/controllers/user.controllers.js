@@ -3,28 +3,28 @@ const userModel = require("../schemas/User");
 
 const userRegister = async (req, res) => {
   try {
-    let emailDomain = req.body.email.split("@")[1];
-    let role = "socio"; // Por defecto el role es "socio"
-    if (emailDomain.toLowerCase() === "ceibo.digital") {
-      role = "consultor";
-      if (req.body.email.toLowerCase() === "admin@ceibo.digital") {
-        role = "admin";
-      }
+    const { name, lastName, email, password } = req.body;
+
+    let user = await userModel.findOne({ email });
+
+    console.log(user);
+
+    if (user) {
+      return res.status(500).send("Usuario ya existe");
     }
-    const user = new userModel({ ...req.body, role });
+
+    user = new userModel({
+      name,
+      lastName,
+      email,
+      password,
+    });
+
     await user.save();
-    res.send(`Usuario creado exitosamente! ${user.email}`);
+
+    return res.status(201).send("Usuario creado");
   } catch (error) {
-    if (error.errors) {
-      // Si hay errores de validación en el modelo
-      const errorMessage = Object.values(error.errors)
-        .map((err) => err.message)
-        .join(", ");
-      res.status(400).send(errorMessage);
-    } else {
-      // Otro tipo de error
-      res.status(500).send(error.message || "Error al crear el usuario");
-    }
+    return res.status(500).send(error);
   }
 };
 
@@ -64,10 +64,7 @@ const logOut = (req, res) => {
 
 const getAllMembers = async (req, res) => {
   try {
-    const members = await userModel.find(
-      {},
-      "name lastName email role associatedCustomer associatedProjects"
-    );
+    const members = await userModel.find({});
     if (members.length === 0) {
       return res.status(404).send("No se encontraron miembros.");
     }
@@ -102,43 +99,6 @@ const changeUserRole = async (req, res) => {
   }
 };
 
-const updateUserCustomer = async (req, res, next) => {
-  const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
-  const {
-    name,
-    lastName,
-    email,
-    role,
-    associatedCustomer,
-    associatedProjects,
-  } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
-
-  try {
-    // Buscar el usuario por ID
-    const user = await userModel.findById(id);
-
-    // Si no se encuentra el usuario, devolver un error
-    if (!user) {
-      const error = new Error("El usuario no existe");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    // Actualizar los campos del usuario con los nuevos datos
-    user.associatedCustomer = associatedCustomer;
-
-    // Guardar los cambios en la base de datos
-    const result = await user.save();
-
-    // Devolver el resultado actualizado
-    res.status(200).json({
-      message: "Usuario actualizado exitosamente.",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
@@ -161,5 +121,4 @@ module.exports = {
   getAllMembers,
   changeUserRole,
   deleteUser,
-  updateUserCustomer,
 };

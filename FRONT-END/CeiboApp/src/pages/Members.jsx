@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { message } from "antd";
+import Layout from "../components/layouts/Layout";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -159,92 +160,95 @@ const Members = () => {
   };
 
   return (
-    <div>
-      <ul className="nav justify-content-center">
-        <li className="nav-item">
-          <a
-            className="nav-link active"
-            aria-current="page"
-            onClick={handleConsultoresFilter}
-          >
-            Consultores
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleManagersFilter}>
-            Managers
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleSociosFilter}>
-            Socios
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleTodosFilter}>
-            Todos
-          </a>
-        </li>
-      </ul>
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar miembro..."
-          value={searchText}
-          onChange={handleSearch}
-        />
-      </div>
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>
-                <div className="form-check">
-                  <label className="form-check-label">Manager</label>
-                </div>
-              </th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMembers.map((member) => (
-              <tr key={member._id}>
-                <td>{member.name}</td>
-                <td>{member.lastName}</td>
-                <td>{member.email}</td>
-                <td>{member.role}</td>
-                <td>
-                  {member.role === "consultor" || member.role === "manager" ? (
-                    <div className="form-check d-flex justify-content-center">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value={member._id}
-                        onChange={handleCheckboxChange}
-                        checked={member.role === "manager"}
-                      />
-                    </div>
-                  ) : null}
-                </td>
-                <td>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDeleteClick(member._id)}
-                  >
-                    🗑️
-                  </button>
-                </td>
+    <Layout title='Members'>
+      <div>
+        <ul className="nav justify-content-center">
+          <li className="nav-item">
+            <a
+              className="nav-link active"
+              aria-current="page"
+              onClick={handleConsultoresFilter}
+            >
+              Consultores
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleManagersFilter}>
+              Managers
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleSociosFilter}>
+              Socios
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleTodosFilter}>
+              Todos
+            </a>
+          </li>
+        </ul>
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar miembro..."
+            value={searchText}
+            onChange={handleSearch}
+          />
+        </div>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>
+                  <div className="form-check">
+                    <label className="form-check-label">Manager</label>
+                  </div>
+                </th>
+                <th>Eliminar</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredMembers.map((member) => (
+                <tr key={member._id}>
+                  <td>{member.name}</td>
+                  <td>{member.lastName}</td>
+                  <td>{member.email}</td>
+                  <td>{member.role}</td>
+                  <td>
+                    {member.role === "consultor" ||
+                    member.role === "manager" ? (
+                      <div className="form-check d-flex justify-content-center">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value={member._id}
+                          onChange={handleCheckboxChange}
+                          checked={member.role === "manager"}
+                        />
+                      </div>
+                    ) : null}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteClick(member._id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
