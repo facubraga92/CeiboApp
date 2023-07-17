@@ -9,6 +9,9 @@ import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
 import Profile from "./pages/Profile";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   return (
     <>
@@ -39,6 +42,7 @@ function App() {
         {/* Contributes Routes */}
         <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
       </Routes>
+      <ToastContainer />
     </>
   );
 }
