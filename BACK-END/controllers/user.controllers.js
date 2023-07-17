@@ -77,39 +77,9 @@ const getAllMembers = async (req, res) => {
   }
 };
 
-const changeUserRole = async (req, res) => {
-  const id = req.params.id;
-  let user = await userModel.findById(id).exec();
-  if (!user) {
-    res.status(404).send("Usuario no encontrado");
-  }
-  try {
-    user.role == "consultor"
-      ? (user.role = "manager")
-      : (user.role = "consultor");
-
-    user.save();
-    res.send(
-      `Role del usuario con id:${id} cambiado exitosamente a ${user.role}`
-    );
-  } catch (error) {
-    res
-      .status(500)
-      .send(
-        "Ha ocurrido un error al intentar cambiar el role del usuario especificado."
-      );
-  }
-};
-
 const updateUserCustomer = async (req, res, next) => {
   const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
-  const {
-    name,
-    lastName,
-    email,
-    role,
-    associatedCustomers,
-  } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
+  const { name, lastName, email, role, associatedCustomers } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
 
   try {
     // Buscar el usuario por ID
@@ -123,7 +93,11 @@ const updateUserCustomer = async (req, res, next) => {
     }
 
     // Actualizar los campos del usuario con los nuevos datos
-    user.associatedCustomers = associatedCustomers;
+    user.name = name || user.name;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.role = role || user.role;
+    user.associatedCustomers = associatedCustomers || user.associatedCustomers;
 
     // Guardar los cambios en la base de datos
     const result = await user.save();
@@ -157,7 +131,6 @@ module.exports = {
   loginUser,
   logOut,
   getAllMembers,
-  changeUserRole,
   deleteUser,
   updateUserCustomer,
 };
