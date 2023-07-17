@@ -73,6 +73,11 @@ const Register = () => {
     setTimeout(() => {
       return navigate("/");
     }, 2000);
+    handleToast();
+    return setIsSubmitOk(true);
+  };
+
+  const handleToast = () => {
     toast.success("Usuario creado satisfactoriamente", {
       position: "top-right", // Posición de la notificación
       autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
@@ -81,7 +86,6 @@ const Register = () => {
       pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
       draggable: true, // Hacer arrastrable la notificación
     });
-    return setIsSubmitOk(true);
   };
 
   const handleCancel = (e) => {
@@ -171,7 +175,7 @@ const Register = () => {
               disabled={bloqInputs}
             />
             {inputs.password != inputs.confirmPassword && (
-              <p>Las contraseñas no coinciden</p>
+              <span className="text-danger">Las contraseñas no coinciden</span>
             )}
           </div>
 
@@ -180,7 +184,7 @@ const Register = () => {
               <input
                 type="button"
                 value="Volver"
-                className="btn btn-outline-warning col-sm-3 mx-2"
+                className="btn btn-outline-warning mr-2 flex-fill w-50"
                 disabled={isChanges || bloqInputs}
                 onClick={handleCancel}
               />
@@ -190,16 +194,17 @@ const Register = () => {
               <input
                 type="button"
                 value="Cancelar"
-                className="btn btn-danger col-sm-3 mx-2"
+                className="btn btn-danger mr-2 flex-fill w-50"
                 onClick={handleModalToggle}
                 disabled={bloqInputs}
               />
             )}
             <input
               type="submit"
-              className="btn btn-primary col-sm-3"
+              className="btn btn-primary flex-fill w-50"
               value={"Registrarse"}
               disabled={!isChangesOk || bloqInputs}
+              style={{ pointerEvents: "auto" }}
             />
           </div>
         </form>
