@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
-import { Modal, Button, Toast, ToastBody } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
