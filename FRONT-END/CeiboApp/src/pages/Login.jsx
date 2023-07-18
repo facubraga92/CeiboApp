@@ -35,11 +35,13 @@ const Login = () => {
     e.preventDefault();
     // Lógica para enviar los datos de inicio de sesión
     // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
+    const { email, password } = inputs;
     axios
       .post(
         "http://localhost:3000/api/users/login",
         {
-          inputs, // SE HIZO CAMBIO, CHEQUEAR
+          email,
+          password,
         },
         {
           headers: { "Content-Type": "application/json" },

@@ -78,8 +78,8 @@ const ProjectForm = () => {
   ];
 
   return (
-    <Layout title='AddProject'>
-      <div>
+    <Layout title="AddProject">
+      <div className="container">
         <h2>Crear Proyecto</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
