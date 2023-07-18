@@ -12,17 +12,18 @@ import Partners from "./pages/Partners";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 function App() {
+  const user = useSelector((state) => state.user);
   return (
     <>
       <Routes>
-        {/* User routes */}
-        <Route path="/" element={<ProtectedRoute />}>
-          <Route path="/" exact element={<Login />} />
-        </Route>
+        {/* User routes 
+        <Route path="/" element={<ProtectedRoute />}></Route>*/}
+
         {/* Public Routes */}
-        <Route path="/Login" element={<Login />} />
+        <Route path="/" element={user.id == null ? <Login /> : <Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />
         {/* Admin Routes */}

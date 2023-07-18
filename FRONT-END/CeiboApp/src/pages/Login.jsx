@@ -9,9 +9,6 @@ import Layout from "../components/layouts/Layout";
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
-  const [disableInputs, setDisableInputs] = useState(false);
-
-  const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,7 +63,7 @@ const Login = () => {
             );
 
             // Mover la navegación a la página principal aquí
-            navigate("/");
+            navigate("/home");
           })
           .catch((error) => {
             if (error.response && error.response.status === 403) {
@@ -87,7 +84,7 @@ const Login = () => {
         }
       });
   };
-  if (user.id != null) return navigate("/home");
+
   return (
     <Layout title="Login">
       <div className="container mt-5 col-12 col-lg-6">
@@ -111,7 +108,6 @@ const Login = () => {
                   name="email"
                   value={inputs.email}
                   onChange={handleChange}
-                  disabled={disableInputs}
                   required
                 />
               </div>
@@ -126,7 +122,6 @@ const Login = () => {
                   name="password"
                   value={inputs.password}
                   onChange={handleChange}
-                  disabled={disableInputs}
                   required
                 />
               </div>
