@@ -1,15 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
+import { message } from "antd";
 import Layout from "../components/layouts/Layout";
 
 const ProjectForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [code, setCode] = useState("");
   const [customer, setCustomer] = useState("");
   const [consultors, setConsultors] = useState([]);
   const [managers, setManagers] = useState([]);
-  const [partners, setPartners] = useState([]);
+  const [membersList, setMembersList] = useState([]);
+  const [customersList, setCustomersList] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/users/admin/members", {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then((response) => {
+        const sortedUsers = response.data.sort((a, b) => {
+          if (a.lastName && b.lastName) {
+            return a.lastName.localeCompare(b.lastName);
+          }
+          return 0;
+        });
+        setMembersList(sortedUsers);
+      });
+
+    axios
+      .get("http://localhost:3000/api/customers/all", {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then((response) => {
+        const sortedCustomers = response.data.sort((a, b) => {
+          if (a.name && b.name) {
+            return a.name.localeCompare(b.name);
+          }
+          return 0;
+        });
+        setCustomersList(sortedCustomers);
+      });
+  }, []);
 
   const handleCustomerChange = (selectedOption) => {
     setCustomer(selectedOption);
@@ -23,10 +60,6 @@ const ProjectForm = () => {
     setManagers(selectedOptions);
   };
 
-  const handlePartnerChange = (selectedOptions) => {
-    setPartners(selectedOptions);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -34,51 +67,46 @@ const ProjectForm = () => {
     const project = {
       name,
       description,
-      customer,
-      consultors,
-      managers,
-      partners,
+      code,
+      customer: customer.value._id,
+      consultors: consultors.map((consultor) => consultor.value._id),
+      managers: managers.map((manager) => manager.value._id),
     };
-
-    // Simular la solicitud POST al endpoint
     axios
-      .post("http://localhost:3000/api/projects/create", project)
+      .post("http://localhost:3000/api/projects/create", project, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+        credentials: "include",
+      })
       .then((response) => {
         // Manejar la respuesta del servidor
-        console.log(response.data);
+        message.success(response.data);
         // Restablecer los campos del formulario
         setName("");
         setDescription("");
+        setCode("");
         setCustomer("");
         setConsultors([]);
         setManagers([]);
-        setPartners([]);
       })
       .catch((error) => {
-        console.log(error);
+        message.error(error);
       });
   };
 
-  const customerOptions = [
-    { value: "1", label: "Cliente 1" },
-    { value: "2", label: "Cliente 2" },
-    { value: "3", label: "Cliente 3" },
-  ];
+  const customerOptions = customersList.map((customer) => {
+    return {
+      value: customer,
+      label: `${customer.name}`,
+    };
+  });
 
-  const userOptions = [
-    { value: "1", label: "Consultor 1" },
-    { value: "2", label: "Consultor 2" },
-    { value: "3", label: "Consultor 3" },
-    { value: "4", label: "Manager 1" },
-    { value: "5", label: "Manager 2" },
-    { value: "6", label: "Manager 3" },
-    { value: "7", label: "Socio 1" },
-    { value: "8", label: "Socio 2" },
-    { value: "9", label: "Socio 3" },
-  ];
+  const userOptions = membersList.map((member) => {
+    return { value: member, label: `${member.name} ${member.lastName}` };
+  });
 
   return (
-    <Layout title='AddProject'>
+    <Layout title={"Agregar proyecto"}>
       <div>
         <h2>Crear Proyecto</h2>
         <form onSubmit={handleSubmit}>
@@ -87,6 +115,7 @@ const ProjectForm = () => {
             <input
               type="text"
               className="form-control"
+              required
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -101,8 +130,19 @@ const ProjectForm = () => {
             ></textarea>
           </div>
           <div className="mb-3">
+            <label className="form-label">Código</label>
+            <input
+              type="text"
+              className="form-control"
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
             <label className="form-label">Cliente</label>
             <Select
+              required
               options={customerOptions}
               value={customer}
               onChange={handleCustomerChange}
@@ -114,7 +154,7 @@ const ProjectForm = () => {
             <label className="form-label">Consultores</label>
             <Select
               options={userOptions.filter((option) =>
-                option.label.includes("Consultor")
+                option.value.role.includes("consultor")
               )}
               isMulti
               value={consultors}
@@ -126,24 +166,12 @@ const ProjectForm = () => {
             <label className="form-label">Managers</label>
             <Select
               options={userOptions.filter((option) =>
-                option.label.includes("Manager")
+                option.value.role.includes("manager")
               )}
               isMulti
               value={managers}
               onChange={handleManagerChange}
               placeholder="Seleccionar managers..."
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Socios</label>
-            <Select
-              options={userOptions.filter((option) =>
-                option.label.includes("Socio")
-              )}
-              isMulti
-              value={partners}
-              onChange={handlePartnerChange}
-              placeholder="Seleccionar socios..."
             />
           </div>
           <button type="submit" className="btn btn-primary">
