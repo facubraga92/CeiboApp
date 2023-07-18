@@ -43,8 +43,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         lastName: user.lastName,
         role: user.role,
-        associatedCustomer: user.associatedCustomer,
-        associatedProjects: user.associatedProjects,
+        associatedCustomers: user.associatedCustomers,
       };
       const token = generateToken(payload);
       res.cookie("token", token);
@@ -64,7 +63,10 @@ const logOut = (req, res) => {
 
 const getAllMembers = async (req, res) => {
   try {
-    const members = await userModel.find({});
+    const members = await userModel.find(
+      {},
+      "name lastName email role associatedCustomers"
+    );
     if (members.length === 0) {
       return res.status(404).send("No se encontraron miembros.");
     }
@@ -75,27 +77,37 @@ const getAllMembers = async (req, res) => {
   }
 };
 
-const changeUserRole = async (req, res) => {
-  const id = req.params.id;
-  let user = await userModel.findById(id).exec();
-  if (!user) {
-    res.status(404).send("Usuario no encontrado");
-  }
-  try {
-    user.role == "consultor"
-      ? (user.role = "manager")
-      : (user.role = "consultor");
+const updateUserCustomer = async (req, res, next) => {
+  const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
+  const { name, lastName, email, role, associatedCustomers } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
 
-    user.save();
-    res.send(
-      `Role del usuario con id:${id} cambiado exitosamente a ${user.role}`
-    );
+  try {
+    // Buscar el usuario por ID
+    const user = await userModel.findById(id);
+
+    // Si no se encuentra el usuario, devolver un error
+    if (!user) {
+      const error = new Error("El usuario no existe");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Actualizar los campos del usuario con los nuevos datos
+    user.name = name || user.name;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.role = role || user.role;
+    user.associatedCustomers = associatedCustomers || user.associatedCustomers;
+
+    // Guardar los cambios en la base de datos
+    const result = await user.save();
+
+    // Devolver el resultado actualizado
+    res.status(200).json({
+      message: "Usuario actualizado exitosamente.",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .send(
-        "Ha ocurrido un error al intentar cambiar el role del usuario especificado."
-      );
+    next(error);
   }
 };
 
@@ -119,6 +131,6 @@ module.exports = {
   loginUser,
   logOut,
   getAllMembers,
-  changeUserRole,
   deleteUser,
+  updateUserCustomer
 };

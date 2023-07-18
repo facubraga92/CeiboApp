@@ -1,6 +1,6 @@
 const userModel = require("../schemas/User");
 
-async function validateManager(req, res, next) {
+async function isManager(req, res, next) {
   const managerId = req.body.managers;
   console.log(managerId);
   try {
@@ -20,4 +20,4 @@ async function validateManager(req, res, next) {
   }
 }
 
-module.exports = validateManager;
+module.exports = isManager;

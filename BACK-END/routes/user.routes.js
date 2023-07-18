@@ -4,13 +4,15 @@ const {
   loginUser,
   logOut,
   getAllMembers,
-  changeUserRole,
   deleteUser,
+  updateUserCustomer,
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isAdminOrManager = require("../middlewares/isAdminOrManager");
+const isManager = require("../middlewares/isManager");
+
 
 const userRouter = express.Router();
 
@@ -30,8 +32,8 @@ userRouter.get("/me", validateUser, (req, res) => {
 
 userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 
-userRouter.get("/admin/members/:id", isAdmin, changeUserRole);
+userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 
-userRouter.delete("/admin/members/:id", isAdmin, deleteUser);
+userRouter.put("/admin/members/:id", isAdminOrManager, updateUserCustomer);
 
 module.exports = userRouter;
