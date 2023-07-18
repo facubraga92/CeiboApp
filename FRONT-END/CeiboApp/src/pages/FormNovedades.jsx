@@ -5,6 +5,7 @@ import Layout from "../components/layouts/Layout";
 import { Axios } from "axios";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { flushSync } from "react-dom";
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -17,17 +18,14 @@ export default function FormNovedades() {
   const [isEditable, setIsEditable] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isChangesOk, setIsChangesOk] = useState(false);
+  const [showModalSave, setShowModalSave] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsChangesOk(
-      Object.keys(inputs).length > 1 &&
-        inputs.name &&
-        inputs.detalles &&
-        inputs.tipoNovedad
+      Object.keys(inputs).length > 1 && inputs.detalles && inputs.tipoNovedad
     );
-    console.log(isChangesOk);
   }, [inputs]);
 
   /**
@@ -81,6 +79,7 @@ export default function FormNovedades() {
     setFormSubmitted(true);
     if (selectInput === "default") return setFormSubmitted(false);
 
+    setShowModalSave(false);
     toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
       position: "top-right", // Posición de la notificación
       autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
@@ -107,8 +106,12 @@ export default function FormNovedades() {
     setIsEditable(!isEditable);
   };
 
-  const handleModalToggle = () => {
+  const toggleModal = () => {
     setShowModal(!showModal);
+  };
+
+  const toggleModalSave = () => {
+    setShowModalSave(!showModalSave);
   };
 
   const handleModalDropChanges = () => {
@@ -119,10 +122,10 @@ export default function FormNovedades() {
 
   return (
     <Layout title={"Crear Novedad"}>
-      <div className="mt-4 p-4">
+      <div className="mt-0 p-4 mt-md-4">
         <div className="row">
           <div className="container col-sm-12 col-md-8 col-lg-6">
-            <div className="d-flex flex-wrap flex-md-nowrap justify-content-between">
+            <div className="d-flex flex-wrap flex-md-nowrap justify-content-between mb-0 mb-md-4">
               <div>
                 <h5>Nombre_Proyecto</h5>
                 <h2>Proyecto_XXXXXXXX</h2>
@@ -223,16 +226,17 @@ export default function FormNovedades() {
                     className="btn btn-danger col-sm-3 col-md-2 mx-2"
                     value={"Cancelar"}
                     type="button"
-                    onClick={handleModalToggle}
+                    onClick={toggleModal}
                     disabled={formSubmitted}
                   />
                 )}
                 {isEditable ? (
                   <input
-                    type="submit"
+                    type="button"
                     className="btn btn-primary col-sm-3 col-md-2"
-                    value={"Guardar"}
-                    disabled={formSubmitted && !isChangesOk}
+                    value={"Crear"}
+                    disabled={!isChangesOk}
+                    onClick={toggleModalSave}
                   />
                 ) : (
                   <input
@@ -248,7 +252,7 @@ export default function FormNovedades() {
           </div>
         </div>
       </div>
-      <Modal show={showModal}>
+      <Modal show={showModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Cancelar cambios</Modal.Title>
         </Modal.Header>
@@ -256,11 +260,27 @@ export default function FormNovedades() {
           <p>Se perderan todos los cambios</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalToggle}>
+          <Button variant="secondary" onClick={toggleModal}>
             Volver
           </Button>
           <Button variant="secondary" onClick={handleModalDropChanges}>
             Perder cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showModalSave} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>¿Agregar novedad?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se agregara la novedad al proyecto</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={toggleModalSave}>
+            Volver
+          </Button>
+          <Button variant="secondary" onClick={handleSubmit}>
+            Agregar novedad
           </Button>
         </Modal.Footer>
       </Modal>
