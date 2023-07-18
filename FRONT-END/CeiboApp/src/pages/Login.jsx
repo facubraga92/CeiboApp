@@ -40,8 +40,7 @@ const Login = () => {
       .post(
         "http://localhost:3000/api/users/login",
         {
-          email,
-          password,
+          ...inputs,
         },
         {
           headers: { "Content-Type": "application/json" },
