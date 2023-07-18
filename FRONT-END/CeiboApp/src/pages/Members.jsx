@@ -160,7 +160,7 @@ const Members = () => {
   };
 
   return (
-    <Layout title='Members'>
+    <Layout title="Members">
       <div>
         <ul className="nav justify-content-center">
           <li className="nav-item">

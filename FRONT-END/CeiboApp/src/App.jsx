@@ -21,24 +21,19 @@ function App() {
           <Route path="/" exact element={<Home />} />
           <Route path="/formNovedades" exact element={<FormNovedades />} />
         </Route>
-
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
         <Route path="/perfil" exact element={<Profile />} />
-
         {/* Admin Routes */}
-        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
-          <Route path="/admin/members" exact element={<Members />} />
-        </Route>
-
+        <Route path="/" element={<ProtectedRoute onlyAdmin />}></Route>
+        <Route path="/admin/members" exact element={<Members />} /> // la baje
+        para testing
         {/* Manager Routes */}
         <Route path="/" element={<ProtectedRoute onlyManager />}>
           <Route path="/manager" exact element={<Manager />} />
           <Route path="/projects/add" exact element={<AddProject />} />
         </Route>
-
         {/* Contributes Routes */}
         <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
       </Routes>
