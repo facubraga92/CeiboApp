@@ -1,12 +1,15 @@
 import Layout from "../components/layouts/Layout";
 import React, { useEffect, useState } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
   const [formOk, setFormOk] = useState(false);
+  const [disabled, setDisabled] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showModalSave, setShowModalSave] = useState(false);
 
   const navigate = useNavigate();
 
@@ -14,22 +17,21 @@ export default function Profile() {
   const [inputs, setInputs] = useState({
     name: "nombre prueba",
     lastName: "lastName prueba",
-    email: "email prueba",
+    email: "prueba@prueba.com",
   });
 
   const [initialState, setInitialState] = useState({
     name: "nombre prueba",
     lastName: "lastName prueba",
-    email: "email prueba",
+    email: "prueba@prueba.com",
   });
 
   useEffect(() => {
+    console.log(inputs);
     return setIsChanges(
       JSON.stringify(inputs) !== JSON.stringify(initialState)
     );
   }, [inputs]);
-
-  const [disabled, setDisabled] = useState(true);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -56,19 +58,19 @@ export default function Profile() {
       setInputs(initialState);
       setDisabled(!disabled);
     }
-  };
-
-  const handleCancelChanges = (e) => {
-    e.preventDefault();
-    if (isChanges) return setShowModal(true);
-    return handleCancel(e);
+    return;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!isChanges) return;
-    // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para editar perfil
-    return handleRedirect();
+    setDisabled(true);
+    setInitialState(inputs);
+    setIsChanges(false);
+    toggleShowModalSave();
+    handleToast();
+    console.log(inputs);
+    // por ahora no hace nada REVISAR
+    return;
   };
 
   const handleRedirect = () => {
@@ -80,29 +82,34 @@ export default function Profile() {
     } else {
       navigate("/"); // redirige al home por ahora
     }
+    return;
+  };
+
+  const toggleShowModalSave = () => {
+    return setShowModalSave(!showModalSave);
   };
 
   const handleModalDropChanges = () => {
     setInputs(initialState);
+    setIsChanges(false);
     setShowModal(false);
+    setDisabled(!disabled);
   };
 
   const handleModalToggle = () => {
-    setShowModal(!showModal);
+    return setShowModal(!showModal);
   };
 
-  if (formOk)
-    return (
-      <Layout title={"Edit Ok"}>
-        <div className="container">
-          <div className="text-center mt-5">
-            <h2 className="text-primary display-4">
-              Usuario editado correctamente
-            </h2>
-          </div>
-        </div>
-      </Layout>
-    );
+  const handleToast = () => {
+    toast.success("Cambios guardados", {
+      position: "top-right", // Posición de la notificación
+      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
+      hideProgressBar: false, // Mostrar la barra de progreso
+      closeOnClick: true, // Cerrar al hacer clic en la notificación
+      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
+      draggable: true, // Hacer arrastrable la notificación
+    });
+  };
   return (
     <Layout title="Profile">
       <div className="mt-4 p-4">
@@ -112,7 +119,7 @@ export default function Profile() {
               <h2>Editar Perfil</h2>
             </div>
             <div className="">
-              <form action="" method="post" onSubmit={handleSubmit}>
+              <form action="" method="post" onSubmit={toggleShowModalSave}>
                 <div className="form-group">
                   <label htmlFor="">Nombre</label>
                   <input
@@ -175,10 +182,11 @@ export default function Profile() {
                         className="btn btn-danger col-sm-3 col-md-2 mx-2"
                       />
                       <input
-                        type="submit"
+                        type="button"
                         value={"Guardar"}
                         className="btn btn-primary col-sm-3 col-md-2 mx-2"
-                        disabled={!isChanges}
+                        disabled={!isChanges || Object.keys(inputs).length < 3}
+                        onClick={toggleShowModalSave}
                       />
                     </>
                   )}
@@ -188,7 +196,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <Modal show={showModal}>
+      <Modal show={showModal} centered onHide={handleModalToggle}>
         <Modal.Header closeButton>
           <Modal.Title>Cancelar cambios</Modal.Title>
         </Modal.Header>
@@ -196,11 +204,25 @@ export default function Profile() {
           <p>Se perderan todos los cambios</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalToggle}>
+          <Button variant="warning" onClick={handleModalToggle}>
             Volver
           </Button>
-          <Button variant="secondary" onClick={handleModalDropChanges}>
+          <Button variant="primary" onClick={handleModalDropChanges}>
             Perder cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showModalSave} centered onHide={toggleShowModalSave}>
+        <Modal.Header closeButton>
+          <Modal.Title>¿Guardar cambios?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Se guardaran los cambios</Modal.Body>
+        <Modal.Footer>
+          <Button variant="warning" onClick={toggleShowModalSave}>
+            Volver
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Guardar cambios
           </Button>
         </Modal.Footer>
       </Modal>

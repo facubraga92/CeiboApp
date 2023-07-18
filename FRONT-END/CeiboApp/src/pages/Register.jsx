@@ -1,46 +1,101 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
+import { Modal, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 const Register = () => {
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [inputs, setInputs] = useState({});
+  const [isChangesOk, setIsChangesOk] = useState(false);
+  const [isChanges, setIsChanges] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [bloqInputs, setBloqInputs] = useState(false);
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Object.keys(inputs).length === 0) {
+      setIsChanges(false);
+    } else {
+      setIsChanges(true);
+    }
+
+    if (
+      inputs.name &&
+      inputs.lastName &&
+      inputs.email &&
+      inputs.password &&
+      inputs.confirmPassword &&
+      inputs.password === inputs.confirmPassword &&
+      isValidEmail(inputs.email)
+    )
+      return setIsChangesOk(true);
+    else {
+      return setIsChangesOk(false);
+    }
+    return;
+  }, [inputs]);
+
+  const handleModalDropChanges = () => {
+    setInputs({});
+    setShowModal(false);
   };
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
+  const handleModalToggle = () => {
+    setShowModal(!showModal);
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  function isValidEmail(email) {
+    const patronEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return patronEmail.test(email);
+  }
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
+  const handleChange = (event) => {
+    const value = event.target.value;
+    const name = event.target.name;
+    if (value === "") {
+      setInputs((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      return setInputs((values) => ({ ...values, [name]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
+    // faltan los llamados a la api para chequear que el usuario no exista y para crearlo en el caso que no exista
+
     e.preventDefault();
     // Lógica para enviar los datos de registro
-    // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
-    console.log("Nombre:", name);
-    console.log("Apellido:", lastName);
-    console.log("Correo electrónico:", email);
-    console.log("Contraseña:", password);
-    console.log("Confirmar contraseña:", confirmPassword);
+    setBloqInputs(true);
+    setTimeout(() => {
+      return navigate("/login");
+    }, 2000);
+    handleToast();
+    return setIsSubmitOk(true);
+  };
+
+  const handleToast = () => {
+    toast.success("Usuario creado satisfactoriamente", {
+      position: "top-right", // Posición de la notificación
+      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
+      hideProgressBar: false, // Mostrar la barra de progreso
+      closeOnClick: true, // Cerrar al hacer clic en la notificación
+      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
+      draggable: true, // Hacer arrastrable la notificación
+    });
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    return navigate("/");
   };
 
   return (
-    <Layout title='Register'>
-      <div className="container">
+    <Layout title="Register">
+      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
         <h2>Registro</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -51,9 +106,11 @@ const Register = () => {
               type="text"
               className="form-control"
               id="name"
-              value={name}
-              onChange={handleNameChange}
+              name="name"
+              value={inputs.name || ""}
+              onChange={handleChange}
               required
+              disabled={bloqInputs}
             />
           </div>
           <div className="mb-3">
@@ -64,9 +121,11 @@ const Register = () => {
               type="text"
               className="form-control"
               id="lastName"
-              value={lastName}
-              onChange={handleLastNameChange}
+              name="lastName"
+              value={inputs.lastName || ""}
+              onChange={handleChange}
               required
+              disabled={bloqInputs}
             />
           </div>
           <div className="mb-3">
@@ -77,9 +136,11 @@ const Register = () => {
               type="email"
               className="form-control"
               id="email"
-              value={email}
-              onChange={handleEmailChange}
+              name="email"
+              value={inputs.email || ""}
+              onChange={handleChange}
               required
+              disabled={bloqInputs}
             />
           </div>
           <div className="mb-3">
@@ -90,9 +151,11 @@ const Register = () => {
               type="password"
               className="form-control"
               id="password"
-              value={password}
-              onChange={handlePasswordChange}
+              name="password"
+              value={inputs.password || ""}
+              onChange={handleChange}
               required
+              disabled={bloqInputs}
             />
           </div>
           <div className="mb-3">
@@ -105,17 +168,63 @@ const Register = () => {
               type="password"
               className="form-control"
               id="confirmPassword"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
+              name="confirmPassword"
+              value={inputs.confirmPassword || ""}
+              onChange={handleChange}
               required
+              disabled={bloqInputs}
             />
-            {password != confirmPassword && <p>Las contraseñas no coinciden</p>}
+            {inputs.password != inputs.confirmPassword && (
+              <span className="text-danger">Las contraseñas no coinciden</span>
+            )}
           </div>
-          <button type="submit" className="btn btn-primary">
-            Registrarse
-          </button>
+
+          <div className="d-flex justify-content-center">
+            {!isChanges && (
+              <input
+                type="button"
+                value="Volver"
+                className="btn btn-outline-warning mr-2 flex-fill w-50"
+                disabled={isChanges || bloqInputs}
+                onClick={handleCancel}
+              />
+            )}
+
+            {isChanges && (
+              <input
+                type="button"
+                value="Cancelar"
+                className="btn btn-danger mr-2 flex-fill w-50"
+                onClick={handleModalToggle}
+                disabled={bloqInputs}
+              />
+            )}
+            <input
+              type="submit"
+              className="btn btn-primary flex-fill w-50"
+              value={"Registrarse"}
+              disabled={!isChangesOk || bloqInputs}
+              style={{ pointerEvents: "auto" }}
+            />
+          </div>
         </form>
       </div>
+      <Modal show={showModal} centered onHide={handleModalToggle}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancelar cambios</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se perderan todos los cambios</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="warning" onClick={handleModalToggle}>
+            Volver
+          </Button>
+          <Button variant="primary" onClick={handleModalDropChanges}>
+            Perder cambios
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Layout>
   );
 };

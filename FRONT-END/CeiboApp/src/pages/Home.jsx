@@ -3,9 +3,9 @@ import Layout from "../components/layouts/Layout";
 
 const Home = () => {
   return (
-    <Layout title='Home'>
-      <div>
-        <h2>Hola, estás en el Home. No tienes acceso a esta ruta</h2>
+    <Layout title="Home">
+      <div className="container">
+        <p>estas en el home</p>
       </div>
     </Layout>
   );
