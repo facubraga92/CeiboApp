@@ -19,8 +19,7 @@ function App() {
       <Routes>
         {/* User routes */}
         <Route path="/" element={<ProtectedRoute />}>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/formNovedades" exact element={<FormNovedades />} />
+          <Route path="/" exact element={<Login />} />
         </Route>
         {/* Public Routes */}
         <Route path="/Login" element={<Login />} />
@@ -37,7 +36,10 @@ function App() {
           <Route path="/partners" exact element={<Partners />} />
         </Route>
         {/* Contributes Routes */}
-        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
+        <Route path="/" element={<ProtectedRoute onlyContributor />}>
+          <Route path="/formNovedades" exact element={<FormNovedades />} />
+          <Route path="/home" exact element={<Home />} />
+        </Route>
       </Routes>
       <ToastContainer />
     </>

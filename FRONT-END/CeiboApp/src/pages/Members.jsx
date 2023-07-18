@@ -30,59 +30,22 @@ const Members = () => {
       });
   }, []);
 
-  const handleConsultoresFilter = () => {
-    const consultores = members.filter(
+  useEffect(() => {
+    if (searchText === "" || searchText === "todo")
+      return setFilteredMembers(members);
+    const filteredMembers = members.filter(
       (member) =>
-        member.role === "consultor" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
+        member.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
+        member.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        member.role.toLowerCase().includes(searchText.toLowerCase())
     );
-    setFilteredMembers(consultores);
-  };
+    return setFilteredMembers(filteredMembers);
+  }, [searchText]);
 
-  const handleManagersFilter = () => {
-    const managers = members.filter(
-      (member) =>
-        member.role === "manager" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-    setFilteredMembers(managers);
-  };
-
-  const handleSociosFilter = () => {
-    const socios = members.filter(
-      (member) =>
-        member.role === "socio" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-    setFilteredMembers(socios);
-  };
-
-  const handleTodosFilter = () => {
-    setFilteredMembers(members);
-    setSearchText("");
-  };
-
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  const handleFilterByAny = (e) => {
+    const { value } = e.target;
     setSearchText(value);
-
-    const filtered = members.filter(
-      (member) =>
-        (member.name &&
-          member.name.toLowerCase().includes(value.toLowerCase())) ||
-        (member.lastName &&
-          member.lastName.toLowerCase().includes(value.toLowerCase())) ||
-        (member.email &&
-          member.email.toLowerCase().includes(value.toLowerCase()))
-    );
-
-    setFilteredMembers(filtered);
   };
 
   const handleRoleChange = (memberId, selectedRole) => {
@@ -152,84 +115,86 @@ const Members = () => {
 
   return (
     <Layout title={"Miembros"}>
-      <div className="container col-12">
-        <ul className="nav justify-content-center">
-          <li className="nav-item">
-            <a
-              className="nav-link active"
-              aria-current="page"
-              onClick={handleConsultoresFilter}
-            >
-              Consultores
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleManagersFilter}>
-              Managers
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleSociosFilter}>
-              Socios
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleTodosFilter}>
-              Todos
-            </a>
-          </li>
-        </ul>
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Buscar miembro..."
-            value={searchText}
-            onChange={handleSearch}
-          />
+      <div className="container col-sm-12 col-md-11">
+        <div className="row justify-content-center mt-3 mb-3">
+          <div className="col-sm-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Consultor"
+              name="consultor"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-sm-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Socio"
+              name="socio"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-sm-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Manager"
+              name="manager"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-sm-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Todo"
+              name="todo"
+              onClick={handleFilterByAny}
+            />
+          </div>
         </div>
-        <div className="table-responsive">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Email</th>
-                <th>Rol</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMembers.map((member) => (
-                <tr key={member._id}>
-                  <td>{member.name}</td>
-                  <td>{member.lastName}</td>
-                  <td>{member.email}</td>
-                  <td>
-                    {user.id != member._id ? (
-                      <Select
-                        defaultValue={member.role}
-                        style={{ width: 120 }}
-                        disabled={false}
-                        onChange={(value) =>
-                          handleRoleChange(member._id, value)
-                        }
-                      >
-                        <Option value="admin">Admin</Option>
-                        <Option value="manager">Manager</Option>
-                        <Option value="socio">Socio</Option>
-                        <Option value="consultor">Consultor</Option>
-                      </Select>
-                    ) : (
+        <div className="row">
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar miembro..."
+              value={searchText || ""}
+              onChange={handleFilterByAny}
+            />
+          </div>
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th className="d-none d-md-table-cell">Nombre</th>
+                  <th className="d-none d-md-table-cell">Apellido</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMembers.map((member) => (
+                  <tr key={member._id}>
+                    <td className="d-none d-md-table-cell">{member.name}</td>
+                    <td className="d-none d-md-table-cell">
+                      {member.lastName}
+                    </td>
+                    <td>{member.email}</td>
+                    <td>
                       <Select
                         onClick={() =>
-                          message.warning(
-                            "No puedes quitarte el rol de Admin a ti mismo."
-                          )
+                          user.id == member._id
+                            ? message.warning(
+                                "No puedes quitarte el rol de Admin a ti mismo."
+                              )
+                            : ""
                         }
                         defaultValue={member.role}
                         style={{ width: 120 }}
-                        disabled={true}
+                        disabled={user.id == member._id}
                         onChange={(value) =>
                           handleRoleChange(member._id, value)
                         }
@@ -239,20 +204,20 @@ const Members = () => {
                         <Option value="socio">Socio</Option>
                         <Option value="consultor">Consultor</Option>
                       </Select>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDeleteClick(member._id)}
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDeleteClick(member._id)}
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Layout>

@@ -35,7 +35,6 @@ const Login = () => {
     e.preventDefault();
     // Lógica para enviar los datos de inicio de sesión
     // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
-    const { email, password } = inputs;
     axios
       .post(
         "http://localhost:3000/api/users/login",
@@ -140,12 +139,6 @@ const Login = () => {
                 />
               </div>
               <div className="d-flex justify-content-center">
-                <input
-                  type="button"
-                  className="btn btn-outline-warning mx-2"
-                  value={"Volver"}
-                  onClick={handleCancel}
-                />
                 <input
                   type="submit"
                   className="btn btn-primary"
