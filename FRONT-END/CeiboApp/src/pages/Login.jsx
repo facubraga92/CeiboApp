@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { message } from "antd";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
@@ -10,6 +10,8 @@ const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
   const [disableInputs, setDisableInputs] = useState(false);
+
+  const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,17 +87,7 @@ const Login = () => {
         }
       });
   };
-
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setDisableInputs(true);
-
-    setTimeout(() => {
-      // ahora va al home, podria ir a la vista anterior
-      navigate("/");
-    }, 200);
-  };
-
+  if (user.id != null) return navigate("/home");
   return (
     <Layout title="Login">
       <div className="container mt-5 col-12 col-lg-6">
