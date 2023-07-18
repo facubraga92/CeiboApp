@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { message } from "antd";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
@@ -9,7 +9,6 @@ import Layout from "../components/layouts/Layout";
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
-  const [disableInputs, setDisableInputs] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,7 +63,7 @@ const Login = () => {
             );
 
             // Mover la navegación a la página principal aquí
-            navigate("/");
+            navigate("/home");
           })
           .catch((error) => {
             if (error.response && error.response.status === 403) {
@@ -84,16 +83,6 @@ const Login = () => {
           message.error("Ocurrió un error al procesar la solicitud.");
         }
       });
-  };
-
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setDisableInputs(true);
-
-    setTimeout(() => {
-      // ahora va al home, podria ir a la vista anterior
-      navigate("/");
-    }, 200);
   };
 
   return (
@@ -119,7 +108,6 @@ const Login = () => {
                   name="email"
                   value={inputs.email}
                   onChange={handleChange}
-                  disabled={disableInputs}
                   required
                 />
               </div>
@@ -134,22 +122,15 @@ const Login = () => {
                   name="password"
                   value={inputs.password}
                   onChange={handleChange}
-                  disabled={disableInputs}
                   required
                 />
               </div>
               <div className="d-flex justify-content-center">
                 <input
-                  type="button"
-                  className="btn btn-outline-warning mx-2"
-                  value={"Volver"}
-                  onClick={handleCancel}
-                />
-                <input
                   type="submit"
                   className="btn btn-primary"
                   value={"Iniciar sesión"}
-                  disabled={!isFormOk || disableInputs}
+                  disabled={!isFormOk}
                 />
               </div>
             </form>

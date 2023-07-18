@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
-import { Axios } from "axios";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { flushSync } from "react-dom";
+import { Select, DatePicker } from "antd";
+
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -13,7 +13,10 @@ import { flushSync } from "react-dom";
 export default function FormNovedades() {
   const [selectedOption, setSelectedOption] = useState(1);
   const [selectInput, setSelectInput] = useState("default");
-  const [inputs, setInputs] = useState({ prioridad: "1" });
+  const [inputs, setInputs] = useState({
+    prioridad: "1",
+    date: new Date().toISOString().split("T")[0],
+  });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -26,6 +29,7 @@ export default function FormNovedades() {
     setIsChangesOk(
       Object.keys(inputs).length > 1 && inputs.detalles && inputs.tipoNovedad
     );
+    console.log(inputs);
   }, [inputs]);
 
   /**
@@ -53,8 +57,7 @@ export default function FormNovedades() {
    * @param {Event} event - Evento del cambio en los campos del formulario.
    */
   const handleChange = (event) => {
-    const value = event.target.value;
-    const name = event.target.name;
+    const { name, value } = event.target;
     if (value === "") {
       setInputs((current) => {
         const { [name]: _, ...rest } = current;
@@ -81,18 +84,17 @@ export default function FormNovedades() {
 
     setShowModalSave(false);
     toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
-      position: "top-right", // Posición de la notificación
-      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
-      hideProgressBar: false, // Mostrar la barra de progreso
-      closeOnClick: true, // Cerrar al hacer clic en la notificación
-      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
-      draggable: true, // Hacer arrastrable la notificación
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
     });
 
     // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para crear novedades
-    console.log(inputs);
     return setTimeout(() => {
-      return navigate("/");
+      return navigate("/home");
     }, 2000);
   };
 
@@ -130,7 +132,16 @@ export default function FormNovedades() {
                 <h5>Nombre_Proyecto</h5>
                 <h2>Proyecto_XXXXXXXX</h2>
               </div>
-              <h5>XX/XX/XXXX</h5>
+              <div>
+                <input
+                  className="form-control"
+                  type="date"
+                  name="date"
+                  id="date"
+                  onChange={handleChange}
+                  value={inputs.date}
+                />
+              </div>
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
@@ -166,25 +177,43 @@ export default function FormNovedades() {
 
               <div className="form-group">
                 <label htmlFor="tipoNovedad">Tipo de Novedad</label>
-                <select
-                  className="form-control"
-                  id="tipoNovedad"
-                  name="tipoNovedad"
-                  value={selectInput}
-                  onChange={handleChange}
-                  required
-                  disabled={!isEditable || formSubmitted}
-                >
-                  <option value="default" disabled>
-                    Seleccione tipo de novedad
-                  </option>
-                  <option value="Novedad prueba">Novedad prueba</option>
-                </select>
-                {formSubmitted && selectInput === "default" && (
-                  <span className="text-danger">
-                    Debe seleccionar un tipo de novedad.
-                  </span>
-                )}
+                <div>
+                  <Select
+                    style={{ width: "100%" }}
+                    onChange={(e) => {
+                      const res = {
+                        target: {
+                          name: "tipoNovedad",
+                          value: e,
+                        },
+                      };
+
+                      handleChange(res);
+                    }}
+                    className=""
+                    defaultValue="Seleccione un tipo de novedad"
+                    value={inputs.tipoNovedad || ""}
+                    options={[
+                      {
+                        value: "Seleccione un tipo de novedad",
+                        label: "Seleccione un tipo de novedad",
+                        disabled: true,
+                      },
+                      {
+                        value: "Tipo 1",
+                        label: "Tipo 1",
+                      },
+                      {
+                        value: "Tipo 2",
+                        label: "Tipo 2",
+                      },
+                      {
+                        value: "Tipo 3",
+                        label: "Tipo 3",
+                      },
+                    ]}
+                  />
+                </div>
               </div>
 
               <label>Prioridad</label>
