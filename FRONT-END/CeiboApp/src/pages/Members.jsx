@@ -31,7 +31,7 @@ const Members = () => {
   }, []);
 
   useEffect(() => {
-    if (searchText === "" || searchText === "todo")
+    if (searchText === "" || searchText === "Todo")
       return setFilteredMembers(members);
     const filteredMembers = members.filter(
       (member) =>
