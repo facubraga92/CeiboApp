@@ -130,7 +130,7 @@ const Login = () => {
                   type="submit"
                   className="btn btn-primary"
                   value={"Iniciar sesión"}
-                  disabled={!isFormOk || disableInputs}
+                  disabled={!isFormOk}
                 />
               </div>
             </form>
