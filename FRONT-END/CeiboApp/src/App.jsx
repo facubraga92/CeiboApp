@@ -8,6 +8,7 @@ import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import Partners from "./pages/Partners";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute onlyManager />}>
           <Route path="/manager" exact element={<Manager />} />
           <Route path="/projects/add" exact element={<AddProject />} />
+          <Route path="/partners" exact element={<Partners />} />
         </Route>
         {/* Contributes Routes */}
         <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
