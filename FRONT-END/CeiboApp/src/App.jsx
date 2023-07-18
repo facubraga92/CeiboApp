@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Members from "./pages/Members";
 import { Manager } from "./pages/Manager";
@@ -8,6 +7,7 @@ import { ProtectedRoute } from "./components";
 import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,7 +22,7 @@ function App() {
           <Route path="/formNovedades" exact element={<FormNovedades />} />
         </Route>
         {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />
         {/* Admin Routes */}

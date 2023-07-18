@@ -98,54 +98,63 @@ const Login = () => {
 
   return (
     <Layout title="Login">
-      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
-        <h2>Iniciar sesión</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              name="email"
-              value={inputs.email}
-              onChange={handleChange}
-              disabled={disableInputs}
-              required
-            />
+      <div className="container mt-5 col-12 col-lg-6">
+        <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
+          <div className="col text-center">
+            <button className="btn btn-primary">
+              Iniciar sesión con Google
+            </button>
           </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              name="password"
-              value={inputs.password}
-              onChange={handleChange}
-              disabled={disableInputs}
-              required
-            />
+          <div className="col mt-5 mt-md-0 align-content-center">
+            <h2>Iniciar sesión</h2>
+            <form onSubmit={handleSubmit} className="">
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Correo electrónico
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  value={inputs.email}
+                  onChange={handleChange}
+                  disabled={disableInputs}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Contraseña
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  name="password"
+                  value={inputs.password}
+                  onChange={handleChange}
+                  disabled={disableInputs}
+                  required
+                />
+              </div>
+              <div className="d-flex justify-content-center">
+                <input
+                  type="button"
+                  className="btn btn-outline-warning mx-2"
+                  value={"Volver"}
+                  onClick={handleCancel}
+                />
+                <input
+                  type="submit"
+                  className="btn btn-primary"
+                  value={"Iniciar sesión"}
+                  disabled={!isFormOk || disableInputs}
+                />
+              </div>
+            </form>
           </div>
-          <div className="d-flex justify-content-center">
-            <input
-              type="button"
-              className="btn btn-outline-warning col-sm-4 mx-2"
-              value={"Volver"}
-              onClick={handleCancel}
-            />
-            <input
-              type="submit"
-              className="btn btn-primary col-sm-4"
-              value={"Iniciar sesión"}
-              disabled={!isFormOk || disableInputs}
-            />
-          </div>
-        </form>
+        </div>
       </div>
     </Layout>
   );
