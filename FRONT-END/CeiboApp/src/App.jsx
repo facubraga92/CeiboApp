@@ -26,9 +26,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />
         {/* Admin Routes */}
-        <Route path="/" element={<ProtectedRoute onlyAdmin />}></Route>
-        <Route path="/admin/members" exact element={<Members />} /> // la baje
-        para testing
+        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
+          <Route path="/admin/members" exact element={<Members />} />
+        </Route>
         {/* Manager Routes */}
         <Route path="/" element={<ProtectedRoute onlyManager />}>
           <Route path="/manager" exact element={<Manager />} />
