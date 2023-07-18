@@ -107,7 +107,7 @@ const ProjectForm = () => {
 
   return (
     <Layout title={"Agregar proyecto"}>
-      <div>
+      <div className="container">
         <h2>Crear Proyecto</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -174,9 +174,11 @@ const ProjectForm = () => {
               placeholder="Seleccionar managers..."
             />
           </div>
-          <button type="submit" className="btn btn-primary">
-            Crear Proyecto
-          </button>
+          <input
+            type="submit"
+            className="btn btn-primary"
+            value={"Crear proyecto"}
+          />
         </form>
       </div>
     </Layout>

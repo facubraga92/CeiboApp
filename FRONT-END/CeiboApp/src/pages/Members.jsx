@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { message, Select } from "antd";
+import Layout from "../components/layouts/Layout";
 
 const { Option } = Select;
 
@@ -150,101 +151,111 @@ const Members = () => {
   };
 
   return (
-    <div>
-      <ul className="nav justify-content-center">
-        <li className="nav-item">
-          <a
-            className="nav-link active"
-            aria-current="page"
-            onClick={handleConsultoresFilter}
-          >
-            Consultores
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleManagersFilter}>
-            Managers
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleSociosFilter}>
-            Socios
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" onClick={handleTodosFilter}>
-            Todos
-          </a>
-        </li>
-      </ul>
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar miembro..."
-          value={searchText}
-          onChange={handleSearch}
-        />
-      </div>
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMembers.map((member) => (
-              <tr key={member._id}>
-                <td>{member.name}</td>
-                <td>{member.lastName}</td>
-                <td>{member.email}</td>
-                <td>
-                  {user.id != member._id ? (
-                    <Select
-                      defaultValue={member.role}
-                      style={{ width: 120 }}
-                      disabled={false}
-                      onChange={(value) => handleRoleChange(member._id, value)}
-                    >
-                      <Option value="admin">Admin</Option>
-                      <Option value="manager">Manager</Option>
-                      <Option value="socio">Socio</Option>
-                      <Option value="consultor">Consultor</Option>
-                    </Select>
-                  ) : (
-                    <Select
-                    onClick={()=>message.warning('No puedes quitarte el rol de Admin a ti mismo.')}
-                      defaultValue={member.role}
-                      style={{ width: 120 }}
-                      disabled={true}
-                      onChange={(value) => handleRoleChange(member._id, value)}
-                    >
-                      <Option value="admin">Admin</Option>
-                      <Option value="manager">Manager</Option>
-                      <Option value="socio">Socio</Option>
-                      <Option value="consultor">Consultor</Option>
-                    </Select>
-                  )}
-                </td>
-                <td>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDeleteClick(member._id)}
-                  >
-                    🗑️
-                  </button>
-                </td>
+    <Layout title={"Miembros"}>
+      <div className="container col-12">
+        <ul className="nav justify-content-center">
+          <li className="nav-item">
+            <a
+              className="nav-link active"
+              aria-current="page"
+              onClick={handleConsultoresFilter}
+            >
+              Consultores
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleManagersFilter}>
+              Managers
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleSociosFilter}>
+              Socios
+            </a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" onClick={handleTodosFilter}>
+              Todos
+            </a>
+          </li>
+        </ul>
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar miembro..."
+            value={searchText}
+            onChange={handleSearch}
+          />
+        </div>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Eliminar</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredMembers.map((member) => (
+                <tr key={member._id}>
+                  <td>{member.name}</td>
+                  <td>{member.lastName}</td>
+                  <td>{member.email}</td>
+                  <td>
+                    {user.id != member._id ? (
+                      <Select
+                        defaultValue={member.role}
+                        style={{ width: 120 }}
+                        disabled={false}
+                        onChange={(value) =>
+                          handleRoleChange(member._id, value)
+                        }
+                      >
+                        <Option value="admin">Admin</Option>
+                        <Option value="manager">Manager</Option>
+                        <Option value="socio">Socio</Option>
+                        <Option value="consultor">Consultor</Option>
+                      </Select>
+                    ) : (
+                      <Select
+                        onClick={() =>
+                          message.warning(
+                            "No puedes quitarte el rol de Admin a ti mismo."
+                          )
+                        }
+                        defaultValue={member.role}
+                        style={{ width: 120 }}
+                        disabled={true}
+                        onChange={(value) =>
+                          handleRoleChange(member._id, value)
+                        }
+                      >
+                        <Option value="admin">Admin</Option>
+                        <Option value="manager">Manager</Option>
+                        <Option value="socio">Socio</Option>
+                        <Option value="consultor">Consultor</Option>
+                      </Select>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteClick(member._id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
