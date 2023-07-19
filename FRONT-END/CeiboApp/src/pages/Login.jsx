@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { message } from "antd";
 import { useDispatch } from "react-redux";
-import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
+
+import { message } from "antd";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+
+import { setGoogleUser, setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
 
 const Login = () => {
@@ -17,6 +20,26 @@ const Login = () => {
   useEffect(() => {
     return setIsFormOk(inputs.email && inputs.password);
   }, [inputs]);
+
+  const handleCallbackResponse = (response) => {
+    let userObject = jwt_decode(response.credential);
+
+    dispatch(setGoogleUser(userObject));
+  };
+
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "1084071228016-gr7fc6uvh4hv66lk0ks1d7cfh4mdh3pv.apps.googleusercontent.com",
+      callback: handleCallbackResponse,
+    });
+
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      size: "large",
+    });
+  }, []);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -100,11 +123,20 @@ const Login = () => {
     <Layout title="Login">
       <div className="container mt-5 col-12 col-lg-6">
         <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
-          <div className="col text-center">
+          {/* <div className="col text-center">
             <button className="btn btn-primary">
               Iniciar sesión con Google
             </button>
-          </div>
+          </div> */}
+
+          <div id="signInDiv"></div>
+          {/* {user && (
+            <div>
+              <img src={user.picture}></img>
+              <h3>{user.name}</h3>
+            </div>
+          )} */}
+
           <div className="col mt-5 mt-md-0 align-content-center">
             <h2>Iniciar sesión</h2>
             <form onSubmit={handleSubmit} className="">
