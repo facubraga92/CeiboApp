@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
@@ -10,24 +11,16 @@ export default function Profile() {
   const [disabled, setDisabled] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
+  const user = useSelector((state) => state.user);
+  const [initialState, setInitialState] = useState({
+    name: user.name,
+    lastName: user.lastName,
+    email: user.email,
+  });
+  const [inputs, setInputs] = useState(initialState);
 
   const navigate = useNavigate();
-
-  // INICIALIZAR CON VALORES DESDE LA API
-  const [inputs, setInputs] = useState({
-    name: "nombre prueba",
-    lastName: "lastName prueba",
-    email: "prueba@prueba.com",
-  });
-
-  const [initialState, setInitialState] = useState({
-    name: "nombre prueba",
-    lastName: "lastName prueba",
-    email: "prueba@prueba.com",
-  });
-
   useEffect(() => {
-    console.log(inputs);
     return setIsChanges(
       JSON.stringify(inputs) !== JSON.stringify(initialState)
     );
@@ -61,15 +54,13 @@ export default function Profile() {
     return;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setDisabled(true);
     setInitialState(inputs);
     setIsChanges(false);
     toggleShowModalSave();
     handleToast();
-    console.log(inputs);
-    // por ahora no hace nada REVISAR
     return;
   };
 
@@ -93,7 +84,7 @@ export default function Profile() {
     setInputs(initialState);
     setIsChanges(false);
     setShowModal(false);
-    setDisabled(!disabled);
+    return setDisabled(!disabled);
   };
 
   const handleModalToggle = () => {
@@ -109,6 +100,7 @@ export default function Profile() {
       pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
       draggable: true, // Hacer arrastrable la notificación
     });
+    return;
   };
   return (
     <Layout title="Profile">

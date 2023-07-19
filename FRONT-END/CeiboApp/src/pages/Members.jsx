@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { message, Select } from "antd";
+import { message, Select, Input } from "antd";
 import Layout from "../components/layouts/Layout";
+import { Button, Modal } from "react-bootstrap";
 
 const { Option } = Select;
 
@@ -11,6 +12,9 @@ const Members = () => {
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [idDelete, setIdDelete] = useState("");
+  const [roleSearch, setRoleSearch] = useState("");
 
   useEffect(() => {
     axios
@@ -46,6 +50,7 @@ const Members = () => {
   const handleFilterByAny = (e) => {
     const { value } = e.target;
     setSearchText(value);
+    if (value == "") return setRoleSearch("");
   };
 
   const handleRoleChange = (memberId, selectedRole) => {
@@ -84,40 +89,62 @@ const Members = () => {
       });
   };
 
-  const handleDeleteClick = (memberId) => {
+  const handleDelete = () => {
+    handleModalToggle();
+    axios
+      .delete(`http://localhost:3000/api/users/admin/members/${idDelete}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then(() => {
+        // Eliminar el usuario de los estados locales
+        setMembers((prevMembers) =>
+          prevMembers.filter((member) => member._id !== idDelete)
+        );
+        setFilteredMembers((prevFilteredMembers) =>
+          prevFilteredMembers.filter((member) => member._id !== idDelete)
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleModal = (memberId) => {
     if (user.id === memberId) {
       message.error("No puedes eliminarte a ti mismo.");
       return;
+    } else {
+      setIdDelete(memberId);
+      handleModalToggle();
     }
+  };
 
-    const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
+  const handleModalToggle = () => {
+    return setShowModal(!showModal);
+  };
 
-    if (confirmed) {
-      axios
-        .delete(`http://localhost:3000/api/users/admin/members/${memberId}`, {
-          withCredentials: true,
-          credentials: "include",
-        })
-        .then(() => {
-          // Eliminar el usuario de los estados locales
-          setMembers((prevMembers) =>
-            prevMembers.filter((member) => member._id !== memberId)
-          );
-          setFilteredMembers((prevFilteredMembers) =>
-            prevFilteredMembers.filter((member) => member._id !== memberId)
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  const handleSelectSearch = (e) => {
+    setRoleSearch(e);
+    setSearchText(e);
   };
 
   return (
     <Layout title={"Miembros"}>
       <div className="container col-sm-12 col-md-11">
-        <div className="row justify-content-center mt-3 mb-3">
-          <div className="col-sm-2">
+        <div className="row mt-3 justify-content-center">
+          <div className="input-group mb-3  col-11 col-md-6">
+            <Input
+              className=""
+              placeholder="Buscar . . ."
+              allowClear
+              value={searchText || ""}
+              onChange={handleFilterByAny}
+            />
+          </div>
+        </div>
+        <div className="row justify-content-sm-center mb-3 d-none d-md-flex">
+          <div className="col-6 col-md-2">
             <input
               type="button"
               className="btn btn-primary btn-block"
@@ -126,7 +153,7 @@ const Members = () => {
               onClick={handleFilterByAny}
             />
           </div>
-          <div className="col-sm-2">
+          <div className="col-6 col-md-2">
             <input
               type="button"
               className="btn btn-primary btn-block"
@@ -135,7 +162,7 @@ const Members = () => {
               onClick={handleFilterByAny}
             />
           </div>
-          <div className="col-sm-2">
+          <div className="col-6 col-md-2">
             <input
               type="button"
               className="btn btn-primary btn-block"
@@ -144,26 +171,21 @@ const Members = () => {
               onClick={handleFilterByAny}
             />
           </div>
-          <div className="col-sm-2">
-            <input
-              type="button"
-              className="btn btn-primary btn-block"
-              value="Todo"
-              name="todo"
-              onClick={handleFilterByAny}
-            />
+        </div>
+        <div className="row justify-content-center mb-3 d-md-none ">
+          <div className="">
+            <Select
+              style={{ width: 120 }}
+              onChange={handleSelectSearch}
+              value={roleSearch || ""}
+            >
+              <Option value="Consultor">Consultor</Option>
+              <Option value="Socio">Socio</Option>
+              <Option value="Manager">Manager</Option>
+            </Select>
           </div>
         </div>
         <div className="row">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Buscar miembro..."
-              value={searchText || ""}
-              onChange={handleFilterByAny}
-            />
-          </div>
           <div className="table-responsive">
             <table className="table table-striped table-hover">
               <thead>
@@ -208,7 +230,7 @@ const Members = () => {
                     <td>
                       <button
                         className="btn btn-danger"
-                        onClick={() => handleDeleteClick(member._id)}
+                        onClick={() => handleModal(member._id)}
                       >
                         🗑️
                       </button>
@@ -220,6 +242,22 @@ const Members = () => {
           </div>
         </div>
       </div>
+      <Modal show={showModal} centered onHide={handleModalToggle}>
+        <Modal.Header closeButton>
+          <Modal.Title>¿Estas seguro de eliminar?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se eliminara el usuario seleccionado</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="warning" onClick={handleModalToggle}>
+            Volver
+          </Button>
+          <Button variant="primary" onClick={handleDelete}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Layout>
   );
 };
