@@ -7,6 +7,7 @@ import News from "../components/Novedades";
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const [data, setData] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(-1);
 
   const user = useSelector((state) => {
     return state.user;
@@ -46,17 +47,54 @@ const Home = () => {
     }
   }, [projects]);
 
+  const handleShowDetails = (index) => {
+    setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
+  };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <Layout title="Home">
-      <div className="container col-sm-12 col-md-6">
-        {data.map((project, index) => (
-          <div key={index}>
-            <h1>{project.project.name}</h1>
-            {project.news.map((news, index) => {
-              <News key={index} />;
-            })}
-          </div>
-        ))}
+      <div className="container col-sm-12 col-md-10">
+        <div className="">
+          {data.map((e, index) => (
+            <div
+              key={index}
+              title={index}
+              className={`row mt-2 d-flex flex-column p-3 ${
+                selectedProject === index ? "" : "bg-light"
+              }`}
+              onClick={() => handleShowDetails(index)}
+              style={{ cursor: "pointer" }}
+            >
+              <strong>{e.project.name}</strong>
+
+              {selectedProject === index && (
+                <div className="ml-3">
+                  {e.news.length > 0 ? (
+                    e.news.map((news) => (
+                      <div
+                        className="m-2"
+                        key={news._id}
+                        style={{ backgroundColor: "beige" }}
+                      >
+                        {news.title}
+                      </div>
+                    ))
+                  ) : (
+                    <div>
+                      <p className="m-0 p-0">
+                        No hay novedades para este proyecto.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </Layout>
   );
