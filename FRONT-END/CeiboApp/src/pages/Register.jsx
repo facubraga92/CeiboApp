@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 const Register = () => {
   const [inputs, setInputs] = useState({});
@@ -39,57 +40,6 @@ const Register = () => {
     return;
   }, [inputs]);
 
-  console.log(inputs);
-
-  const handleCallbackResponse = (response) => {
-    let userObject = jwt_decode(response.credential);
-    console.log(userObject);
-
-    const nameAsPassword = userObject.name;
-
-    setInputs({
-      ...inputs,
-      confirmPassword: nameAsPassword,
-      email: userObject.email,
-      lastName: userObject.family_name,
-      name: userObject.given_name,
-      password: nameAsPassword,
-    });
-
-    try {
-      // Realizar llamada a la API para enviar los datos de registro
-      const apiResponse = axios.post('http://localhost:3000/api/users/register', inputs);
-
-      
-      // Lógica adicional si es necesario
-      console.log(apiResponse.data); // Acceder a la respuesta de la API
-
-      setBloqInputs(true);
-      setTimeout(() => {
-        return navigate("/login");
-      }, 2000);
-      handleToast();
-      setIsSubmitOk(true);
-    } catch (error) {
-      // Manejo de errores si la llamada a la API falla
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id:
-        "1084071228016-gr7fc6uvh4hv66lk0ks1d7cfh4mdh3pv.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-    });
-
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "large",
-    });
-  }, []);
-
   const handleModalDropChanges = () => {
     setInputs({});
     setShowModal(false);
@@ -117,17 +67,26 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    // faltan los llamados a la api para chequear que el usuario no exista y para crearlo en el caso que no exista
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de registro
-    setBloqInputs(true);
-    setTimeout(() => {
-      return navigate("/login");
-    }, 2000);
-    handleToast();
-    return setIsSubmitOk(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        inputs
+      );
+
+      console.log(response.data);
+
+      setBloqInputs(true);
+      setTimeout(() => {
+        return navigate("/login");
+      }, 2000);
+      handleToast();
+      setIsSubmitOk(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleToast = () => {
@@ -150,7 +109,6 @@ const Register = () => {
     <Layout title="Register">
       <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
         <h2>Registro</h2>
-        <div id="signInDiv"></div>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
