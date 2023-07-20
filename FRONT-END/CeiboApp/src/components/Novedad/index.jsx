@@ -198,7 +198,7 @@ export default function Novedad({ datos }) {
 
             <hr className="" />
 
-            <div className="comprimed-chat" ref={extendChat}>
+            <div className="comprimed-chat back-normal" ref={extendChat}>
               <ul className="list-unstyled">
                 {data.reply.map((mess, index) => (
                   <div className="">
