@@ -2,6 +2,7 @@ const { generateToken } = require("../config/tokens");
 const userModel = require("../schemas/User");
 
 const userRegister = async (req, res) => {
+  console.log('estoy en el register');
   try {
     const user = new userModel(req.body);
     await user.save();
