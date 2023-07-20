@@ -50,6 +50,31 @@ exports.getAllNews = async (req, res) => {
   }
 };
 
+exports.getNewsProyect = async (req, res) => {
+  const projectId = req.params.id;
+
+  try {
+    // Buscar el proyecto por su ID para verificar si existe
+    const project = await Project.findById(projectId);
+    console.log(project);
+    if (!project) {
+      return res.status(404).json({ message: "Proyecto no encontrado" });
+    }
+
+    // Obtener las novedades del proyecto por su ID
+    const projectNews = await ProjectNews.find({
+      associatedProject: projectId,
+    }).populate("userId", "username"); // Esto es opcional, para obtener solo el nombre de usuario en lugar de toda la información del usuario.
+
+    res.json(projectNews);
+  } catch (err) {
+    console.error("Error al obtener las novedades del proyecto:", err);
+    res.status(500).json({
+      message: "Error del servidor al obtener las novedades del proyecto",
+    });
+  }
+};
+
 exports.getNewsById = async (req, res) => {
   try {
     const { id } = req.params;

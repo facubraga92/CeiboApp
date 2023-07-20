@@ -10,6 +10,23 @@ const getAllProjects = async (req, res) => {
   }
 };
 
+const getProjectsUser = async (req, res) => {
+  try {
+    const userId = req.body.id;
+
+    const projects = await projectModel.find({
+      $expr: {
+        $or: [{ $in: [userId, "$consultors"] }, { $in: [userId, "$managers"] }],
+      },
+    });
+    console.log(projects);
+    res.json(projects);
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: error.message });
+  }
+};
+
 const createOneProject = async (req, res) => {
   const project = new projectModel(req.body);
   try {
@@ -109,4 +126,5 @@ module.exports = {
   getAllProjects,
   getOneProject,
   createOneProject,
+  getProjectsUser,
 };
