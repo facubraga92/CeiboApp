@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 const News = ({ project }) => {
   const [selectedProject, setSelectedProject] = useState({}); // Cambiamos el nombre del estado
 
-
-
   return (
     <div>
       {selectedProject.data === undefined ? (
