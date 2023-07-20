@@ -63,9 +63,7 @@ const Home = () => {
             <div
               key={index}
               title={index}
-              className={`row mt-2 d-flex flex-column p-3 ${
-                selectedProject === index ? "" : "bg-light"
-              }`}
+              className={`row mt-2 d-flex flex-column p-3 bg-light`}
               onClick={() => handleShowDetails(index)}
               style={{ cursor: "pointer" }}
             >
@@ -76,11 +74,16 @@ const Home = () => {
                   {e.news.length > 0 ? (
                     e.news.map((news) => (
                       <div
-                        className="m-2"
+                        className="m-2 d-flex justify-content-between"
                         key={news._id}
                         style={{ backgroundColor: "beige" }}
                       >
-                        {news.title}
+                        <p>{news.title}</p>
+                        <p>{news.title}</p>
+                        <p>{news.title}</p>
+                        <p>{news.title}</p>
+                        <p>{news.title}</p>
+                        <p>{news.title}</p>
                       </div>
                     ))
                   ) : (
