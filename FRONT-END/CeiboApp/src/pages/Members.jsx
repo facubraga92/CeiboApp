@@ -39,11 +39,16 @@ const Members = () => {
       return setFilteredMembers(members);
     const filteredMembers = members.filter(
       (member) =>
-        member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-        member.email.toLowerCase().includes(searchText.toLowerCase()) ||
-        member.role.toLowerCase().includes(searchText.toLowerCase())
+        (member.name &&
+          member.name.toLowerCase().includes(searchText.toLowerCase())) ||
+        (member.lastName &&
+          member.lastName.toLowerCase().includes(searchText.toLowerCase())) ||
+        (member.email &&
+          member.email.toLowerCase().includes(searchText.toLowerCase())) ||
+        (member.role &&
+          member.role.toLowerCase().includes(searchText.toLowerCase()))
     );
+
     return setFilteredMembers(filteredMembers);
   }, [searchText]);
 
