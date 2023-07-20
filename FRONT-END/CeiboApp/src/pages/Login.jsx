@@ -21,12 +21,6 @@ const Login = () => {
     return setIsFormOk(inputs.email && inputs.password);
   }, [inputs]);
 
-  const handleCallbackResponse = (response) => {
-    let userObject = jwt_decode(response.credential);
-
-    dispatch(setGoogleUser(userObject));
-  };
-
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
@@ -40,6 +34,68 @@ const Login = () => {
       size: "large",
     });
   }, []);
+
+  const handleCallbackResponse = async (response) => {
+    let userObject = jwt_decode(response.credential);
+
+    const nameAsPassword = "12345678A";
+
+    const registerData = {
+      confirmPassword: nameAsPassword,
+      email: userObject.email,
+      lastName: userObject.family_name,
+      name: userObject.given_name,
+      password: nameAsPassword,
+    };
+
+    try {
+      const googleVerify = await axios.post(
+        "http://localhost:3000/api/users/googleVerify",
+        { email: userObject.email }
+      );
+
+      console.log(googleVerify);
+
+      if (googleVerify.data) {
+        await axios.post(
+          "http://localhost:3000/api/users/login",
+          {
+            email: userObject.email,
+            password: nameAsPassword,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+            credentials: "include",
+          }
+        );
+        dispatch(setGoogleUser(userObject));
+        return navigate("/");
+      } else {
+        await axios.post(
+          "http://localhost:3000/api/users/register",
+          registerData
+        );
+
+        await axios.post(
+          "http://localhost:3000/api/users/login",
+          {
+            email: userObject.email,
+            password: nameAsPassword,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+            credentials: "include",
+          }
+        );
+        dispatch(setGoogleUser(userObject));
+        return navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -56,8 +112,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de inicio de sesión
-    // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
+
     axios
       .post(
         "http://localhost:3000/api/users/login",
@@ -71,7 +126,6 @@ const Login = () => {
         }
       )
       .then((loginResponse) => {
-        // Verificar el token después del inicio de sesión exitoso
         axios
           .get("http://localhost:3000/api/users/me", {
             withCredentials: true,
@@ -86,12 +140,10 @@ const Login = () => {
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
 
-            // Mover la navegación a la página principal aquí
             navigate("/");
           })
           .catch((error) => {
             if (error.response && error.response.status === 403) {
-              // El token no es válido
               message.error("El token no es válido. Inicia sesión nuevamente.");
             } else {
               message.error(
@@ -114,7 +166,6 @@ const Login = () => {
     setDisableInputs(true);
 
     setTimeout(() => {
-      // ahora va al home, podria ir a la vista anterior
       navigate("/");
     }, 200);
   };
@@ -128,8 +179,7 @@ const Login = () => {
               Iniciar sesión con Google
             </button>
           </div> */}
-
-          <div id="signInDiv"></div>
+          <div id="signInDiv">{handleCallbackResponse}</div>
           {/* {user && (
             <div>
               <img src={user.picture}></img>

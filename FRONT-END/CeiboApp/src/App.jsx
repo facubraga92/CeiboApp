@@ -37,7 +37,10 @@ function App() {
           <Route path="/partners" exact element={<Partners />} />
         </Route>
         {/* Contributes Routes */}
-        <Route path="/" element={<ProtectedRoute onlyContributor />}></Route>
+        <Route path="/" element={<ProtectedRoute onlyContributor />}>
+
+          
+        </Route>
       </Routes>
       <ToastContainer />
     </>
