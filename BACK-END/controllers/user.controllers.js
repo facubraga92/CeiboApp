@@ -1,11 +1,38 @@
-const { generateToken } = require("../config/tokens");
+const { generateToken, validateToken } = require("../config/tokens");
 const userModel = require("../schemas/User");
+const { v4: uuidv4 } = require("uuid");
+const { sendMail } = require("../utils/mail/mailService");
+const generateMailOptions = require("../utils/mail/registrationMail");
 
 const userRegister = async (req, res) => {
-  console.log('estoy en el register');
   try {
-    const user = new userModel(req.body);
+    let emailDomain = req.body.email.split("@")[1];
+    let role = "socio"; // Por defecto el role es "socio"
+    if (emailDomain.toLowerCase() === "ceibo.digital") {
+      role = "consultor";
+      if (req.body.email.toLowerCase() === "admin@ceibo.digital") {
+        req.body.isValidated = true;
+        role = "admin";
+      }
+    }
+    // Código aleatorio de verificación
+    const code = uuidv4();
+
+    const user = new userModel({ ...req.body, role, code });
     await user.save();
+
+    // Implementaciones para validación de email
+
+    const email = req.body.email;
+
+    const token = generateToken({ email, code });
+    //reemplace los puntos por @ porque osino la url en el front al tener puntos el token me daba error..
+    //una vez que llega la url con arrobas en el front le cambio nuevamente los arrobas por puntos para hacer el pedido al endpoint.
+    const replacedDotsToken = token.replaceAll(".", "@");
+    const mailOptions = generateMailOptions(user, replacedDotsToken);
+    sendMail(mailOptions);
+
+    // Respuesta exitosa
     res.send(`Usuario creado exitosamente! ${user.email}`);
   } catch (error) {
     if (error.errors) {
@@ -18,6 +45,41 @@ const userRegister = async (req, res) => {
       // Otro tipo de error
       res.status(500).send(error.message || "Error al crear el usuario");
     }
+  }
+};
+
+const verifyAccount = async (req, res) => {
+  const token = req.params.token;
+  try {
+    const decoded = validateToken(token);
+
+    if (!decoded || !decoded.email || !decoded.code) {
+      return res.status(400).send("Token de verificación inválido.");
+    }
+
+    const { email, code } = decoded;
+
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(401).send("Usuario incorrecto/inexistente.");
+    }
+
+    if (user.code === code) {
+      if (!user.isValidated) {
+        user.isValidated = true;
+        await user.save();
+        return res.send("Usuario validado exitosamente!");
+      } else {
+        return res.send("Este usuario ya se encuentra validado.");
+      }
+    }
+
+    return res.status(401).send("Código de validación incorrecto.");
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .send("Hubo un error al intentar validar el usuario.");
   }
 };
 
@@ -37,6 +99,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         lastName: user.lastName,
         role: user.role,
+        isValidated: user.isValidated,
         associatedCustomers: user.associatedCustomers,
       };
       const token = generateToken(payload);
@@ -142,4 +205,5 @@ module.exports = {
   deleteUser,
   updateUserCustomer,
   googleVerify,
+  verifyAccount,
 };

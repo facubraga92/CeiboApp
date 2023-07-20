@@ -47,6 +47,7 @@ const Login = () => {
       lastName: userObject.family_name,
       name: userObject.given_name,
       password: nameAsPassword,
+      isValidated: true,
     };
 
     try {

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { SECRET_TOKEN } = require("../config");
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -16,6 +15,11 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   salt: String,
+  code: String,
+  isValidated: {
+    type: Boolean,
+    default: false,
+  },
   role: {
     type: String,
     enum: ["consultor", "manager", "socio", "admin"],

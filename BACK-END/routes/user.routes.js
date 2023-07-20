@@ -7,6 +7,7 @@ const {
   deleteUser,
   updateUserCustomer,
   googleVerify,
+  verifyAccount,
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
@@ -37,5 +38,8 @@ userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 
 userRouter.put("/admin/members/:id", isAdminOrManager, updateUserCustomer);
+
+userRouter.get("/verify-account/:token", verifyAccount);
+
 
 module.exports = userRouter;

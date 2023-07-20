@@ -10,6 +10,7 @@ export const userInitialState = {
   email: null,
   role: null,
   associatedCustomers: null,
+  isValidated: false,
 };
 
 export const userReducer = createReducer(userInitialState, (builder) => {
@@ -23,6 +24,7 @@ export const userReducer = createReducer(userInitialState, (builder) => {
         email: action.payload.email,
         role: "socio",
         associatedCustomers: null,
+        isValidated: true,
       };
     });
 });
