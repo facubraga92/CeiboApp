@@ -2,34 +2,28 @@ const { generateToken } = require("../config/tokens");
 const userModel = require("../schemas/User");
 
 const userRegister = async (req, res) => {
+  console.log('estoy en el register');
   try {
-    const { name, lastName, email, password } = req.body;
-
-    let user = await userModel.findOne({ email });
-
-    console.log(user);
-
-    if (user) {
-      return res.status(500).send("Usuario ya existe");
-    }
-
-    user = new userModel({
-      name,
-      lastName,
-      email,
-      password,
-    });
-
+    const user = new userModel(req.body);
     await user.save();
-
-    return res.status(201).send("Usuario creado");
+    res.send(`Usuario creado exitosamente! ${user.email}`);
   } catch (error) {
-    return res.status(500).send(error);
+    if (error.errors) {
+      // Si hay errores de validación en el modelo
+      const errorMessage = Object.values(error.errors)
+        .map((err) => err.message)
+        .join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      // Otro tipo de error
+      res.status(500).send(error.message || "Error al crear el usuario");
+    }
   }
 };
 
 const loginUser = async (req, res) => {
   try {
+    console.log("llegue aca", req.body);
     const user = await userModel.findOne({ email: req.body.email });
     if (!user) {
       return res.status(401).send("Usuario incorrecto/inexistente.");
@@ -126,11 +120,26 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const googleVerify = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (user) {
+      return res.send(true);
+    } else {
+      return res.send(false);
+    }
+  } catch (error) {
+    return res.status(500).send("Error al verificar el correo electrónico.");
+  }
+};
 module.exports = {
   userRegister,
   loginUser,
   logOut,
   getAllMembers,
   deleteUser,
-  updateUserCustomer
+  updateUserCustomer,
+  googleVerify,
 };
