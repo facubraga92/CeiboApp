@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import axios from "axios";
 import { useSelector } from "react-redux";
-
+import News from "../components/Novedades";
 const Home = () => {
   //  const paramMovie = useParams();
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+
+  const [data, setData] = useState([]);
 
   const user = useSelector((state) => {
     return state.user;
@@ -25,41 +26,33 @@ const Home = () => {
         console.log(error);
       });
   }, []);
+  useEffect(() => {
+    projects.map((proyecto) => {
+      let aux = [];
+      console.log(proyecto);
+      axios
+        .get(`http://localhost:3000/api/news/newsProject/${proyecto._id}`, {
+          withCredentials: true,
+          credentials: "include",
+        })
+        .then((novedades) => {
+          aux.push(novedades);
 
-  const handleProjectClick = (project) => {
+          setData((e) => {
+            return e.concat(aux);
+          });
+          console.log(data, "...........................................");
+        });
+    });
+  }, [projects]);
+
+  /*   const handleProjectClick = (project) => {
     setSelectedProject(project);
-  };
+  }; */
 
   return (
     <Layout title="Home">
-      <div>
-        {/* Ternario para verificar si projects está vacío */}
-        {projects.length === 0 ? (
-          <p>No hay proyectos para mostrar.</p>
-        ) : (
-          projects.map((project) => (
-            <div
-              key={project._id}
-              className={`card mb-3 ${
-                selectedProject === project ? "bg-primary text-white" : ""
-              }`}
-              onClick={() => handleProjectClick(project)}
-            >
-              <div className="card-body">
-                <small>{project.name}</small>
-                {selectedProject === project && (
-                  <div>
-                    <p className="card-text">{project.description}</p>
-                    <p>Customer: {project.customer}</p>
-                    <p>Consultors: {project.consultors.join(", ")}</p>
-                    <p>Managers: {project.managers.join(", ")}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      <div className="container col-sm-12 col-md-6"></div>
     </Layout>
   );
 };
