@@ -5,7 +5,7 @@ import "./Style.Novedad.css";
 
 const { TextArea } = Input;
 
-export default function Novedad({ mostrar }) {
+export default function Novedad({ mostrar, datos }) {
   const [data, setData] = useState({
     title: "TITULO_NOVEDAD",
     description:
@@ -71,10 +71,12 @@ export default function Novedad({ mostrar }) {
   const loggedUserId = "admin@ceibo.digital";
   const role = "manager";
   // para testing
+
   useEffect(() => {
     mostrar = true; //
     setShowModal(mostrar); //
-  }, []);
+  }, [mostrar]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (value === "") {
@@ -112,6 +114,11 @@ export default function Novedad({ mostrar }) {
     setConfirmModal(!confirmModal);
   };
 
+  const handleApprove = () => {
+    toggleShowConfirmModal();
+    return setData((values) => ({ ...values, ["state"]: "aprobada" }));
+  };
+
   return (
     <>
       <Modal
@@ -119,31 +126,48 @@ export default function Novedad({ mostrar }) {
         centered
         onHide={toggleShowModal}
         size="lg"
-        backdropClassName="bg-dark"
+        backdropClassName="background-blur"
       >
-        <Modal.Header closeButton>
+        <Modal.Header
+          closeButton
+          className={`${
+            data.state == "aprobada" ? "back-approve" : "back-normal"
+          }`}
+        >
           <div>
             <h2>{data.title}</h2>
             <h5>{data.associatedProject}</h5>
           </div>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body
+          className={`${
+            data.state == "aprobada" ? "back-approve" : "back-normal"
+          }`}
+        >
           <div>
             <div className="d-flex justify-content-center">
-              {role == "manager" ? (
-                <input
-                  type="button"
-                  value={`Estado: ${data.state}`}
-                  className="btn btn-warning"
-                  onClick={toggleShowConfirmModal}
-                />
+              {role == "manager" && data.state != "aprobada" ? (
+                <>
+                  <input
+                    type="button"
+                    value={`Estado: ${data.state}`}
+                    className="btn btn-outline-warning p-3 text-uppercase"
+                    onClick={toggleShowConfirmModal}
+                  />
+                </>
               ) : (
-                <p>Estado: {data.state}</p>
+                <p className="display-4">
+                  Estado:{" "}
+                  <span className="bg-warning text-uppercase">
+                    {data.state}
+                  </span>
+                </p>
               )}
             </div>
             <div>
               <p className="lead mt-2">{data.description}</p>
             </div>
+            <hr className="" />
             <ul className="list-unstyled ">
               {data.reply.map((mess, index) => (
                 <li
@@ -164,59 +188,96 @@ export default function Novedad({ mostrar }) {
             </ul>
           </div>
           <div className="">
-            <label htmlFor="">{loggedUserId}</label>
-            <TextArea
-              rows={2}
-              allowClear
-              value={inputs.message || ""}
-              onChange={handleChange}
-              name="message"
-            />
-            <Button
-              variant="primary mt-3 mb-2"
-              onClick={handleSubmit}
-              disabled={!inputs.message}
-            >
-              Comentar
-            </Button>
+            {data.state != "aprobada" ? (
+              <>
+                <label htmlFor="">{loggedUserId}</label>
+                <TextArea
+                  rows={2}
+                  allowClear
+                  value={inputs.message || ""}
+                  onChange={handleChange}
+                  name="message"
+                />
+                <Button
+                  variant="primary mt-3 mb-2"
+                  onClick={handleSubmit}
+                  disabled={!inputs.message}
+                >
+                  Comentar
+                </Button>
+              </>
+            ) : (
+              <div className="bg-secondary text-white p-2">
+                <p className="display-4 text-center">Novedad aprobada</p>
+              </div>
+            )}
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between">
+        <Modal.Footer
+          className={`d-flex justify-content-between ${
+            data.state == "aprobada" ? "back-approve" : "back-normal"
+          }`}
+        >
           <div>
             <p>{data.userId}</p>
             <p>{data.creationDate}</p>
           </div>
-          <div className="d-flex">
-            <Button
-              variant="warning"
-              onClick={toggleShowModal}
-              className="mr-2"
-            >
-              Volver
-            </Button>
-            {(role == "manager" || role == "admin") && (
-              <Button variant="danger" onClick={toggleShowConfirmModal}>
-                Aprobar Novedad
+
+          {data.state != "aprobada" ? (
+            <div className="d-flex">
+              <Button
+                variant="warning"
+                onClick={toggleShowModal}
+                className="mr-2"
+              >
+                Volver
               </Button>
-            )}
-          </div>
+              {(role == "manager" || role == "admin") && (
+                <Button variant="danger" onClick={toggleShowConfirmModal}>
+                  Aprobar Novedad
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className={`d-flex flex-column align-items-end`}>
+              <p>Aprobada por: admin@ceibo.digital</p>
+              <p>20/07/2023</p>
+            </div>
+          )}
         </Modal.Footer>
       </Modal>
       <Modal
-        centered
         show={confirmModal}
         backdrop="static"
         keyboard={false}
         onHide={toggleShowConfirmModal}
         backdropClassName="bg-dark"
       >
-        <Modal.Header className="" closeButton>
-          ¿Aprobar novedad?
+        <Modal.Header closeButton>
+          <p className="lead">¿Aprobar novedad y notificar a Socio?</p>
         </Modal.Header>
         <Modal.Body>
-          <div></div>
+          <div>
+            <p>
+              Se pasara la novedad a aprobada y se notificara el socio
+              correspondiente
+            </p>
+          </div>
         </Modal.Body>
-        <Modal.Footer>Footer</Modal.Footer>
+        <Modal.Footer className="d-flex justify-content-center">
+          <input
+            type="button"
+            value="Volver sin modificar"
+            className="btn btn-warning"
+            onClick={toggleShowConfirmModal}
+          />
+          <input
+            type="button"
+            value="Aprobar y Notificar"
+            className="btn btn-danger"
+            onClick={handleApprove}
+          />
+        </Modal.Footer>
       </Modal>
     </>
   );

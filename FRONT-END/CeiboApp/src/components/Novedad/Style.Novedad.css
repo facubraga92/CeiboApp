@@ -1,4 +1,4 @@
-.blurred-background {
+.background-blur {
   position: fixed;
   top: 0;
   left: 0;
@@ -14,4 +14,12 @@
     5px
   ); /* Ajusta el valor del desenfoque, si es necesario */
   z-index: 1000; /* Asegúrate de que la superposición esté por encima de otros elementos */
+}
+
+.back-approve {
+  background-color: beige;
+}
+
+.back-normal {
+  background-color: rgb(245, 240, 240);
 }
