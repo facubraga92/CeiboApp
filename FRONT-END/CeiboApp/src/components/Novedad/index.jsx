@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { Input } from "antd";
 import "./Style.Novedad.css";
 
 const { TextArea } = Input;
 
-export default function Novedad({ mostrar, datos }) {
+export default function Novedad({ datos }) {
   const [data, setData] = useState({
     title: "TITULO_NOVEDAD",
     description:
-      "esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando",
+      "esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando. esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando. esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando",
     userId: "6FFSDFASDRREHREASDA",
     associatedProject: "PROYECTO_XXX",
     state: "pendiente",
@@ -73,9 +73,11 @@ export default function Novedad({ mostrar, datos }) {
   // para testing
 
   useEffect(() => {
-    mostrar = true; //
-    setShowModal(mostrar); //
-  }, [mostrar]);
+    if (datos) {
+      setData(datos); // para usar junto al llamado de la api a la pasada de datos por promp
+    }
+    setShowModal(true);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,6 +106,7 @@ export default function Novedad({ mostrar, datos }) {
 
     setInputs({});
     setData(updatedFakeData);
+    return handleScrollBottom();
   };
 
   const toggleShowModal = () => {
@@ -119,6 +122,25 @@ export default function Novedad({ mostrar, datos }) {
     return setData((values) => ({ ...values, ["state"]: "aprobada" }));
   };
 
+  const descRef = useRef(null);
+  const handleDesc = () => {
+    return descRef.current.classList.toggle("text-truncate");
+  };
+
+  const extendChat = useRef(null);
+  const handleExtendChat = (e) => {
+    let { value } = e.target;
+    value == "Extender chat"
+      ? (value = "Comprimir chat")
+      : (value = "Extender chat");
+    return extendChat.current.classList.toggle("comprimed-chat");
+  };
+
+  const handleScrollBottom = () => {
+    setTimeout(() => {
+      return (extendChat.current.scrollTop = extendChat.current.scrollHeight);
+    }, 100);
+  };
   return (
     <>
       <Modal
@@ -165,29 +187,51 @@ export default function Novedad({ mostrar, datos }) {
               )}
             </div>
             <div>
-              <p className="lead mt-2">{data.description}</p>
+              <p
+                className="lead mt-2 text-justify"
+                ref={descRef}
+                onClick={handleDesc}
+              >
+                {data.description}
+              </p>
             </div>
+
             <hr className="" />
-            <ul className="list-unstyled ">
-              {data.reply.map((mess, index) => (
-                <li
-                  key={index}
-                  style={{ backgroundColor: "#d9d7c7" }}
-                  className={`p-3 rounded mb-3 ${
-                    mess.userId === loggedUserId
-                      ? "d-flex flex-column align-items-end"
-                      : "bg-light"
-                  }`}
-                >
-                  <p className="m-0">{mess.message}</p>
-                  <p className={`small text-muted m-0 font-italic`}>
-                    {mess.userId} - {mess.date}
-                  </p>
-                </li>
-              ))}
-            </ul>
+
+            <div className="comprimed-chat" ref={extendChat}>
+              <ul className="list-unstyled">
+                {data.reply.map((mess, index) => (
+                  <div className="">
+                    <li
+                      key={index}
+                      style={{
+                        backgroundColor: "#d9d7c7",
+                        width: "fit-content",
+                        marginLeft: mess.userId === loggedUserId ? "auto" : "0",
+                      }}
+                      className={`p-3 rounded mb-3 ${
+                        mess.userId === loggedUserId ? "text-right" : "bg-light"
+                      }`}
+                    >
+                      <p className="m-0">{mess.message}</p>
+                      <p className={`small text-muted m-0 font-italic`}>
+                        {mess.userId} - {mess.date}
+                      </p>
+                    </li>
+                  </div>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="">
+          <div className="text-center mt-2">
+            <input
+              type="button"
+              value={"Extender chat"}
+              className="btn btn-info"
+              onClick={handleExtendChat}
+            />
+          </div>
+          <div className="mt-2">
             {data.state != "aprobada" ? (
               <>
                 <label htmlFor="">{loggedUserId}</label>
@@ -199,7 +243,7 @@ export default function Novedad({ mostrar, datos }) {
                   name="message"
                 />
                 <Button
-                  variant="primary mt-3 mb-2"
+                  variant="primary mt-2"
                   onClick={handleSubmit}
                   disabled={!inputs.message}
                 >

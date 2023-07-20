@@ -23,3 +23,8 @@
 .back-normal {
   background-color: rgb(245, 240, 240);
 }
+
+.comprimed-chat {
+  height: 300px;
+  overflow: auto;
+}
