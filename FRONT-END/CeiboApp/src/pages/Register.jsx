@@ -43,8 +43,7 @@ const Register = () => {
   }
 
   const handleChange = (event) => {
-    const value = event.target.value;
-    const name = event.target.name;
+    const { name, value } = event.target;
     if (value === "") {
       setInputs((current) => {
         const { [name]: _, ...rest } = current;

@@ -13,6 +13,7 @@ import Partners from "./pages/Partners";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import Novedad from "./components/Novedad";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -21,9 +22,9 @@ function App() {
       <Routes>
         {/* User routes 
         <Route path="/" element={<ProtectedRoute />}></Route>*/}
+        {/* Public Routes    <Login /> */}
+        <Route path="/" element={user.id == null ? <Novedad /> : <Home />} />
 
-        {/* Public Routes */}
-        <Route path="/" element={user.id == null ? <Login /> : <Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />
         {/* Admin Routes */}
