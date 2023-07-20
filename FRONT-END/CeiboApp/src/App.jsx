@@ -37,7 +37,7 @@ function App() {
               <Login />
             )
           }
-        />{" "}
+        />
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />
         <Route path="/verification/:token" element={<VerificationPage />} />
@@ -57,8 +57,14 @@ function App() {
         </Route>
         {/* Contributes Routes */}
         <Route path="/" element={<ProtectedRoute onlyContributor />}>
-          <Route path="/formNovedades" exact element={<FormNovedades />} />
-          <Route path="/home" exact element={<Home />} />
+          {user.isValidated ? (
+            <>
+              <Route path="/formNovedades" exact element={<FormNovedades />} />
+              <Route path="/home" exact element={<Home />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
         </Route>
       </Routes>
       <ToastContainer />

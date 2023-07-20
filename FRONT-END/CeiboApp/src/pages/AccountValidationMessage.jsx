@@ -1,7 +1,10 @@
 import React from "react";
+import Layout from "../components/layouts/Layout";
 
 const AccountValidationMessage = () => {
   return (
+    <>
+    <Layout/>
     <div className="container">
       <h1>Valida tu cuenta</h1>
       <p className="mt-4 fs-1 fw-bold">
@@ -10,6 +13,7 @@ const AccountValidationMessage = () => {
         completar la validación.
       </p>
     </div>
+    </>
   );
 };
 
