@@ -28,14 +28,14 @@ const Navbar = () => {
       })
       .then((user) => {
         dispatch(setUser(userInitialState));
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
         navigate("/");
       });
   };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="/">
+        <a className="navbar-brand" href="/home">
           CeiboApp
         </a>
         <button
@@ -56,7 +56,7 @@ const Navbar = () => {
           {" "}
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link to="/" className="nav-link">
+              <Link to="/home" className="nav-link">
                 Inicio
               </Link>
             </li>
@@ -74,22 +74,18 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
-            <li className="nav-item">
-              <a className="nav-link" href="/about">
-                Acerca de
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="/contact">
-                Contacto
-              </a>
-            </li>
           </ul>
-          <div>
-            {user.email && (
-              <button className="btn btn-danger" onClick={handleLogout}>
-                Logout
-              </button>
+          <div className="">
+            {user.email ? (
+              <input
+                className="btn btn-danger"
+                onClick={handleLogout}
+                value={"Logout"}
+              />
+            ) : (
+              <Link to="/">
+                <input className="btn btn-warning" value={"Login"} />
+              </Link>
             )}
           </div>
         </div>
