@@ -16,6 +16,7 @@ const createOneProject = async (req, res) => {
     const newProject = await project.save();
     const projectId = newProject._id;
 
+    // si da problemas comentar todo el customerModel
     // Asociar el proyecto al cliente correspondiente
     await customerModel.updateOne(
       { _id: req.body.customer },
