@@ -73,7 +73,6 @@ export default function Novedad({ datos }) {
   // para testing
 
   useEffect(() => {
-    console.log(datos);
     if (datos) {
       setData(datos);
     }

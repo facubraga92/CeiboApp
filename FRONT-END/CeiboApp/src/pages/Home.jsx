@@ -51,30 +51,30 @@ const Home = () => {
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
-  useEffect(() => {}, []);
-
   return (
     <Layout title="Home">
-      <div className="container col-sm-12 col-md-10">
+      <div className="container col-sm-12 col-md-8">
         <div className="">
           {data.map((e, index) => (
-            <div
-              key={index}
-              title={index}
-              className={`row mt-2 d-flex flex-column p-3 bg-light`}
-              style={{ cursor: "pointer" }}
-            >
-              <div onClick={() => handleShowDetails(index)}>
-                <strong>{e.project.name}</strong>
+            <div>
+              <div
+                key={index}
+                title={index}
+                className={`row mt-2 d-flex flex-column p-3 bg-light`}
+                style={{ cursor: "pointer" }}
+                onClick={() => handleShowDetails(index)}
+              >
+                <div>
+                  <strong>{e.project.name}</strong>
+                </div>
               </div>
-
               {selectedProject === index && (
-                <div className="ml-3">
+                <div className="ml-5 mt-0">
                   {e.news.length > 0 ? (
                     <div className="table-responsive">
-                      <table className="table table-striped table-hover">
-                        <thead>
-                          <tr>
+                      <table className="table table-striped table-hover table-sm">
+                        <thead className="">
+                          <tr className="">
                             <th>Título</th>
                             <th>Fecha de Creación</th>
                             <th>Descripción</th>
