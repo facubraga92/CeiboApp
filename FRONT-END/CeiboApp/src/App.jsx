@@ -21,41 +21,51 @@ function App() {
   return (
     <>
       <Routes>
-        {/* User routes 
-        <Route path="/" element={<ProtectedRoute />}></Route>*/}
         {/* Public Routes */}
-        <Route
-          path="/"
-          element={
-            user.email ? (
-              user.isValidated ? (
-                <Home />
-              ) : (
-                <AccountValidationMessage />
-              )
-            ) : (
-              <Login />
-            )
-          }
-        />
+
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/perfil" exact element={<Profile />} />
         <Route path="/verification/:token" element={<VerificationPage />} />
         <Route
           path="/validation-error"
           element={<AccountValidationMessage />}
         />
+
+        {/* User Routes, cualquier usuario ya loggeado! */}
+
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/home" exact element={<Home />} />
+          <Route path="/perfil" exact element={<Profile />} />
+        </Route>
+
         {/* Admin Routes */}
+
         <Route path="/" element={<ProtectedRoute onlyAdmin />}>
-          <Route path="/admin/members" exact element={<Members />} />
+          {user.isValidated ? (
+            <>
+              <Route path="/admin/members" exact element={<Members />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
         </Route>
+
         {/* Manager Routes */}
+
         <Route path="/" element={<ProtectedRoute onlyManager />}>
-          <Route path="/manager" exact element={<Manager />} />
-          <Route path="/projects/add" exact element={<AddProject />} />
-          <Route path="/partners" exact element={<Partners />} />
+          {user.isValidated ? (
+            <>
+              <Route path="/manager" exact element={<Manager />} />
+              <Route path="/projects/add" exact element={<AddProject />} />
+              <Route path="/partners" exact element={<Partners />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
         </Route>
+
         {/* Contributes Routes */}
+
         <Route path="/" element={<ProtectedRoute onlyContributor />}>
           {user.isValidated ? (
             <>

@@ -72,7 +72,7 @@ const Login = () => {
           }
         );
         dispatch(setGoogleUser(userObject));
-        return navigate("/");
+        return navigate("/home");
       } else {
         await axios.post(
           "http://localhost:3000/api/users/register",
@@ -92,7 +92,7 @@ const Login = () => {
           }
         );
         dispatch(setGoogleUser(userObject));
-        return navigate("/");
+        return navigate("/home");
       }
     } catch (error) {
       console.error(error);
