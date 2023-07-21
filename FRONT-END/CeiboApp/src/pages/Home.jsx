@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import News from "../components/Novedades";
+import Novedad from "../components/Novedad";
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
@@ -51,9 +51,7 @@ const Home = () => {
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  useEffect(() => {}, []);
 
   return (
     <Layout title="Home">
@@ -64,28 +62,33 @@ const Home = () => {
               key={index}
               title={index}
               className={`row mt-2 d-flex flex-column p-3 bg-light`}
-              onClick={() => handleShowDetails(index)}
               style={{ cursor: "pointer" }}
             >
-              <strong>{e.project.name}</strong>
+              <div onClick={() => handleShowDetails(index)}>
+                <strong>{e.project.name}</strong>
+              </div>
 
               {selectedProject === index && (
                 <div className="ml-3">
                   {e.news.length > 0 ? (
-                    e.news.map((news) => (
-                      <div
-                        className="m-2 d-flex justify-content-between"
-                        key={news._id}
-                        style={{ backgroundColor: "beige" }}
-                      >
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                      </div>
-                    ))
+                    <div className="table-responsive">
+                      <table className="table table-striped table-hover">
+                        <thead>
+                          <tr>
+                            <th>Título</th>
+                            <th>Fecha de Creación</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Comentarios</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {e.news.map((news, index) => (
+                            <Novedad key={index} datos={{ ...news, e }} />
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   ) : (
                     <div>
                       <p className="m-0 p-0">

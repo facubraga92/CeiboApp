@@ -22,8 +22,8 @@ function App() {
       <Routes>
         {/* User routes 
         <Route path="/" element={<ProtectedRoute />}></Route>*/}
-        {/* Public Routes    <Login /> */}
-        <Route path="/" element={user.id == null ? <Novedad /> : <Home />} />
+        {/* Public Routes     <Novedad />*/}
+        <Route path="/" element={user.id == null ? <Login /> : <Home />} />
 
         <Route path="/register" element={<Register />} />
         <Route path="/perfil" exact element={<Profile />} />

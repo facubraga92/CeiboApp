@@ -64,7 +64,7 @@ export default function Novedad({ datos }) {
     ],
   });
   const [inputs, setInputs] = useState({});
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
   // para testing
@@ -73,10 +73,10 @@ export default function Novedad({ datos }) {
   // para testing
 
   useEffect(() => {
+    console.log(datos);
     if (datos) {
-      setData(datos); // para usar junto al llamado de la api a la pasada de datos por promp
+      setData(datos);
     }
-    setShowModal(true);
   }, []);
 
   const handleChange = (e) => {
@@ -119,6 +119,8 @@ export default function Novedad({ datos }) {
 
   const handleApprove = () => {
     toggleShowConfirmModal();
+    extendChat.current.classList.add("comprimed-chat");
+    descRef.current.classList.add("text-truncate");
     return setData((values) => ({ ...values, ["state"]: "aprobada" }));
   };
 
@@ -129,10 +131,6 @@ export default function Novedad({ datos }) {
 
   const extendChat = useRef(null);
   const handleExtendChat = (e) => {
-    let { value } = e.target;
-    value == "Extender chat"
-      ? (value = "Comprimir chat")
-      : (value = "Extender chat");
     return extendChat.current.classList.toggle("comprimed-chat");
   };
 
@@ -141,8 +139,16 @@ export default function Novedad({ datos }) {
       return (extendChat.current.scrollTop = extendChat.current.scrollHeight);
     }, 100);
   };
+
   return (
     <>
+      <tr onClick={toggleShowModal}>
+        <td>{data.title}</td>
+        <td>{data.creationDate.split("T")[0]}</td>
+        <td className="text-truncate">{data.description}</td>
+        <td>{data.state}</td>
+        <td>Comentarios: {data.reply.length}</td>
+      </tr>
       <Modal
         show={showModal}
         centered
@@ -157,8 +163,10 @@ export default function Novedad({ datos }) {
           }`}
         >
           <div>
-            <h2>{data.title}</h2>
-            <h5>{data.associatedProject}</h5>
+            <h2>Novedad: {data.title}</h2>
+            <h5 className="text-muted">
+              <em>Proyecto: {data.e?.project.name}</em>
+            </h5>
           </div>
         </Modal.Header>
         <Modal.Body
