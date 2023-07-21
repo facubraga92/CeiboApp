@@ -23,6 +23,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
 
+        <Route path="/" element={user.isValidated ? <Home /> : <Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verification/:token" element={<VerificationPage />} />

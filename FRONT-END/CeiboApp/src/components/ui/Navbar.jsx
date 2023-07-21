@@ -61,7 +61,7 @@ const Navbar = () => {
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link to="/home" className="nav-link">
-                Inicio
+                {user.role === "manager" ? "Home" : "Inicio"}
               </Link>
             </li>
             {user.email ? (

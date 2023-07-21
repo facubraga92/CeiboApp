@@ -173,7 +173,9 @@ const Login = () => {
               Iniciar sesión con Google
             </button>
           </div> */}
-          <div id="signInDiv">{handleCallbackResponse}</div>
+          <div id="signInDiv" className="col">
+            {handleCallbackResponse}
+          </div>
           {/* {user && (
             <div>
               <img src={user.picture}></img>

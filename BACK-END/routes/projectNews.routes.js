@@ -7,6 +7,7 @@ const {
   updateNews,
   deleteNews,
   approveNews,
+  addCommentToNews,
 } = require("../controllers/projectNews.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");

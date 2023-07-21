@@ -1,5 +1,5 @@
 const projectModel = require("../schemas/Project");
-
+const customerModel = require("../schemas/Customer");
 const getAllProjects = async (req, res) => {
   try {
     const projects = await projectModel.find();
@@ -19,10 +19,8 @@ const getProjectsUser = async (req, res) => {
         $or: [{ $in: [userId, "$consultors"] }, { $in: [userId, "$managers"] }],
       },
     });
-    console.log(projects);
     res.json(projects);
   } catch (error) {
-    console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
