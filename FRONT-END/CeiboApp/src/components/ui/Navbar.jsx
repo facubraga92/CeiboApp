@@ -3,12 +3,17 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const user = useSelector((state) => state.user);
+
+  const isLogin = location.pathname === "/login";
+  const isRegister = location.pathname === "/register";
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/users/me", {
@@ -59,17 +64,86 @@ const Navbar = () => {
                 Inicio
               </Link>
             </li>
-            {user.role === "admin" && (
+            {user.email ? (
+              <>
+                {user.role === "admin" && (
+                  <>
+                    <li className="nav-item">
+                      <Link to="/admin/members" className="nav-link">
+                        Administrar Miembros
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "manager" && (
+                  <>
+                    <li className="nav-item">
+                      <Link to="/projects/add" className="nav-link">
+                        Crear Proyecto
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link to="/partners" className="nav-link">
+                        Socios
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "consultor" && (
+                  <>
+                    <li>
+                      <Link to="/formNovedades" className="nav-link">
+                        Crear Novedad
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "socio" && (
+                  <>
+                    <li>
+                      <Link to="/home" className="nav-link">
+                        Mis Proyectos
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/home" className="nav-link">
+                        Ver Novedades
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </>
+            ) : (
               <li className="nav-item">
-                <Link to="/admin/members" className="nav-link">
-                  Administrar Miembros
-                </Link>
-              </li>
-            )}
-            {user.role === "manager" && (
-              <li className="nav-item">
-                <Link to="/projects/add" className="nav-link">
-                  Crear Proyecto
+                <Link
+                  to={isLogin ? "/register" : "/login"}
+                  className="nav-link"
+                >
+                  {isLogin ? "Register" : "Login"}
                 </Link>
               </li>
             )}
