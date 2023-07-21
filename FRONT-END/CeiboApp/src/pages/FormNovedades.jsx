@@ -5,6 +5,8 @@ import Layout from "../components/layouts/Layout";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { Select, DatePicker } from "antd";
+import axios from "axios";
+
 
 /**
  * Componente FormNovedades
@@ -77,25 +79,54 @@ export default function FormNovedades() {
    *
    * @param {Event} event - Evento del envío del formulario.
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
     if (selectInput === "default") return setFormSubmitted(false);
 
     setShowModalSave(false);
-    toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    //Se manda datos hardcodeados
+    try {
+      const { data } = await axios.post("/api/createNews", {
+        title: inputs.detalles,
+        description: inputs.comentarios,
+        userId: "64aecb422dd82ed2fb9ff66c", 
+        associatedProject: "64b837cdb0f1893a3a43aa51", 
+      });
+      if (data.success) {
+        toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setTimeout(() => {
+          navigate("/home");
+        }, 2000);
+      } else {
+        toast.error(data.error, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      toast.error("Error al enviar el formulario", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
 
-    // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para crear novedades
-    return setTimeout(() => {
-      return navigate("/home");
-    }, 2000);
   };
 
   const handleCancel = (e) => {
