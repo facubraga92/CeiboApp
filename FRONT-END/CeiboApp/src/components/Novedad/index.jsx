@@ -70,13 +70,11 @@ export default function Novedad({ datos }) {
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
-  // para testing
-  const loggedUserId = "admin@ceibo.digital";
-  const role = "manager";
-  // para testing
-
   useEffect(() => {
     if (datos) {
+      datos.reply.map((r) => {
+        const { userId } = r;
+      });
       setData(datos);
     }
   }, []);
@@ -94,9 +92,9 @@ export default function Novedad({ datos }) {
     return;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newReply = {
-      userId: loggedUserId,
+      userId: user.id,
       message: inputs.message,
       date: new Date().toLocaleDateString("es-AR"),
     };
@@ -105,6 +103,12 @@ export default function Novedad({ datos }) {
       ...data,
       reply: [...data.reply, newReply],
     };
+
+    await axios.put(`http://localhost:3000/api/news/${data._id}`, newReply, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+      credentials: "include",
+    });
 
     setInputs({});
     setData(updatedFakeData);
@@ -203,7 +207,7 @@ export default function Novedad({ datos }) {
         >
           <div>
             <div className="d-flex justify-content-center">
-              {role == "manager" && data.state != "aprobada" ? (
+              {user.user?.role == "manager" && data.state != "aprobada" ? (
                 <>
                   <input
                     type="button"
@@ -243,13 +247,10 @@ export default function Novedad({ datos }) {
                         style={{
                           backgroundColor: "#d9d7c7",
                           width: "fit-content",
-                          marginLeft:
-                            mess.userId === loggedUserId ? "auto" : "0",
+                          marginLeft: mess.userId === user.id ? "auto" : "0",
                         }}
                         className={`p-3 rounded mb-3 ${
-                          mess.userId === loggedUserId
-                            ? "text-right"
-                            : "bg-light"
+                          mess.userId === user.id ? "text-right" : "bg-light"
                         }`}
                       >
                         <p className="m-0">{mess.message}</p>
@@ -282,7 +283,7 @@ export default function Novedad({ datos }) {
           <div className="mt-2">
             {data.state != "aprobada" ? (
               <>
-                <label htmlFor="">{loggedUserId}</label>
+                <label htmlFor="">{user.email}</label>
                 <TextArea
                   rows={2}
                   allowClear
@@ -324,7 +325,7 @@ export default function Novedad({ datos }) {
               >
                 Volver
               </Button>
-              {(role == "manager" || role == "admin") && (
+              {(user?.role == "manager" || user?.role == "admin") && (
                 <Button variant="danger" onClick={toggleShowConfirmModal}>
                   Aprobar Novedad
                 </Button>

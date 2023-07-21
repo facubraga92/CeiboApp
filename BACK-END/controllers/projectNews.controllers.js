@@ -1,7 +1,7 @@
 const ProjectNews = require("../schemas/ProjectNews");
 const Project = require("../schemas/Project");
-const getManagersRelevants = require("../utils/utils")
- 
+const getManagersRelevants = require("../utils/utils");
+
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
@@ -28,7 +28,7 @@ exports.createNews = async (req, res) => {
     });
     await news.save();
 
-    await getManagersRelevants(news)
+    await getManagersRelevants(news);
     res.status(201).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -107,27 +107,29 @@ exports.getNewsById = async (req, res) => {
 exports.updateNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    console.log("BOASDASD");
+    const { title, description, userId, message, date } = req.body;
 
     const news = await ProjectNews.findById(id);
-
     if (!news) {
       return res
         .status(404)
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (
-      req.user.role !== "consultor" ||
-      !news.userId.equals(req.user._id) ||
-      news.state !== "pendiente"
-    ) {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
+    if (news.title) news.title = title;
+    if (news.description) news.description = description;
+    if (news.state) news.state = "modificada";
+    if (userId && message && date) {
+      const rDate = new Date(date);
+      const newComment = {
+        userId,
+        message,
+        rDate,
+      };
 
-    news.title = title;
-    news.description = description;
-    news.state = "modificada";
+      news.reply.push(newComment);
+    }
     await news.save();
 
     res.status(200).json({ success: true, data: news });
@@ -171,7 +173,6 @@ exports.approveNews = async (req, res) => {
     const { id } = req.params;
 
     const news = await ProjectNews.findById(id);
-    console.log(news);
 
     if (!news) {
       return res
@@ -187,5 +188,27 @@ exports.approveNews = async (req, res) => {
   }
 };
 
+exports.addCommentToNews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, message, date } = req.body;
+    const news = await ProjectNews.findById(id);
 
-//agregar acompentario 
+    if (!news) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Novedad no encontrada" });
+    }
+
+    const newComment = {
+      userId,
+      message,
+      date,
+    };
+
+    news.reply.push(newComment);
+    await news.save();
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
