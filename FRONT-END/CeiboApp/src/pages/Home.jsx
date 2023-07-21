@@ -57,40 +57,74 @@ const Home = () => {
 
   return (
     <Layout title="Home">
-      <div className="container col-sm-12 col-md-10">
+      <div className="container col-sm-12 col-md-6">
         <div className="">
           {data.map((e, index) => (
             <div
               key={index}
               title={index}
-              className={`row mt-2 d-flex flex-column p-3 bg-light`}
+              className={`row mt-2 d-flex  flex-column justify-content-center alaig p-3 bg-light`}
               onClick={() => handleShowDetails(index)}
               style={{ cursor: "pointer" }}
             >
-              <strong>{e.project.name}</strong>
+              <table class="table bd-highlight table-striped">
+                <thead class=" bd-highlight flex-fill">
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody class="table table-striped  bd-highlight table-hover">
+                  <tr>
+                    <th scope="row"></th>
+                    <td>{e.project.name}</td>
+                    <td>{e.project.description}</td>
+                  </tr>
+                </tbody>
+              </table>
 
               {selectedProject === index && (
                 <div className="ml-3">
                   {e.news.length > 0 ? (
                     e.news.map((news) => (
-                      <div
-                        className="m-2 d-flex justify-content-between"
-                        key={news._id}
-                        style={{ backgroundColor: "beige" }}
-                      >
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                        <p>{news.title}</p>
-                      </div>
+                      <table class="table table-primary table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Reply</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table table-primary table-hover">
+                          <tr>
+                            <th scope="row"></th>
+                            <td>{news.title}</td>
+                            <td>{news.description}</td>
+                            <td>{news.reply.length}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     ))
                   ) : (
                     <div>
-                      <p className="m-0 p-0">
-                        No hay novedades para este proyecto.
-                      </p>
+                      <table class="table table-primary table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table table-primary table-hover">
+                          <tr>
+                            <th scope="row"></th>
+                            <td>este proyecto no tiene novedades</td>
+
+                            <td></td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
