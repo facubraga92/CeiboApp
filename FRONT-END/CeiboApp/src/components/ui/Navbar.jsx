@@ -3,12 +3,17 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const user = useSelector((state) => state.user);
+
+  const isLogin = location.pathname === "/login";
+  const isRegister = location.pathname === "/register";
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/users/me", {
@@ -59,6 +64,17 @@ const Navbar = () => {
               <Link to="/home" className="nav-link">
                 Inicio
               </Link>
+            </li>
+            <li className="nav-item">
+              {isLogin ? (
+                <Link to="/register" className="nav-link">
+                  Register
+                </Link>
+              ) : (
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
+              )}
             </li>
             {user.role == "admin" && (
               <li className="nav-item">

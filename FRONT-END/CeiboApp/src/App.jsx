@@ -34,8 +34,14 @@ function App() {
         {/* User Routes, cualquier usuario ya loggeado! */}
 
         <Route path="/" element={<ProtectedRoute />}>
-          <Route path="/home" exact element={<Home />} />
-          <Route path="/perfil" exact element={<Profile />} />
+          {user.isValidated ? (
+            <>
+              <Route path="/home" exact element={<Home />} />
+              <Route path="/perfil" exact element={<Profile />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
         </Route>
 
         {/* Admin Routes */}
