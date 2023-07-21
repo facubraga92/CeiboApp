@@ -37,7 +37,7 @@ function App() {
           {user.isValidated ? (
             <>
               <Route path="/home" exact element={<Home />} />
-              <Route path="/perfil" exact element={<Profile />} />
+              <Route path="/profile" exact element={<Profile />} />
             </>
           ) : (
             <Route path="/home" exact element={<AccountValidationMessage />} />

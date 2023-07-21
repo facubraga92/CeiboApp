@@ -58,35 +58,92 @@ const Navbar = () => {
           className="collapse navbar-collapse justify-content-between"
           id="navbarNav"
         >
-          {" "}
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link to="/home" className="nav-link">
                 Inicio
               </Link>
             </li>
-            <li className="nav-item">
-              {isLogin ? (
-                <Link to="/register" className="nav-link">
-                  Register
-                </Link>
-              ) : (
-                <Link to="/login" className="nav-link">
-                  Login
-                </Link>
-              )}
-            </li>
-            {user.role == "admin" && (
+            {user.email ? (
+              <>
+                {user.role === "admin" && (
+                  <>
+                    <li className="nav-item">
+                      <Link to="/admin/members" className="nav-link">
+                        Administrar Miembros
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "manager" && (
+                  <>
+                    <li className="nav-item">
+                      <Link to="/projects/add" className="nav-link">
+                        Crear Proyecto
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link to="/partners" className="nav-link">
+                        Socios
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "consultor" && (
+                  <>
+                    <li>
+                      <Link to="/formNovedades" className="nav-link">
+                        Crear Novedad
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {user.role === "socio" && (
+                  <>
+                    <li>
+                      <Link to="/home" className="nav-link">
+                        Mis Proyectos
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/home" className="nav-link">
+                        Ver Novedades
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/profile" className="nav-link">
+                        Perfil
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </>
+            ) : (
               <li className="nav-item">
-                <Link to="/admin/members" className="nav-link">
-                  Administrar Miembros
-                </Link>
-              </li>
-            )}
-            {user.role == "manager" && (
-              <li className="nav-item">
-                <Link to="/projects/add" className="nav-link">
-                  Crear Proyecto
+                <Link
+                  to={isLogin ? "/register" : "/login"}
+                  className="nav-link"
+                >
+                  {isLogin ? "Register" : "Login"}
                 </Link>
               </li>
             )}
