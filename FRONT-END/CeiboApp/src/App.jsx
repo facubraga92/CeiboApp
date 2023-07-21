@@ -13,34 +13,68 @@ import Partners from "./pages/Partners";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
-import Novedad from "./components/Novedad";
+import VerificationPage from "./pages/VerificationPage";
+import AccountValidationMessage from "./pages/AccountValidationMessage";
 
 function App() {
   const user = useSelector((state) => state.user);
   return (
     <>
       <Routes>
-        {/* User routes 
-        <Route path="/" element={<ProtectedRoute />}></Route>*/}
-        {/* Public Routes     <Novedad />*/}
-        <Route path="/" element={user.id == null ? <Login /> : <Home />} />
+        {/* Public Routes */}
 
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/perfil" exact element={<Profile />} />
-        {/* Admin Routes */}
-        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
-          <Route path="/admin/members" exact element={<Members />} />
-        </Route>
-        {/* Manager Routes */}
-        <Route path="/" element={<ProtectedRoute onlyManager />}>
-          <Route path="/manager" exact element={<Manager />} />
-          <Route path="/projects/add" exact element={<AddProject />} />
-          <Route path="/partners" exact element={<Partners />} />
-        </Route>
-        {/* Contributes Routes */}
-        <Route path="/" element={<ProtectedRoute onlyContributor />}>
-          <Route path="/formNovedades" exact element={<FormNovedades />} />
+        <Route path="/verification/:token" element={<VerificationPage />} />
+        <Route
+          path="/validation-error"
+          element={<AccountValidationMessage />}
+        />
+
+        {/* User Routes, cualquier usuario ya loggeado! */}
+
+        <Route path="/" element={<ProtectedRoute />}>
           <Route path="/home" exact element={<Home />} />
+          <Route path="/perfil" exact element={<Profile />} />
+        </Route>
+
+        {/* Admin Routes */}
+
+        <Route path="/" element={<ProtectedRoute onlyAdmin />}>
+          {user.isValidated ? (
+            <>
+              <Route path="/admin/members" exact element={<Members />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
+        </Route>
+
+        {/* Manager Routes */}
+
+        <Route path="/" element={<ProtectedRoute onlyManager />}>
+          {user.isValidated ? (
+            <>
+              <Route path="/manager" exact element={<Manager />} />
+              <Route path="/projects/add" exact element={<AddProject />} />
+              <Route path="/partners" exact element={<Partners />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
+        </Route>
+
+        {/* Contributes Routes */}
+
+        <Route path="/" element={<ProtectedRoute onlyContributor />}>
+          {user.isValidated ? (
+            <>
+              <Route path="/formNovedades" exact element={<FormNovedades />} />
+              <Route path="/home" exact element={<Home />} />
+            </>
+          ) : (
+            <Route path="/home" exact element={<AccountValidationMessage />} />
+          )}
         </Route>
       </Routes>
       <ToastContainer />

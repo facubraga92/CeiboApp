@@ -29,7 +29,7 @@ const Navbar = () => {
       .then((user) => {
         dispatch(setUser(userInitialState));
         localStorage.removeItem("user");
-        navigate("/");
+        navigate("/login");
       });
   };
   return (

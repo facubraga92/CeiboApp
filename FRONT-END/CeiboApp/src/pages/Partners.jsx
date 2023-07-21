@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { message } from "antd";
 import Select from "react-select";
+import Layout from "../components/layouts/Layout";
 
 const Partners = () => {
   const [partners, setPartners] = useState([]);
@@ -137,90 +138,92 @@ const Partners = () => {
   };
 
   return (
-    <div>
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar miembro..."
-          value={searchText}
-          onChange={handleSearch}
-        />
-      </div>
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Email</th>
-              <th>Cliente Asignado</th>
-              <th>Lista de Clientes</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPartners.map((partner) => (
-              <tr key={partner._id}>
-                <td>{partner.name}</td>
-                <td>{partner.lastName}</td>
-                <td>{partner.email}</td>
-                <td>
-                  {partner.associatedCustomers &&
-                  partner.associatedCustomers.length > 0
-                    ? partner.associatedCustomers.map((customerId) => {
-                        const customer = customersList.find(
-                          (customer) => customer._id === customerId
-                        );
-                        return customer ? ` "${customer.name}"; ` : "";
-                      })
-                    : ""}
-                </td>
-                <td>
-                  <Select
-                    options={customerOptions}
-                    value={
-                      partner._id === selectedCustomer?.partnerId
-                        ? selectedCustomer.value
-                        : null
-                    }
-                    onChange={(selectedOption) =>
-                      setSelectedCustomer({
-                        partnerId: partner._id,
-                        value: selectedOption,
-                      })
-                    }
-                    isClearable={true}
-                    isMulti={true}
-                    placeholder="Selecciona un Cliente"
-                  />
-                </td>
-                <td>
-                  {partner._id == selectedCustomer?.partnerId &&
-                  selectedCustomer?.value?.value == "" ? (
-                    <button
-                      title="Quitar Cliente al Usuario Seleccionado"
-                      className="btn btn-danger"
-                      onClick={() => handleUpdateClick(partner._id)}
-                    >
-                      Quitar Cliente
-                    </button>
-                  ) : (
-                    <button
-                      title="Asignar Cliente al Usuario Seleccionado"
-                      className="btn btn-warning"
-                      onClick={() => handleUpdateClick(partner._id)}
-                    >
-                      Asignar Cliente
-                    </button>
-                  )}
-                </td>
+    <Layout>
+      <div>
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar miembro..."
+            value={searchText}
+            onChange={handleSearch}
+          />
+        </div>
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Cliente Asignado</th>
+                <th>Lista de Clientes</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredPartners.map((partner) => (
+                <tr key={partner._id}>
+                  <td>{partner.name}</td>
+                  <td>{partner.lastName}</td>
+                  <td>{partner.email}</td>
+                  <td>
+                    {partner.associatedCustomers &&
+                    partner.associatedCustomers.length > 0
+                      ? partner.associatedCustomers.map((customerId) => {
+                          const customer = customersList.find(
+                            (customer) => customer._id === customerId
+                          );
+                          return customer ? ` "${customer.name}"; ` : "";
+                        })
+                      : ""}
+                  </td>
+                  <td>
+                    <Select
+                      options={customerOptions}
+                      value={
+                        partner._id === selectedCustomer?.partnerId
+                          ? selectedCustomer.value
+                          : null
+                      }
+                      onChange={(selectedOption) =>
+                        setSelectedCustomer({
+                          partnerId: partner._id,
+                          value: selectedOption,
+                        })
+                      }
+                      isClearable={true}
+                      isMulti={true}
+                      placeholder="Selecciona un Cliente"
+                    />
+                  </td>
+                  <td>
+                    {partner._id == selectedCustomer?.partnerId &&
+                    selectedCustomer?.value?.value == "" ? (
+                      <button
+                        title="Quitar Cliente al Usuario Seleccionado"
+                        className="btn btn-danger"
+                        onClick={() => handleUpdateClick(partner._id)}
+                      >
+                        Quitar Cliente
+                      </button>
+                    ) : (
+                      <button
+                        title="Asignar Cliente al Usuario Seleccionado"
+                        className="btn btn-warning"
+                        onClick={() => handleUpdateClick(partner._id)}
+                      >
+                        Asignar Cliente
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

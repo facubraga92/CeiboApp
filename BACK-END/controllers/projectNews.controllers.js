@@ -1,14 +1,15 @@
 const ProjectNews = require("../schemas/ProjectNews");
 const Project = require("../schemas/Project");
-
+const getManagersRelevants = require("../utils/utils")
+ 
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
-
+    //para probar las rutas en postman y no tener ningun problema comentar los dos if
     if (req.user.role !== "consultor" || req.user.role !== "admin") {
       return res.status(403).json({ success: false, error: "Acceso denegado" });
     }
-
+    console.log(title, description, userId, associatedProject);
     const project = await Project.findById(associatedProject);
 
     if (!project || !project.consultors.includes(req.user._id)) {
@@ -25,9 +26,9 @@ exports.createNews = async (req, res) => {
       associatedProject,
       state: "pendiente",
     });
-
     await news.save();
 
+    await getManagersRelevants(news)
     res.status(201).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -185,3 +186,6 @@ exports.approveNews = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
+//agregar acompentario 

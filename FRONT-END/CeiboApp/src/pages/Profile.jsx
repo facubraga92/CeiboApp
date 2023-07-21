@@ -68,10 +68,10 @@ export default function Profile() {
     if (isChanges) {
       setFormOk(true);
       return setTimeout(() => {
-        navigate("/"); // redirige al home por ahora
+        navigate("/home"); // redirige al home por ahora
       }, 1000);
     } else {
-      navigate("/"); // redirige al home por ahora
+      navigate("/home"); // redirige al home por ahora
     }
     return;
   };
