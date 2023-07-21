@@ -35,9 +35,9 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="/home">
+        <Link className="navbar-brand" to="/home">
           CeiboApp
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -53,21 +53,20 @@ const Navbar = () => {
           className="collapse navbar-collapse justify-content-between"
           id="navbarNav"
         >
-          {" "}
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link to="/home" className="nav-link">
                 Inicio
               </Link>
             </li>
-            {user.role == "admin" && (
+            {user.role === "admin" && (
               <li className="nav-item">
                 <Link to="/admin/members" className="nav-link">
                   Administrar Miembros
                 </Link>
               </li>
             )}
-            {user.role == "manager" && (
+            {user.role === "manager" && (
               <li className="nav-item">
                 <Link to="/projects/add" className="nav-link">
                   Crear Proyecto
@@ -75,16 +74,14 @@ const Navbar = () => {
               </li>
             )}
           </ul>
-          <div className="">
+          <div>
             {user.email ? (
-              <input
-                className="btn btn-danger"
-                onClick={handleLogout}
-                value={"Logout"}
-              />
+              <button className="btn btn-danger" onClick={handleLogout}>
+                Logout
+              </button>
             ) : (
               <Link to="/">
-                <input className="btn btn-warning" value={"Login"} />
+                <button className="btn btn-warning">Login</button>
               </Link>
             )}
           </div>
