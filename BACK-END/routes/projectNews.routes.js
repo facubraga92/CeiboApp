@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createNews,
   getAllNews,
+  getNewsProyect,
   getNewsById,
   updateNews,
   deleteNews,
@@ -15,6 +16,8 @@ const router = express.Router();
 router.post("/", isLogged, validateUser, createNews);
 
 router.get("/", isLogged, validateUser, getAllNews);
+
+router.get("/newsProject/:id", isLogged, getNewsProyect);
 
 router.get("/:id", isLogged, validateUser, getNewsById);
 

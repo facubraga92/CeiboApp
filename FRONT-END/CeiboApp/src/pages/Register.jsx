@@ -18,35 +18,26 @@ const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (Object.keys(inputs).length === 0) {
-      setIsChanges(false);
-    } else {
-      setIsChanges(true);
-    }
+    Object.keys(inputs).length === 0 ? setIsChanges(false) : setIsChanges(true);
 
-    if (
-      inputs.name &&
+    return inputs.name &&
       inputs.lastName &&
       inputs.email &&
       inputs.password &&
       inputs.confirmPassword &&
       inputs.password === inputs.confirmPassword &&
       isValidEmail(inputs.email)
-    )
-      return setIsChangesOk(true);
-    else {
-      return setIsChangesOk(false);
-    }
-    return;
+      ? setIsChangesOk(true)
+      : setIsChangesOk(false);
   }, [inputs]);
 
   const handleModalDropChanges = () => {
     setInputs({});
-    setShowModal(false);
+    return setShowModal(false);
   };
 
   const handleModalToggle = () => {
-    setShowModal(!showModal);
+    return setShowModal(!showModal);
   };
 
   function isValidEmail(email) {
@@ -55,8 +46,7 @@ const Register = () => {
   }
 
   const handleChange = (event) => {
-    const value = event.target.value;
-    const name = event.target.name;
+    const { name, value } = event.target;
     if (value === "") {
       setInputs((current) => {
         const { [name]: _, ...rest } = current;
@@ -65,6 +55,7 @@ const Register = () => {
     } else {
       return setInputs((values) => ({ ...values, [name]: value }));
     }
+    return;
   };
 
   const handleSubmit = async (e) => {
@@ -98,6 +89,7 @@ const Register = () => {
       pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
       draggable: true, // Hacer arrastrable la notificación
     });
+    return;
   };
 
   const handleCancel = (e) => {

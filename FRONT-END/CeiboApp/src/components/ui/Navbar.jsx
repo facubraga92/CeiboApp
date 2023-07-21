@@ -40,9 +40,9 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="/home">
+        <Link className="navbar-brand" to="/home">
           CeiboApp
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -148,16 +148,14 @@ const Navbar = () => {
               </li>
             )}
           </ul>
-          <div className="">
+          <div>
             {user.email ? (
-              <input
-                className="btn btn-danger"
-                onClick={handleLogout}
-                value={"Logout"}
-              />
+              <button className="btn btn-danger" onClick={handleLogout}>
+                Logout
+              </button>
             ) : (
               <Link to="/">
-                <input className="btn btn-warning" value={"Login"} />
+                <button className="btn btn-warning">Login</button>
               </Link>
             )}
           </div>
