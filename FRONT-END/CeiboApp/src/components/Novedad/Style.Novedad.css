@@ -4,16 +4,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.5
-  ); /* Ajusta el valor alpha para controlar la opacidad del fondo */
-  backdrop-filter: blur(
-    5px
-  ); /* Ajusta el valor del desenfoque, si es necesario */
-  z-index: 1000; /* Asegúrate de que la superposición esté por encima de otros elementos */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
 }
 
 .back-approve {
@@ -25,6 +18,6 @@
 }
 
 .comprimed-chat {
-  height: 300px;
+  max-height: 300px;
   overflow: auto;
 }

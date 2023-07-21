@@ -60,8 +60,12 @@ const Home = () => {
               <div
                 key={index}
                 title={index}
-                className={`row mt-2 d-flex flex-column p-3 bg-light`}
-                style={{ cursor: "pointer" }}
+                className={`row mt-2 d-flex flex-column p-3`}
+                style={{
+                  cursor: "pointer",
+                  backgroundColor: "#F5F5F5",
+                  borderRadius: "10px",
+                }}
                 onClick={() => handleShowDetails(index)}
               >
                 <div>
@@ -71,7 +75,7 @@ const Home = () => {
               {selectedProject === index && (
                 <div className="ml-5 mt-0">
                   {e.news.length > 0 ? (
-                    <div className="table-responsive">
+                    <div className="table-responsive ">
                       <table className="table table-striped table-hover table-sm">
                         <thead className="">
                           <tr className="">
@@ -82,7 +86,10 @@ const Home = () => {
                             <th>Comentarios</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody
+                          style={{ cursor: "pointer" }}
+                          className="container"
+                        >
                           {e.news.map((news, index) => (
                             <Novedad key={index} datos={{ ...news, e }} />
                           ))}

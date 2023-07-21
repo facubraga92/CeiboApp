@@ -170,6 +170,7 @@ exports.approveNews = async (req, res) => {
     const { id } = req.params;
 
     const news = await ProjectNews.findById(id);
+    console.log(news);
 
     if (!news) {
       return res
@@ -177,16 +178,8 @@ exports.approveNews = async (req, res) => {
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (
-      req.user.role !== "manager" ||
-      !news.associatedProject.managers.includes(req.user._id)
-    ) {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
-
     news.state = "aprobada";
     await news.save();
-
     res.status(200).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

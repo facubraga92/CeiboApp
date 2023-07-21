@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Toast } from "react-bootstrap";
 import { Input } from "antd";
 import "./Style.Novedad.css";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const { TextArea } = Input;
 
@@ -116,10 +119,33 @@ export default function Novedad({ datos }) {
     setConfirmModal(!confirmModal);
   };
 
+  const user = useSelector((state) => {
+    return state.user;
+  });
+
   const handleApprove = () => {
     toggleShowConfirmModal();
     extendChat.current.classList.add("comprimed-chat");
     descRef.current.classList.add("text-truncate");
+
+    const call = axios.put(
+      `http://localhost:3000/api/news/${data._id}/approve`,
+      user,
+      {
+        withCredentials: true,
+        credentials: "include",
+      }
+    );
+
+    toast.success(`Novedad Aprobada, notificando a Socios`, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+
     return setData((values) => ({ ...values, ["state"]: "aprobada" }));
   };
 
@@ -144,7 +170,9 @@ export default function Novedad({ datos }) {
       <tr onClick={toggleShowModal}>
         <td>{data.title}</td>
         <td>{data.creationDate.split("T")[0]}</td>
-        <td className="text-truncate">{data.description}</td>
+        <td style={{ maxWidth: "100px" }}>
+          <p className="text-truncate">{data.description}</p>
+        </td>
         <td>{data.state}</td>
         <td>Comentarios: {data.reply.length}</td>
       </tr>
@@ -207,37 +235,50 @@ export default function Novedad({ datos }) {
 
             <div className="comprimed-chat back-normal" ref={extendChat}>
               <ul className="list-unstyled">
-                {data.reply.map((mess, index) => (
-                  <div className="">
-                    <li
-                      key={index}
-                      style={{
-                        backgroundColor: "#d9d7c7",
-                        width: "fit-content",
-                        marginLeft: mess.userId === loggedUserId ? "auto" : "0",
-                      }}
-                      className={`p-3 rounded mb-3 ${
-                        mess.userId === loggedUserId ? "text-right" : "bg-light"
-                      }`}
-                    >
-                      <p className="m-0">{mess.message}</p>
-                      <p className={`small text-muted m-0 font-italic`}>
-                        {mess.userId} - {mess.date}
-                      </p>
-                    </li>
-                  </div>
-                ))}
+                {data.reply.length ? (
+                  data.reply.map((mess, index) => (
+                    <div className="" style={{ backgroundColor: "cornsilk" }}>
+                      <li
+                        key={index}
+                        style={{
+                          backgroundColor: "#d9d7c7",
+                          width: "fit-content",
+                          marginLeft:
+                            mess.userId === loggedUserId ? "auto" : "0",
+                        }}
+                        className={`p-3 rounded mb-3 ${
+                          mess.userId === loggedUserId
+                            ? "text-right"
+                            : "bg-light"
+                        }`}
+                      >
+                        <p className="m-0">{mess.message}</p>
+                        <p className={`small text-muted m-0 font-italic`}>
+                          {mess.userId} - {mess.date}
+                        </p>
+                      </li>
+                    </div>
+                  ))
+                ) : (
+                  <li>
+                    <p className="text-center display-4">
+                      No hay comentarios todavia
+                    </p>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
-          <div className="text-center mt-2">
-            <input
-              type="button"
-              value={"Extender chat"}
-              className="btn btn-info"
-              onClick={handleExtendChat}
-            />
-          </div>
+          {data.reply.length > 4 && (
+            <div className="text-center mt-2">
+              <input
+                type="button"
+                value={"Extender chat"}
+                className="btn btn-info"
+                onClick={handleExtendChat}
+              />
+            </div>
+          )}
           <div className="mt-2">
             {data.state != "aprobada" ? (
               <>
