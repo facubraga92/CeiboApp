@@ -6,13 +6,14 @@ const {
   getAllMembers,
   deleteUser,
   updateUserCustomer,
+  googleVerify,
+  verifyAccount,
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isAdminOrManager = require("../middlewares/isAdminOrManager");
 const isManager = require("../middlewares/isManager");
-
 
 const userRouter = express.Router();
 
@@ -30,10 +31,15 @@ userRouter.get("/me", validateUser, (req, res) => {
   res.status(200).send({ status: "OK", ...req.user });
 });
 
+userRouter.post("/googleVerify", googleVerify);
+
 userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 
 userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 
 userRouter.put("/admin/members/:id", isAdminOrManager, updateUserCustomer);
+
+userRouter.get("/verify-account/:token", verifyAccount);
+
 
 module.exports = userRouter;

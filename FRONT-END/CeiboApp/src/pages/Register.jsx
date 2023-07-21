@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
+import jwt_decode from "jwt-decode";
+import axios from "axios";
+
 const Register = () => {
   const [inputs, setInputs] = useState({});
   const [isChangesOk, setIsChangesOk] = useState(false);
@@ -64,17 +67,26 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    // faltan los llamados a la api para chequear que el usuario no exista y para crearlo en el caso que no exista
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de registro
-    setBloqInputs(true);
-    setTimeout(() => {
-      return navigate("/login");
-    }, 2000);
-    handleToast();
-    return setIsSubmitOk(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        inputs
+      );
+
+      console.log(response.data);
+
+      setBloqInputs(true);
+      setTimeout(() => {
+        return navigate("/login");
+      }, 2000);
+      handleToast();
+      setIsSubmitOk(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleToast = () => {

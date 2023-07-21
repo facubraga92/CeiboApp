@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { message } from "antd";
+
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../state/user";
+
 import { useNavigate } from "react-router-dom";
+
+import { message } from "antd";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+
+import { setGoogleUser, setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
 
 const Login = () => {
@@ -16,6 +21,83 @@ const Login = () => {
   useEffect(() => {
     return setIsFormOk(inputs.email && inputs.password);
   }, [inputs]);
+
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "1084071228016-gr7fc6uvh4hv66lk0ks1d7cfh4mdh3pv.apps.googleusercontent.com",
+      callback: handleCallbackResponse,
+    });
+
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      size: "large",
+    });
+  }, []);
+
+  const handleCallbackResponse = async (response) => {
+    let userObject = jwt_decode(response.credential);
+
+    const nameAsPassword = "12345678A";
+
+    const registerData = {
+      confirmPassword: nameAsPassword,
+      email: userObject.email,
+      lastName: userObject.family_name,
+      name: userObject.given_name,
+      password: nameAsPassword,
+      isValidated: true,
+    };
+
+    try {
+      const googleVerify = await axios.post(
+        "http://localhost:3000/api/users/googleVerify",
+        { email: userObject.email }
+      );
+
+      console.log(googleVerify);
+
+      if (googleVerify.data) {
+        await axios.post(
+          "http://localhost:3000/api/users/login",
+          {
+            email: userObject.email,
+            password: nameAsPassword,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+            credentials: "include",
+          }
+        );
+        dispatch(setGoogleUser(userObject));
+        return navigate("/");
+      } else {
+        await axios.post(
+          "http://localhost:3000/api/users/register",
+          registerData
+        );
+
+        await axios.post(
+          "http://localhost:3000/api/users/login",
+          {
+            email: userObject.email,
+            password: nameAsPassword,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+            credentials: "include",
+          }
+        );
+        dispatch(setGoogleUser(userObject));
+        return navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -32,8 +114,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de inicio de sesión
-    // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
+
     axios
       .post(
         "http://localhost:3000/api/users/login",
@@ -47,7 +128,6 @@ const Login = () => {
         }
       )
       .then((loginResponse) => {
-        // Verificar el token después del inicio de sesión exitoso
         axios
           .get("http://localhost:3000/api/users/me", {
             withCredentials: true,
@@ -67,7 +147,6 @@ const Login = () => {
           })
           .catch((error) => {
             if (error.response && error.response.status === 403) {
-              // El token no es válido
               message.error("El token no es válido. Inicia sesión nuevamente.");
             } else {
               message.error(
@@ -89,11 +168,19 @@ const Login = () => {
     <Layout title="Login">
       <div className="container mt-5 col-12 col-lg-6">
         <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
-          <div className="col text-center">
+          {/* <div className="col text-center">
             <button className="btn btn-primary">
               Iniciar sesión con Google
             </button>
-          </div>
+          </div> */}
+          <div id="signInDiv">{handleCallbackResponse}</div>
+          {/* {user && (
+            <div>
+              <img src={user.picture}></img>
+              <h3>{user.name}</h3>
+            </div>
+          )} */}
+
           <div className="col mt-5 mt-md-0 align-content-center">
             <h2>Iniciar sesión</h2>
             <form onSubmit={handleSubmit} className="">
