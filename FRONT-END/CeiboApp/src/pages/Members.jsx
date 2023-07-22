@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { message, Select, Input } from "antd";
 import Layout from "../components/layouts/Layout";
 import { Button, Modal } from "react-bootstrap";
-
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 const Members = () => {
@@ -54,7 +54,11 @@ const Members = () => {
 
   const handleFilterByAny = (e) => {
     const { value } = e.target;
-    setSearchText(value);
+    if (value == searchText) {
+      setSearchText("");
+    } else {
+      setSearchText(value);
+    }
     if (value == "") return setRoleSearch("");
   };
 
@@ -88,6 +92,8 @@ const Members = () => {
             return member;
           })
         );
+
+        handleToast();
       })
       .catch((error) => {
         console.log(error);
@@ -132,6 +138,18 @@ const Members = () => {
   const handleSelectSearch = (e) => {
     setRoleSearch(e);
     setSearchText(e);
+  };
+
+  const handleToast = () => {
+    toast.success("Cambios aceptados", {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+    });
+    return;
   };
 
   return (
