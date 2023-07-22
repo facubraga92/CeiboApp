@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
@@ -11,15 +12,36 @@ export default function Profile() {
   const [disabled, setDisabled] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
+
   const user = useSelector((state) => state.user);
-  const [initialState, setInitialState] = useState({
-    name: user.name,
-    lastName: user.lastName,
-    email: user.email,
-  });
+  const navigate = useNavigate();
+
+  const [initialState, setInitialState] = useState({});
   const [inputs, setInputs] = useState(initialState);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const handle = async function () {
+      let call = await axios
+        .get(`http://localhost:3000/api/users/admin/members/${user.id}`, {
+          withCredentials: true,
+          credentials: "include",
+        })
+        .then((e) => {
+          const { email, lastName, name } = e.data;
+          setInitialState({
+            email,
+            name,
+            lastName,
+          });
+        });
+    };
+    handle();
+  }, []);
+
+  useEffect(() => {
+    setInputs(initialState);
+  }, [initialState]);
+
   useEffect(() => {
     return setIsChanges(
       JSON.stringify(inputs) !== JSON.stringify(initialState)
@@ -56,6 +78,16 @@ export default function Profile() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    let call = await axios.put(
+      `http://localhost:3000/api/users/admin/members/${user.id}`,
+      inputs,
+      {
+        withCredentials: true,
+        credentials: "include",
+      }
+    );
+
     setDisabled(true);
     setInitialState(inputs);
     setIsChanges(false);
@@ -92,13 +124,13 @@ export default function Profile() {
   };
 
   const handleToast = () => {
-    toast.success("Cambios guardados", {
-      position: "top-right", // Posición de la notificación
-      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
-      hideProgressBar: false, // Mostrar la barra de progreso
-      closeOnClick: true, // Cerrar al hacer clic en la notificación
-      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
-      draggable: true, // Hacer arrastrable la notificación
+    toast.success("Cambios aceptados", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
     });
     return;
   };
