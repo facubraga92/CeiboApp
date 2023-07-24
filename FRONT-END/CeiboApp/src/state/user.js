@@ -11,6 +11,7 @@ export const userInitialState = {
   role: null,
   associatedCustomers: null,
   isValidated: false,
+  picture: null,
 };
 
 export const userReducer = createReducer(userInitialState, (builder) => {
@@ -25,6 +26,7 @@ export const userReducer = createReducer(userInitialState, (builder) => {
         role: "socio",
         associatedCustomers: null,
         isValidated: true,
+        picture: action.payload.picture,
       };
     });
 });

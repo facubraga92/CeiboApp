@@ -37,7 +37,7 @@ const Login = () => {
   }, []);
 
   const handleCallbackResponse = async (response) => {
-    let userObject = jwt_decode(response.credential);
+    let userObject = await jwt_decode(response.credential);
 
     const nameAsPassword = "12345678A";
 
@@ -48,6 +48,7 @@ const Login = () => {
       name: userObject.given_name,
       password: nameAsPassword,
       isValidated: true,
+      picture: userObject.picture,
     };
 
     try {
@@ -55,8 +56,6 @@ const Login = () => {
         "http://localhost:3000/api/users/googleVerify",
         { email: userObject.email }
       );
-
-      console.log(googleVerify);
 
       if (googleVerify.data) {
         await axios.post(
