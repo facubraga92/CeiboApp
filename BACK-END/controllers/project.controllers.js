@@ -46,7 +46,7 @@ const createOneProject = async (req, res) => {
       { $push: { associatedProjects: projectId } }
     );
 
-    res.status(201).send("Proyecto creado con éxito!");
+    res.status(201).send(projectId);
   } catch (error) {
     // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
