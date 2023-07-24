@@ -30,3 +30,20 @@ export const useCredentials = {
   withCredentials: true,
   credentials: "include",
 };
+
+/*
+
+const handleChange = (event) => {
+  const { name, value } = event.target;
+  if (value === "") {
+    setInputs((current) => {
+      const { [name]: _, ...rest } = current;
+      return rest;
+    });
+  } else {
+    return setInputs((values) => ({ ...values, [name]: value }));
+  }
+  return;
+};
+
+*/
