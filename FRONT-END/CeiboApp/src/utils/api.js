@@ -6,7 +6,6 @@ export const userMe = async () => {
       withCredentials: true,
       credentials: "include",
     });
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error al obtener el usuario:", error);
@@ -25,3 +24,8 @@ const [user, setUser] = useState(null);
   }, []);
   
 */
+
+export const useCredentials = {
+  withCredentials: true,
+  credentials: "include",
+};

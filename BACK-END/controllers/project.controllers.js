@@ -1,5 +1,9 @@
+const mongoose = require("mongoose");
+
 const projectModel = require("../schemas/Project");
 const customerModel = require("../schemas/Customer");
+const userModel = require("../schemas/User");
+
 const getAllProjects = async (req, res) => {
   try {
     const projects = await projectModel.find();
@@ -10,15 +14,19 @@ const getAllProjects = async (req, res) => {
   }
 };
 
-const getProjectsUser = async (req, res) => {
+const getProjectsByUserId = async (req, res) => {
   try {
-    const userId = req.body.id;
+    const { id } = req.params;
+    const user = await userModel.findById(id);
 
     const projects = await projectModel.find({
-      $expr: {
-        $or: [{ $in: [userId, "$consultors"] }, { $in: [userId, "$managers"] }],
-      },
+      $or: [
+        { managers: user._id },
+        { consultors: user._id },
+        { customer: user._id },
+      ],
     });
+
     res.json(projects);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -125,5 +133,5 @@ module.exports = {
   getAllProjects,
   getOneProject,
   createOneProject,
-  getProjectsUser,
+  getProjectsByUserId,
 };

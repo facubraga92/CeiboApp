@@ -7,6 +7,7 @@ const projectSchema = new mongoose.Schema({
   customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
   consultors: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   managers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  news: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProjectNews" }],
 });
 
 const projectModel = mongoose.model("Project", projectSchema);

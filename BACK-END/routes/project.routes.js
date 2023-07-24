@@ -6,16 +6,17 @@ const {
   getAllProjects,
   getOneProject,
   createOneProject,
-  getProjectsUser,
+  getProjectsByUserId,
 } = require("../controllers/project.controllers");
+const isLogged = require("../middlewares/isLogged");
 const isManager = require("../middlewares/isManager");
 
-projectRouter.get("/getAll", getAllProjects);
+projectRouter.get("/getAll", isLogged, getAllProjects);
 
-projectRouter.post("/getProjectsUser", getProjectsUser);
+projectRouter.get("/getProjectsUser/:id", isLogged, getProjectsByUserId);
 
 projectRouter.post("/create", isManager, createOneProject);
 
-projectRouter.get("/getOne/:id", getOneProject);
+projectRouter.get("/getOne/:id", isLogged, getOneProject);
 
 module.exports = projectRouter;

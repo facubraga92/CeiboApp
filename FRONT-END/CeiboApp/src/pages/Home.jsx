@@ -4,55 +4,40 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
+import { useCredentials, userMe } from "../utils/api";
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
-  const [data, setData] = useState([]);
   const [selectedProject, setSelectedProject] = useState(-1);
-
-  const user = useSelector((state) => {
-    return state.user;
-  });
-  const userId = user;
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const handle = async () => {
+      const user = await userMe();
+      return setUser(user);
+    };
+    handle();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
     axios
-      .post("http://localhost:3000/api/projects/getProjectsUser", user)
+      .get(
+        `http://localhost:3000/api/projects/getProjectsUser/${user.id}`,
+        useCredentials
+      )
       .then((project) => {
         setProjects(project.data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      const promises = projects.map(async (proyecto) => {
-        const response = await axios.get(
-          `http://localhost:3000/api/news/newsProject/${proyecto._id}`,
-          {
-            withCredentials: true,
-            credentials: "include",
-          }
-        );
-        return { project: proyecto, news: response.data };
-      });
-
-      const results = await Promise.all(promises);
-      setData(results);
-    };
-
-    if (projects.length > 0) {
-      fetchNews();
-    }
-  }, [projects]);
+  }, [user]);
 
   const handleShowDetails = (index) => {
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
-  if (user.role != "manager") return <Layout></Layout>;
   return (
     <Layout title="Home">
       <div className="container col-sm-12 col-md-6">
@@ -67,10 +52,9 @@ const Home = () => {
         </div>
 
         <div className="">
-          {data.map((e, index) => (
+          {projects.map((e, index) => (
             <>
               <div>
-                {console.log(e)}
                 <div
                   key={index}
                   title={index}
@@ -87,10 +71,10 @@ const Home = () => {
                       className="mr-4 text-truncate"
                       style={{ maxWidth: "250px" }}
                     >
-                      {e.project.name}
+                      {e.name}
                     </strong>
                     <p className="text-truncate" style={{ width: "20em" }}>
-                      {e.project.description}
+                      {e.description}
                     </p>
                   </div>
                   <div>
