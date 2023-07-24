@@ -9,6 +9,7 @@ const {
   googleVerify,
   verifyAccount,
   getMemberById,
+  getMembersByRole,
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
@@ -33,6 +34,8 @@ userRouter.get("/me", validateUser, (req, res) => {
 });
 
 userRouter.post("/googleVerify", googleVerify);
+
+userRouter.get("/admin/:rol", isAdminOrManager, getMembersByRole);
 
 userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
 

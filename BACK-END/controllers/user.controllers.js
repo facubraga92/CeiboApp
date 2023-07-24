@@ -209,6 +209,17 @@ const getMemberById = async (req, res) => {
   }
 };
 
+const getMembersByRole = async (req, res) => {
+  const { rol } = req.params;
+
+  try {
+    const users = await userModel.find({ role: rol });
+    return res.status(200).send(users);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
 module.exports = {
   userRegister,
   loginUser,
@@ -219,4 +230,5 @@ module.exports = {
   googleVerify,
   verifyAccount,
   getMemberById,
+  getMembersByRole,
 };
