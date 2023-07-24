@@ -3,6 +3,7 @@ import axios from "axios";
 import Select from "react-select";
 import { message } from "antd";
 import Layout from "../components/layouts/Layout";
+import { useCredentials } from "../utils/api";
 
 const ProjectForm = () => {
   const [name, setName] = useState("");
@@ -73,11 +74,11 @@ const ProjectForm = () => {
       managers: managers.map((manager) => manager.value._id),
     };
     axios
-      .post("http://localhost:3000/api/projects/create", project, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-        credentials: "include",
-      })
+      .post(
+        "http://localhost:3000/api/projects/create",
+        project,
+        useCredentials
+      )
       .then((response) => {
         // Manejar la respuesta del servidor
         message.success(response.data);

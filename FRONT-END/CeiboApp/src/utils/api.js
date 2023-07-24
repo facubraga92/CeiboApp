@@ -26,6 +26,7 @@ const [user, setUser] = useState(null);
 */
 
 export const useCredentials = {
+  headers: { "Content-Type": "application/json" },
   withCredentials: true,
   credentials: "include",
 };
