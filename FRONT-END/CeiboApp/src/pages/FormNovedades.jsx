@@ -8,7 +8,6 @@ import { Select, DatePicker, Spin } from "antd";
 import moment from "moment";
 import axios from "axios";
 import { useCredentials, userMe } from "../utils/api";
-
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
