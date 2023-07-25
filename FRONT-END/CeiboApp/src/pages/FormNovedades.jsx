@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { Select, DatePicker } from "antd";
+import { Select, DatePicker, Spin } from "antd";
+import moment from "moment";
+import axios from "axios";
+import { useCredentials, userMe } from "../utils/api";
 
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
  */
 export default function FormNovedades() {
+  const params = useParams();
+
   const [selectedOption, setSelectedOption] = useState(1);
   const [selectInput, setSelectInput] = useState("default");
   const [inputs, setInputs] = useState({
-    prioridad: "1",
-    date: new Date().toISOString().split("T")[0],
+    priority: "1",
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
@@ -23,11 +27,57 @@ export default function FormNovedades() {
   const [isChangesOk, setIsChangesOk] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
 
+  const [project, setProject] = useState({});
+
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const handle = async () => {
+      const user = await userMe();
+      return setUser(user);
+    };
+    handle();
+  }, []);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        axios
+          .get(
+            `http://localhost:3000/api/projects/project/${params.idProject}`,
+            useCredentials
+          )
+          .then((response) => {
+            setProject(response.data);
+            handleChange({
+              target: {
+                name: "associatedProject",
+                value: project._id,
+              },
+            });
+            handleChange({
+              target: {
+                name: "userId",
+                value: user.id,
+              },
+            });
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProject();
+  }, [user]);
 
   useEffect(() => {
     setIsChangesOk(
-      Object.keys(inputs).length > 1 && inputs.detalles && inputs.tipoNovedad
+      Object.keys(inputs).length > 1 &&
+        inputs.description &&
+        inputs.type &&
+        inputs.week &&
+        inputs.title
     );
     console.log(inputs);
   }, [inputs]);
@@ -41,34 +91,9 @@ export default function FormNovedades() {
   const handleOptionChange = (event) => {
     const selectedValue = parseInt(event.target.value);
     setSelectedOption(selectedValue);
-
-    if (selectedValue) {
-      for (let i = 1; i <= selectedValue; i++) {
-        document.getElementById(`checkbox-${i}`).checked = true;
-      }
+    for (let i = 1; i <= selectedValue; i++) {
+      document.getElementById(`checkbox-${i}`).checked = true;
     }
-    return;
-  };
-
-  /**
-   * Maneja el cambio en los campos del formulario.
-   * Actualiza el estado correspondiente según el campo modificado.
-   *
-   * @param {Event} event - Evento del cambio en los campos del formulario.
-   */
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (value === "") {
-      setInputs((current) => {
-        const { [name]: _, ...rest } = current;
-        return rest;
-      });
-    } else {
-      if (name == "tipoNovedad") setSelectInput(value);
-      if (name == "prioridad") handleOptionChange(event);
-      return setInputs((values) => ({ ...values, [name]: value }));
-    }
-    return;
   };
 
   /**
@@ -77,8 +102,19 @@ export default function FormNovedades() {
    *
    * @param {Event} event - Evento del envío del formulario.
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    try {
+      await axios.post(
+        `http://localhost:3000/api/projects/project/addNews/${params.idProject}`,
+        inputs,
+        useCredentials
+      );
+    } catch (error) {
+      return console.log(error);
+    }
+
     setFormSubmitted(true);
     if (selectInput === "default") return setFormSubmitted(false);
 
@@ -91,7 +127,6 @@ export default function FormNovedades() {
       pauseOnHover: true,
       draggable: true,
     });
-
     // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para crear novedades
     return setTimeout(() => {
       return navigate("/home");
@@ -122,6 +157,32 @@ export default function FormNovedades() {
     setShowModal(false);
   };
 
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * Actualiza el estado correspondiente según el campo modificado.
+   *
+   * @param {Event} event - Evento del cambio en los campos del formulario.
+   */
+  const handleChange = (event) => {
+    const { name, value } = event?.target;
+    if (value === "") {
+      setInputs((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      if (name == "type") setSelectInput(value);
+      if (name == "priority") handleOptionChange(event);
+      return setInputs((values) => ({ ...values, [name]: value }));
+    }
+    return;
+  };
+
+  const customWeek = (value) => {
+    const weekOfYear = moment(value).isoWeek();
+    return `S:${weekOfYear} ${moment(value).format("MM/YYYY")}`;
+  };
+
   return (
     <Layout title={"Crear Novedad"}>
       <div className="mt-0 p-4 mt-md-4">
@@ -129,48 +190,62 @@ export default function FormNovedades() {
           <div className="container col-sm-12 col-md-8 col-lg-6">
             <div className="d-flex flex-wrap flex-md-nowrap justify-content-between mb-0 mb-md-4">
               <div>
-                <h5>Nombre_Proyecto</h5>
-                <h2>Proyecto_XXXXXXXX</h2>
+                {project.name ? (
+                  <>
+                    <h5>{project.name}</h5>
+                    <h2>{project.description || project.name}</h2>
+                  </>
+                ) : (
+                  <Spin />
+                )}
               </div>
               <div>
-                <input
-                  className="form-control"
-                  type="date"
-                  name="date"
-                  id="date"
-                  onChange={handleChange}
-                  value={inputs.date}
+                <DatePicker
+                  placeholder="Semana . . ."
+                  format="S:Wo MM/YYYY"
+                  picker="week"
+                  valueRender={customWeek}
+                  size="large"
+                  onChange={(e) => {
+                    handleChange({
+                      target: {
+                        name: "week",
+                        value: e?.week() ? e?.week() : "",
+                      },
+                    });
+                  }}
                 />
               </div>
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="detalles">Detalles</label>
-                <textarea
+                <label htmlFor="title">Titulo</label>
+                <input
                   type="text"
                   className="form-control"
-                  id="detalles"
-                  name="detalles"
+                  id="title"
+                  name="title"
                   rows={4}
-                  placeholder="Detalles acerca de la novedad"
-                  value={inputs.detalles || ""}
+                  placeholder="Titulo de la novedad"
+                  value={inputs.title || ""}
                   onChange={handleChange}
                   required
                   disabled={!isEditable || formSubmitted}
                 />
               </div>
-
               <div className="form-group">
-                <label htmlFor="comentarios">Comentarios</label>
-                <input
+                <label htmlFor="detalles">Detalles</label>
+                <textarea
                   type="text"
                   className="form-control"
-                  id="comentarios"
-                  name="comentarios"
-                  placeholder="Comentarios de la novedad"
-                  value={inputs.comentarios || ""}
+                  id="detalles"
+                  name="description"
+                  rows={4}
+                  placeholder="Detalles acerca de la novedad"
+                  value={inputs.description || ""}
                   onChange={handleChange}
+                  required
                   disabled={!isEditable || formSubmitted}
                 />
               </div>
@@ -183,7 +258,7 @@ export default function FormNovedades() {
                     onChange={(e) => {
                       const res = {
                         target: {
-                          name: "tipoNovedad",
+                          name: "type",
                           value: e,
                         },
                       };
@@ -192,7 +267,7 @@ export default function FormNovedades() {
                     }}
                     className=""
                     defaultValue="Seleccione un tipo de novedad"
-                    value={inputs.tipoNovedad || ""}
+                    value={inputs.type || ""}
                     options={[
                       {
                         value: "Seleccione un tipo de novedad",
@@ -223,7 +298,7 @@ export default function FormNovedades() {
                     <input
                       type="checkbox"
                       id={`checkbox-${option}`}
-                      name="prioridad"
+                      name="priority"
                       value={option}
                       checked={selectedOption >= option}
                       onChange={handleChange}

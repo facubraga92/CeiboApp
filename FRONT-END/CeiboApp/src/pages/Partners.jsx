@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Input, message } from "antd";
+import { Input, Spin, message } from "antd";
 import Select from "react-select";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
@@ -221,7 +221,7 @@ const Partners = () => {
               <tbody>
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No hay resultados para esta búsqueda.
+                    <Spin size="large" />
                   </td>
                 </tr>
               </tbody>

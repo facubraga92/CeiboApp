@@ -10,7 +10,15 @@ const projectNewsSchema = new mongoose.Schema({
     enum: ["pendiente", "aprobada", "modificada"],
     default: "pendiente",
   },
-  creationDate: { type: Date, default: Date.now },
+  created_at: {
+    type: Date,
+    default: Date.now,
+    setDefaultsOnInsert: true,
+  },
+  modified_at: { type: Date, default: Date.now },
+  week: { type: Number },
+  priority: { type: Number },
+  type: { type: String },
   reply: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

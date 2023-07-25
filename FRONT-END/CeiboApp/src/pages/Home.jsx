@@ -78,7 +78,7 @@ const Home = () => {
                     </p>
                   </div>
                   <div>
-                    <Link to={"/formNovedades"}>
+                    <Link to={`/project/addNews/${e._id}`}>
                       <input type="button" value="+" className="btn btn-info" />
                     </Link>
                   </div>

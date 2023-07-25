@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const projectModel = require("../schemas/Project");
 const customerModel = require("../schemas/Customer");
 const userModel = require("../schemas/User");
+const projectNews = require("../schemas/ProjectNews");
 
 const getAllProjects = async (req, res) => {
   try {
@@ -116,10 +117,9 @@ const updateOneProject = async (req, res) => {
 };
 
 const getOneProject = async (req, res) => {
+  const { id } = req.params;
   try {
-    const project = await projectModel
-      .findById(req.params.id)
-      .populate("name description code customer consultors managers");
+    const project = await projectModel.findById(id);
     if (project == null) {
       return res.status(404).json({ message: "Proyecto no encontrado" });
     }
@@ -129,9 +129,32 @@ const getOneProject = async (req, res) => {
   }
 };
 
+const addNewsToProjectById = async (req, res) => {
+  try {
+    const { idProject } = req.params;
+    const newsToCreate = req.body;
+    const news = await projectNews.create(newsToCreate);
+    const newNewsId = news._id;
+
+    const project = await projectModel.findByIdAndUpdate(
+      idProject,
+      {
+        $push: { news: newNewsId },
+        $set: { modified_at: new Date() },
+      },
+      { new: true }
+    );
+
+    return res.send(project);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   getAllProjects,
   getOneProject,
   createOneProject,
   getProjectsByUserId,
+  addNewsToProjectById,
 };

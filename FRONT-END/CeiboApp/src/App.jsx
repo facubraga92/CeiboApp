@@ -76,7 +76,11 @@ function App() {
         <Route path="/" element={<ProtectedRoute onlyContributor />}>
           {user.isValidated ? (
             <>
-              <Route path="/formNovedades" exact element={<FormNovedades />} />
+              <Route
+                path="/project/addNews/:idProject"
+                exact
+                element={<FormNovedades />}
+              />
               <Route path="/home" exact element={<Home />} />
             </>
           ) : (
