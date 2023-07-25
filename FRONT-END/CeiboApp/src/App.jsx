@@ -59,7 +59,6 @@ function App() {
                   exact
                   element={<FormNovedades />}
                 />
-                <Route path="/home" exact element={<Home />} />
               </Route>
             </>
           ) : (
