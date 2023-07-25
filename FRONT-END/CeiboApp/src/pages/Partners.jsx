@@ -3,6 +3,7 @@ import axios from "axios";
 import { Input, message } from "antd";
 import Select from "react-select";
 import Layout from "../components/layouts/Layout";
+import { useCredentials } from "../utils/api";
 
 const Partners = () => {
   const [partners, setPartners] = useState([]);
@@ -13,10 +14,7 @@ const Partners = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/users/admin/members", {
-        withCredentials: true,
-        credentials: "include",
-      })
+      .get("http://localhost:3000/api/users/admin/socio", useCredentials)
       .then((response) => {
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
@@ -31,11 +29,7 @@ const Partners = () => {
         setFilteredPartners(sortedPartners);
       });
     axios
-      .get("http://localhost:3000/api/customers/all", {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-        credentials: "include",
-      })
+      .get("http://localhost:3000/api/customers/all", useCredentials)
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
           if (a.name && b.name) {
