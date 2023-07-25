@@ -1,28 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { userMe } from "../../utils/api";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-  const user = useSelector((state) => state.user);
 
   const isLogin = location.pathname === "/login";
   const isRegister = location.pathname === "/register";
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/users/me", {
-        withCredentials: true,
-        credentials: "include",
-      })
-      .then((response) => {
-        dispatch(setUser(response.data));
-      });
+    const handle = async () => {
+      const user = await userMe();
+      return setUser(user);
+    };
+    handle();
   }, []);
 
   const handleLogout = () => {
@@ -37,17 +36,18 @@ const Navbar = () => {
         navigate("/login");
       });
   };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container">
+      <div className="container col-12">
         <Link className="navbar-brand" to="/home">
           CeiboApp
         </Link>
         <button
           className="navbar-toggler"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
+          data-toggle="collapse"
+          data-target="#navbarNav"
           aria-controls="navbarNav"
           aria-expanded="false"
           aria-label="Toggle navigation"
@@ -61,12 +61,12 @@ const Navbar = () => {
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link to="/home" className="nav-link">
-                {user.role === "manager" ? "Home" : "Inicio"}
+                {user?.role === "manager" ? "Proyectos" : "Inicio"}
               </Link>
             </li>
-            {user.email ? (
+            {user?.email ? (
               <>
-                {user.role === "admin" && (
+                {user?.role === "admin" && (
                   <>
                     <li className="nav-item">
                       <Link to="/admin/members" className="nav-link">
@@ -81,14 +81,8 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user.role === "manager" && (
+                {user?.role === "manager" && (
                   <>
-                    <li className="nav-item">
-                      <Link to="/projects/add" className="nav-link">
-                        Crear Proyecto
-                      </Link>
-                    </li>
-
                     <li className="nav-item">
                       <Link to="/partners" className="nav-link">
                         Socios
@@ -102,7 +96,7 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user.role === "consultor" && (
+                {user?.role === "consultor" && (
                   <>
                     <li>
                       <Link to="/formNovedades" className="nav-link">
@@ -117,7 +111,7 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user.role === "socio" && (
+                {user?.role === "socio" && (
                   <>
                     <li>
                       <Link to="/home" className="nav-link">
@@ -149,7 +143,7 @@ const Navbar = () => {
             )}
           </ul>
           <div>
-            {user.email ? (
+            {user?.email ? (
               <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
               </button>

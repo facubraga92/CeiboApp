@@ -197,6 +197,29 @@ const googleVerify = async (req, res) => {
     return res.status(500).send("Error al verificar el correo electrónico.");
   }
 };
+
+const getMemberById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findById(id);
+    return res.send(user);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getMembersByRole = async (req, res) => {
+  const { rol } = req.params;
+
+  try {
+    const users = await userModel.find({ role: rol });
+    return res.status(200).send(users);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
 module.exports = {
   userRegister,
   loginUser,
@@ -206,4 +229,6 @@ module.exports = {
   updateUserCustomer,
   googleVerify,
   verifyAccount,
+  getMemberById,
+  getMembersByRole,
 };
