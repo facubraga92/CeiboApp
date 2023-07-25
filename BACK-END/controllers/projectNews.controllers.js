@@ -107,7 +107,6 @@ exports.getNewsById = async (req, res) => {
 exports.updateNews = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("BOASDASD");
     const { title, description, userId, message, date } = req.body;
 
     const news = await ProjectNews.findById(id);
@@ -191,7 +190,8 @@ exports.approveNews = async (req, res) => {
 exports.addCommentToNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId, message, date } = req.body;
+    const { userId, message } = req.body;
+
     const news = await ProjectNews.findById(id);
 
     if (!news) {
@@ -203,11 +203,12 @@ exports.addCommentToNews = async (req, res) => {
     const newComment = {
       userId,
       message,
-      date,
     };
 
     news.reply.push(newComment);
     await news.save();
+
+    res.json({ success: true, message: "Comentario agregado correctamente" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

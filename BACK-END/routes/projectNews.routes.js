@@ -20,9 +20,9 @@ router.get("/", isLogged, validateUser, getAllNews);
 
 router.get("/newsProject/:id", isLogged, getNewsProyect);
 
-router.get("/:id", isLogged, validateUser, getNewsById);
+router.get("/:id", isLogged, getNewsById);
 
-router.put("/:id", isLogged, validateUser, updateNews);
+router.put("/:id", isLogged, validateUser, addCommentToNews);
 
 router.delete("/:id", isLogged, validateUser, deleteNews);
 

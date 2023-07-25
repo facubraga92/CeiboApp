@@ -21,7 +21,7 @@ const projectNewsSchema = new mongoose.Schema({
   type: { type: String },
   reply: [
     {
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      userId: { type: String },
       message: String,
       date: { type: Date, default: Date.now },
     },

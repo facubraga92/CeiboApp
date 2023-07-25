@@ -135,7 +135,6 @@ const addNewsToProjectById = async (req, res) => {
     const newsToCreate = req.body;
     const news = await projectNews.create(newsToCreate);
     const newNewsId = news._id;
-
     const project = await projectModel.findByIdAndUpdate(
       idProject,
       {

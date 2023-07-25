@@ -5,79 +5,24 @@ import "./Style.Novedad.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useCredentials } from "../../utils/api";
 
 const { TextArea } = Input;
 
-export default function Novedad({ datos }) {
-  const [data, setData] = useState({
-    title: "TITULO_NOVEDAD",
-    description:
-      "esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando. esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando. esta es la descripcion completa de la novedad, vamos agregando texto para hacer lugar y ver como va quedando",
-    userId: "6FFSDFASDRREHREASDA",
-    associatedProject: "PROYECTO_XXX",
-    state: "pendiente",
-    creationDate: "19/07/2023",
-    reply: [
-      {
-        userId: "ceibo@ceibo.digital",
-        message: "este es un mensajito de prueba vamo viendo que onda",
-        date: "19/07/2023",
-      },
-      {
-        userId: "ceibo@ceibo.digital",
-        message:
-          "este es un mensajito de prueba vamo viendo que ondaeste es un mensajito de prueba vamo viendo que ondaeste es un mensajito de prueba vamo viendo que ondaeste es un mensajito de prueba vamo viendo que ondaeste es un mensajito de prueba vamo viendo que onda",
-        date: "19/07/2023",
-      },
-      {
-        userId: "admin@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "consultor@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "ceibo@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "admin@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "8888DASDASDAS",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "ceibo@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-      {
-        userId: "ceibo@ceibo.digital",
-        message: "MENSAJE",
-        date: "19/07/2023",
-      },
-    ],
-  });
+export default function Novedad({ idNews }) {
+  const [data, setData] = useState({});
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
   useEffect(() => {
-    if (datos) {
-      datos.reply.map((r) => {
-        const { userId } = r;
-      });
-      setData(datos);
-    }
-  }, []);
+    axios
+      .get(`http://localhost:3000/api/news/${idNews}`, useCredentials)
+      .then((result) => {
+        setData(result.data.data);
+      })
+      .catch((err) => {});
+  }, [idNews]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,11 +49,11 @@ export default function Novedad({ datos }) {
       reply: [...data.reply, newReply],
     };
 
-    await axios.put(`http://localhost:3000/api/news/${data._id}`, newReply, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
-      credentials: "include",
-    });
+    await axios.put(
+      `http://localhost:3000/api/news/${data._id}`,
+      newReply,
+      useCredentials
+    );
 
     setInputs({});
     setData(updatedFakeData);
@@ -135,10 +80,7 @@ export default function Novedad({ datos }) {
     const call = axios.put(
       `http://localhost:3000/api/news/${data._id}/approve`,
       user,
-      {
-        withCredentials: true,
-        credentials: "include",
-      }
+      useCredentials
     );
 
     toast.success(`Novedad Aprobada, notificando a Socios`, {
@@ -173,12 +115,12 @@ export default function Novedad({ datos }) {
     <>
       <tr onClick={toggleShowModal}>
         <td>{data.title}</td>
-        <td>{data.creationDate.split("T")[0]}</td>
+        <td>{data?.created_at?.split("T")[0]}</td>
         <td style={{ maxWidth: "100px" }}>
-          <p className="text-truncate">{data.description}</p>
+          <p className="text-truncate">{data?.description}</p>
         </td>
-        <td>{data.state}</td>
-        <td>Comentarios: {data.reply.length}</td>
+        <td>{data?.state}</td>
+        <td>Comentarios: {data?.reply?.length}</td>
       </tr>
       <Modal
         show={showModal}
@@ -211,7 +153,7 @@ export default function Novedad({ datos }) {
                 <>
                   <input
                     type="button"
-                    value={`Estado: ${data.state}`}
+                    value={`Estado: ${data?.state}`}
                     className="btn btn-outline-warning p-3 text-uppercase"
                     onClick={toggleShowConfirmModal}
                   />
@@ -220,7 +162,7 @@ export default function Novedad({ datos }) {
                 <p className="display-4">
                   Estado:{" "}
                   <span className="bg-warning text-uppercase">
-                    {data.state}
+                    {data?.state}
                   </span>
                 </p>
               )}
@@ -231,17 +173,20 @@ export default function Novedad({ datos }) {
                 ref={descRef}
                 onClick={handleDesc}
               >
-                {data.description}
+                {data?.description}
               </p>
             </div>
 
             <hr className="" />
 
-            <div className="comprimed-chat back-normal" ref={extendChat}>
+            <div
+              className="comprimed-chat back-normal bg-secondary p-1"
+              ref={extendChat}
+            >
               <ul className="list-unstyled">
-                {data.reply.length ? (
-                  data.reply.map((mess, index) => (
-                    <div className="" style={{ backgroundColor: "cornsilk" }}>
+                {data?.reply?.length ? (
+                  data?.reply?.map((mess, index) => (
+                    <div className="">
                       <li
                         key={index}
                         style={{
@@ -255,7 +200,7 @@ export default function Novedad({ datos }) {
                       >
                         <p className="m-0">{mess.message}</p>
                         <p className={`small text-muted m-0 font-italic`}>
-                          {mess.userId} - {mess.date}
+                          {mess.userId} - {mess.date.split("T")[0]}
                         </p>
                       </li>
                     </div>
@@ -270,7 +215,7 @@ export default function Novedad({ datos }) {
               </ul>
             </div>
           </div>
-          {data.reply.length > 4 && (
+          {data?.reply?.length > 4 && (
             <div className="text-center mt-2">
               <input
                 type="button"
@@ -290,6 +235,7 @@ export default function Novedad({ datos }) {
                   value={inputs.message || ""}
                   onChange={handleChange}
                   name="message"
+                  onPressEnter={inputs.message ? handleSubmit : ""}
                 />
                 <Button
                   variant="primary mt-2"
