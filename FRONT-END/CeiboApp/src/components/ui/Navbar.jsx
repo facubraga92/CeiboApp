@@ -5,6 +5,7 @@ import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userMe } from "../../utils/api";
+import { envs } from "../../config/env/env.config";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -16,6 +17,8 @@ const Navbar = () => {
   const isLogin = location.pathname === "/login";
   const isRegister = location.pathname === "/register";
 
+  const { VITE_BACKEND_URL } = envs;
+
   useEffect(() => {
     const handle = async () => {
       const user = await userMe();
@@ -26,7 +29,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     axios
-      .post("http://localhost:3000/api/users/logout", null, {
+      .post(`${VITE_BACKEND_URL}/users/logout`, null, {
         withCredentials: true,
         credentials: "include",
       })
@@ -100,7 +103,7 @@ const Navbar = () => {
                   <>
                     <li>
                       <Link to="/formNovedades" className="nav-link">
-                        Crear Novedadd
+                        Crear Novedad
                       </Link>
                     </li>
 

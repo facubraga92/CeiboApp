@@ -54,13 +54,13 @@ const Login = () => {
 
     try {
       const googleVerify = await axios.post(
-        "http://localhost:3000/api/users/googleVerify",
+        `${VITE_BACKEND_URL}/users/googleVerify`,
         { email: userObject.email }
       );
 
       if (googleVerify.data) {
         await axios.post(
-          "http://localhost:3000/api/users/login",
+          `${VITE_BACKEND_URL}/users/login`,
           {
             email: userObject.email,
             password: nameAsPassword,
@@ -75,12 +75,12 @@ const Login = () => {
         return navigate("/home");
       } else {
         await axios.post(
-          "http://localhost:3000/api/users/register",
+          `${VITE_BACKEND_URL}/users/register`,
           registerData
         );
 
         await axios.post(
-          "http://localhost:3000/api/users/login",
+          `${VITE_BACKEND_URL}/users/login`,
           {
             email: userObject.email,
             password: nameAsPassword,
@@ -129,7 +129,7 @@ const Login = () => {
       )
       .then((loginResponse) => {
         axios
-          .get("http://localhost:3000/api/users/me", {
+          .get(`${VITE_BACKEND_URL}/users/me`, {
             withCredentials: true,
             credentials: "include",
           })

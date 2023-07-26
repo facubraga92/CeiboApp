@@ -5,16 +5,19 @@ import { message } from "antd";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { envs } from "../config/env/env.config";
 
 const ProjectForm = () => {
   const [membersList, setMembersList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
   const [inputs, setInputs] = useState({});
 
+  const { VITE_BACKEND_URL } = envs;
+
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/users/admin/members", useCredentials)
+      .get(`${VITE_BACKEND_URL}/users/admin/members`, useCredentials)
       .then((response) => {
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
@@ -26,7 +29,7 @@ const ProjectForm = () => {
       });
 
     axios
-      .get("http://localhost:3000/api/customers/all", useCredentials)
+      .get(`${VITE_BACKEND_URL}/customers/all`, useCredentials)
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
           if (a.name && b.name) {
@@ -42,7 +45,7 @@ const ProjectForm = () => {
     e.preventDefault();
 
     axios
-      .post("http://localhost:3000/api/projects/create", inputs, useCredentials)
+      .post(`${VITE_BACKEND_URL}/projects/create`, inputs, useCredentials)
       .then((response) => {
         message.success(`Proyecto ${inputs.name} creado!`);
         // Restablecer los campos del formulario

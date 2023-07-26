@@ -6,6 +6,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useCredentials } from "../../utils/api";
+import { envs } from "../../config/env/env.config";
 
 const { TextArea } = Input;
 
@@ -14,10 +15,11 @@ export default function Novedad({ idNews }) {
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/news/${idNews}`, useCredentials)
+      .get(`${VITE_BACKEND_URL}/news/${idNews}`, useCredentials)
       .then((result) => {
         setData(result.data.data);
       })
@@ -50,7 +52,7 @@ export default function Novedad({ idNews }) {
     };
 
     await axios.put(
-      `http://localhost:3000/api/news/${data._id}`,
+      `${VITE_BACKEND_URL}/news/${data._id}`,
       newReply,
       useCredentials
     );
@@ -78,7 +80,7 @@ export default function Novedad({ idNews }) {
     descRef.current.classList.add("text-truncate");
 
     const call = axios.put(
-      `http://localhost:3000/api/news/${data._id}/approve`,
+      `${VITE_BACKEND_URL}/news/${data._id}/approve`,
       user,
       useCredentials
     );
