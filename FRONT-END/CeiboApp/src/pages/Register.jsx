@@ -67,8 +67,6 @@ const Register = () => {
         inputs
       );
 
-      console.log(response.data);
-
       setBloqInputs(true);
       setTimeout(() => {
         return navigate("/login");
