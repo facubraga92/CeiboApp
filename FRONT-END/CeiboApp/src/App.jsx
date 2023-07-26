@@ -9,6 +9,7 @@ import FormNovedades from "./pages/FormNovedades";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Partners from "./pages/Partners";
+import NotFound from "./pages/NotFound";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -65,6 +66,8 @@ function App() {
             <Route path="/home" exact element={<AccountValidationMessage />} />
           )}
         </Route>
+        {/*Error 404 */}
+        <Route path="*" element={<NotFound/>} />
       </Routes>
       <ToastContainer />
     </>
