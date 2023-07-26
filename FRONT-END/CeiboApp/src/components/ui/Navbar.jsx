@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userMe } from "../../utils/api";
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
+  const [userE, setUsere] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,22 +19,26 @@ const Navbar = () => {
   useEffect(() => {
     const handle = async () => {
       const user = await userMe();
-      return setUser(user);
+      return setUsere(user);
     };
     handle();
   }, []);
 
-  const handleLogout = () => {
-    axios
-      .post("http://localhost:3000/api/users/logout", null, {
+  const handleLogout = async () => {
+    const call = await axios.post(
+      "http://localhost:3000/api/users/logout",
+      null,
+      {
         withCredentials: true,
         credentials: "include",
-      })
-      .then((user) => {
-        dispatch(setUser(userInitialState));
-        localStorage.removeItem("user");
-        navigate("/login");
-      });
+      }
+    );
+    if (call.status == 204) {
+      dispatch(setUser(userInitialState));
+      localStorage.removeItem("user");
+      return navigate("/login");
+    }
+    return;
   };
 
   return (
@@ -61,12 +65,12 @@ const Navbar = () => {
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <Link to="/home" className="nav-link">
-                {user?.role === "manager" ? "Proyectos" : "Inicio"}
+                {userE?.role === "manager" ? "Proyectos" : "Inicio"}
               </Link>
             </li>
-            {user?.email ? (
+            {userE?.email ? (
               <>
-                {user?.role === "admin" && (
+                {userE?.role === "admin" && (
                   <>
                     <li className="nav-item">
                       <Link to="/admin/members" className="nav-link">
@@ -81,7 +85,7 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user?.role === "manager" && (
+                {userE?.role === "manager" && (
                   <>
                     <li className="nav-item">
                       <Link to="/partners" className="nav-link">
@@ -96,7 +100,7 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user?.role === "consultor" && (
+                {userE?.role === "consultor" && (
                   <>
                     <li>
                       <Link to="/formNovedades" className="nav-link">
@@ -111,7 +115,7 @@ const Navbar = () => {
                     </li>
                   </>
                 )}
-                {user?.role === "socio" && (
+                {userE?.role === "socio" && (
                   <>
                     <li>
                       <Link to="/home" className="nav-link">
@@ -143,7 +147,7 @@ const Navbar = () => {
             )}
           </ul>
           <div>
-            {user?.email ? (
+            {userE?.email ? (
               <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
               </button>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const userMe = async () => {
   try {
@@ -47,3 +48,28 @@ const handleChange = (event) => {
 };
 
 */
+export function toastSuccess(mess) {
+  toast.success(`${mess}`, {
+    position: "top-center",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+}
+
+export function toastError(mess) {
+  toast.error(`${mess}`, {
+    position: "top-center",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+}

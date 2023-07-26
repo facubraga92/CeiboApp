@@ -16,9 +16,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
+import { useEffect, useState } from "react";
 
 function App() {
-  const user = useSelector((state) => state.user);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const handle = async () => {
+      const user = useSelector((state) => state.user);
+      setUser(user);
+    };
+    handle();
+  }, []);
+
   return (
     <>
       <Routes>

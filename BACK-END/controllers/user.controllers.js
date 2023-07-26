@@ -85,8 +85,8 @@ const verifyAccount = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    console.log("llegue aca", req.body);
     const user = await userModel.findOne({ email: req.body.email });
+
     if (!user) {
       return res.status(401).send("Usuario incorrecto/inexistente.");
     }
@@ -100,7 +100,6 @@ const loginUser = async (req, res) => {
         lastName: user.lastName,
         role: user.role,
         isValidated: user.isValidated,
-        associatedCustomers: user.associatedCustomers,
       };
       const token = generateToken(payload);
       res.cookie("token", token);
