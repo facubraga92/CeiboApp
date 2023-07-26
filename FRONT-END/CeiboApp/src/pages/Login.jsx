@@ -7,6 +7,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
+import { useCredentials } from "../utils/api";
 
 const Login = () => {
   const [inputs, setInputs] = useState({});
@@ -70,10 +71,14 @@ const Login = () => {
           });
         }
         axios
-          .post("http://localhost:3000/api/users/login", {
-            email: email,
-            password: `${userState.password}`,
-          })
+          .post(
+            "http://localhost:3000/api/users/login",
+            {
+              email: email,
+              password: `${userState.password}`,
+            },
+            useCredentials
+          )
           .then((loginResponse) => {
             const user = loginResponse.data;
             delete user?.status;
@@ -84,7 +89,6 @@ const Login = () => {
             navigate("/home");
           });
       });
-    return;
   };
 
   const handleChange = (e) => {

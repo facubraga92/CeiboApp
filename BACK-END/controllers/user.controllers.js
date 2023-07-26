@@ -87,9 +87,7 @@ const loginUser = async (req, res) => {
   try {
     const user = await userModel.findOne({ email: req.body.email });
 
-    if (!user) {
-      return res.status(401).send("Usuario incorrecto/inexistente.");
-    }
+    if (!user) return res.status(401).send("Usuario incorrecto/inexistente.");
 
     const passwordMatch = await user.comparePassword(req.body.password);
     if (passwordMatch) {
@@ -102,13 +100,12 @@ const loginUser = async (req, res) => {
         isValidated: user.isValidated,
       };
       const token = generateToken(payload);
-      res.cookie("token", token);
-      return res.send(payload);
+      return res.cookie("token", token).send(payload);
     } else {
       return res.status(404).send("Contraseña incorrecta.");
     }
   } catch (error) {
-    return res.status(500).send("Error al realizar el inicio de sesión.");
+    return res.status(500).send("Error al intentar logear");
   }
 };
 
