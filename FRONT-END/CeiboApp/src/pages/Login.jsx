@@ -5,12 +5,12 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../state/user";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layouts/Layout";
-
+import { envs } from "../config/env/env.config";
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
   const [disableInputs, setDisableInputs] = useState(false);
-
+  const { VITE_BACKEND_URL } = envs;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const Login = () => {
     // Puedes agregar aquí la llamada a tu API o realizar cualquier otra acción necesaria
     axios
       .post(
-        "http://localhost:3000/api/users/login",
+        `${VITE_BACKEND_URL}/users/login`,
         {
           ...inputs,
         },
