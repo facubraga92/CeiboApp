@@ -1,35 +1,91 @@
-const { generateToken } = require("../config/tokens");
+const { generateToken, validateToken } = require("../config/tokens");
 const userModel = require("../schemas/User");
+const { v4: uuidv4 } = require("uuid");
+const { sendMail } = require("../utils/mail/mailService");
+const generateMailOptions = require("../utils/mail/registrationMail");
 
 const userRegister = async (req, res) => {
   try {
-    const { name, lastName, email, password } = req.body;
-
-    let user = await userModel.findOne({ email });
-
-    console.log(user);
-
-    if (user) {
-      return res.status(500).send("Usuario ya existe");
+    let emailDomain = req.body.email.split("@")[1];
+    let role = "socio"; // Por defecto el role es "socio"
+    if (emailDomain.toLowerCase() === "ceibo.digital") {
+      role = "consultor";
+      if (req.body.email.toLowerCase() === "admin@ceibo.digital") {
+        req.body.isValidated = true;
+        role = "admin";
+      }
     }
+    // Código aleatorio de verificación
+    const code = uuidv4();
 
-    user = new userModel({
-      name,
-      lastName,
-      email,
-      password,
-    });
-
+    const user = new userModel({ ...req.body, role, code });
     await user.save();
 
-    return res.status(201).send("Usuario creado");
+    // Implementaciones para validación de email
+
+    const email = req.body.email;
+
+    const token = generateToken({ email, code });
+    //reemplace los puntos por @ porque osino la url en el front al tener puntos el token me daba error..
+    //una vez que llega la url con arrobas en el front le cambio nuevamente los arrobas por puntos para hacer el pedido al endpoint.
+    const replacedDotsToken = token.replaceAll(".", "@");
+    const mailOptions = generateMailOptions(user, replacedDotsToken);
+    sendMail(mailOptions);
+
+    // Respuesta exitosa
+    res.send(`Usuario creado exitosamente! ${user.email}`);
   } catch (error) {
-    return res.status(500).send(error);
+    if (error.errors) {
+      // Si hay errores de validación en el modelo
+      const errorMessage = Object.values(error.errors)
+        .map((err) => err.message)
+        .join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      // Otro tipo de error
+      res.status(500).send(error.message || "Error al crear el usuario");
+    }
+  }
+};
+
+const verifyAccount = async (req, res) => {
+  const token = req.params.token;
+  try {
+    const decoded = validateToken(token);
+
+    if (!decoded || !decoded.email || !decoded.code) {
+      return res.status(400).send("Token de verificación inválido.");
+    }
+
+    const { email, code } = decoded;
+
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(401).send("Usuario incorrecto/inexistente.");
+    }
+
+    if (user.code === code) {
+      if (!user.isValidated) {
+        user.isValidated = true;
+        await user.save();
+        return res.send("Usuario validado exitosamente!");
+      } else {
+        return res.send("Este usuario ya se encuentra validado.");
+      }
+    }
+
+    return res.status(401).send("Código de validación incorrecto.");
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .send("Hubo un error al intentar validar el usuario.");
   }
 };
 
 const loginUser = async (req, res) => {
   try {
+    console.log("llegue aca", req.body);
     const user = await userModel.findOne({ email: req.body.email });
     if (!user) {
       return res.status(401).send("Usuario incorrecto/inexistente.");
@@ -43,6 +99,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         lastName: user.lastName,
         role: user.role,
+        isValidated: user.isValidated,
         associatedCustomers: user.associatedCustomers,
       };
       const token = generateToken(payload);
@@ -126,11 +183,52 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const googleVerify = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (user) {
+      return res.send(true);
+    } else {
+      return res.send(false);
+    }
+  } catch (error) {
+    return res.status(500).send("Error al verificar el correo electrónico.");
+  }
+};
+
+const getMemberById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findById(id);
+    return res.send(user);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getMembersByRole = async (req, res) => {
+  const { rol } = req.params;
+
+  try {
+    const users = await userModel.find({ role: rol });
+    return res.status(200).send(users);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
 module.exports = {
   userRegister,
   loginUser,
   logOut,
   getAllMembers,
   deleteUser,
-  updateUserCustomer
+  updateUserCustomer,
+  googleVerify,
+  verifyAccount,
+  getMemberById,
+  getMembersByRole,
 };

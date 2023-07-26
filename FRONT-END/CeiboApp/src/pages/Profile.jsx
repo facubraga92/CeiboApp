@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
@@ -11,23 +13,36 @@ export default function Profile() {
   const [showModal, setShowModal] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
 
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
-  // INICIALIZAR CON VALORES DESDE LA API
-  const [inputs, setInputs] = useState({
-    name: "nombre prueba",
-    lastName: "lastName prueba",
-    email: "prueba@prueba.com",
-  });
-
-  const [initialState, setInitialState] = useState({
-    name: "nombre prueba",
-    lastName: "lastName prueba",
-    email: "prueba@prueba.com",
-  });
+  const [initialState, setInitialState] = useState({});
+  const [inputs, setInputs] = useState(initialState);
 
   useEffect(() => {
-    console.log(inputs);
+    const handle = async function () {
+      let call = await axios
+        .get(`http://localhost:3000/api/users/admin/members/${user.id}`, {
+          withCredentials: true,
+          credentials: "include",
+        })
+        .then((e) => {
+          const { email, lastName, name } = e.data;
+          setInitialState({
+            email,
+            name,
+            lastName,
+          });
+        });
+    };
+    handle();
+  }, []);
+
+  useEffect(() => {
+    setInputs(initialState);
+  }, [initialState]);
+
+  useEffect(() => {
     return setIsChanges(
       JSON.stringify(inputs) !== JSON.stringify(initialState)
     );
@@ -61,15 +76,23 @@ export default function Profile() {
     return;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    let call = await axios.put(
+      `http://localhost:3000/api/users/admin/members/${user.id}`,
+      inputs,
+      {
+        withCredentials: true,
+        credentials: "include",
+      }
+    );
+
     setDisabled(true);
     setInitialState(inputs);
     setIsChanges(false);
     toggleShowModalSave();
     handleToast();
-    console.log(inputs);
-    // por ahora no hace nada REVISAR
     return;
   };
 
@@ -77,10 +100,10 @@ export default function Profile() {
     if (isChanges) {
       setFormOk(true);
       return setTimeout(() => {
-        navigate("/"); // redirige al home por ahora
+        navigate("/home"); // redirige al home por ahora
       }, 1000);
     } else {
-      navigate("/"); // redirige al home por ahora
+      navigate("/home"); // redirige al home por ahora
     }
     return;
   };
@@ -93,7 +116,7 @@ export default function Profile() {
     setInputs(initialState);
     setIsChanges(false);
     setShowModal(false);
-    setDisabled(!disabled);
+    return setDisabled(!disabled);
   };
 
   const handleModalToggle = () => {
@@ -101,14 +124,15 @@ export default function Profile() {
   };
 
   const handleToast = () => {
-    toast.success("Cambios guardados", {
-      position: "top-right", // Posición de la notificación
-      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
-      hideProgressBar: false, // Mostrar la barra de progreso
-      closeOnClick: true, // Cerrar al hacer clic en la notificación
-      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
-      draggable: true, // Hacer arrastrable la notificación
+    toast.success("Cambios aceptados", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
     });
+    return;
   };
   return (
     <Layout title="Profile">

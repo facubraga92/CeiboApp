@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { message, Select } from "antd";
+import { message, Select, Input } from "antd";
 import Layout from "../components/layouts/Layout";
-
+import { Button, Modal } from "react-bootstrap";
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 const Members = () => {
@@ -11,6 +12,9 @@ const Members = () => {
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [idDelete, setIdDelete] = useState("");
+  const [roleSearch, setRoleSearch] = useState("");
 
   useEffect(() => {
     axios
@@ -30,59 +34,32 @@ const Members = () => {
       });
   }, []);
 
-  const handleConsultoresFilter = () => {
-    const consultores = members.filter(
-      (member) =>
-        member.role === "consultor" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-    setFilteredMembers(consultores);
-  };
-
-  const handleManagersFilter = () => {
-    const managers = members.filter(
-      (member) =>
-        member.role === "manager" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-    setFilteredMembers(managers);
-  };
-
-  const handleSociosFilter = () => {
-    const socios = members.filter(
-      (member) =>
-        member.role === "socio" &&
-        (member.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-          member.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-    setFilteredMembers(socios);
-  };
-
-  const handleTodosFilter = () => {
-    setFilteredMembers(members);
-    setSearchText("");
-  };
-
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-
-    const filtered = members.filter(
+  useEffect(() => {
+    if (searchText === "" || searchText === "Todo")
+      return setFilteredMembers(members);
+    const filteredMembers = members.filter(
       (member) =>
         (member.name &&
-          member.name.toLowerCase().includes(value.toLowerCase())) ||
+          member.name.toLowerCase().includes(searchText.toLowerCase())) ||
         (member.lastName &&
-          member.lastName.toLowerCase().includes(value.toLowerCase())) ||
+          member.lastName.toLowerCase().includes(searchText.toLowerCase())) ||
         (member.email &&
-          member.email.toLowerCase().includes(value.toLowerCase()))
+          member.email.toLowerCase().includes(searchText.toLowerCase())) ||
+        (member.role &&
+          member.role.toLowerCase().includes(searchText.toLowerCase()))
     );
 
-    setFilteredMembers(filtered);
+    return setFilteredMembers(filteredMembers);
+  }, [searchText]);
+
+  const handleFilterByAny = (e) => {
+    const { value } = e.target;
+    if (value == searchText) {
+      setSearchText("");
+    } else {
+      setSearchText(value);
+    }
+    if (value == "") return setRoleSearch("");
   };
 
   const handleRoleChange = (memberId, selectedRole) => {
@@ -115,121 +92,154 @@ const Members = () => {
             return member;
           })
         );
+
+        handleToast();
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const handleDeleteClick = (memberId) => {
+  const handleDelete = () => {
+    handleModalToggle();
+    axios
+      .delete(`http://localhost:3000/api/users/admin/members/${idDelete}`, {
+        withCredentials: true,
+        credentials: "include",
+      })
+      .then(() => {
+        // Eliminar el usuario de los estados locales
+        setMembers((prevMembers) =>
+          prevMembers.filter((member) => member._id !== idDelete)
+        );
+        setFilteredMembers((prevFilteredMembers) =>
+          prevFilteredMembers.filter((member) => member._id !== idDelete)
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleModal = (memberId) => {
     if (user.id === memberId) {
       message.error("No puedes eliminarte a ti mismo.");
       return;
+    } else {
+      setIdDelete(memberId);
+      handleModalToggle();
     }
+  };
 
-    const confirmed = window.confirm("¿Estás seguro de eliminar este usuario?");
+  const handleModalToggle = () => {
+    return setShowModal(!showModal);
+  };
 
-    if (confirmed) {
-      axios
-        .delete(`http://localhost:3000/api/users/admin/members/${memberId}`, {
-          withCredentials: true,
-          credentials: "include",
-        })
-        .then(() => {
-          // Eliminar el usuario de los estados locales
-          setMembers((prevMembers) =>
-            prevMembers.filter((member) => member._id !== memberId)
-          );
-          setFilteredMembers((prevFilteredMembers) =>
-            prevFilteredMembers.filter((member) => member._id !== memberId)
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  const handleSelectSearch = (e) => {
+    setRoleSearch(e);
+    setSearchText(e);
+  };
+
+  const handleToast = () => {
+    toast.success("Cambios aceptados", {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+    });
+    return;
   };
 
   return (
     <Layout title={"Miembros"}>
-      <div className="container col-12">
-        <ul className="nav justify-content-center">
-          <li className="nav-item">
-            <a
-              className="nav-link active"
-              aria-current="page"
-              onClick={handleConsultoresFilter}
-            >
-              Consultores
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleManagersFilter}>
-              Managers
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleSociosFilter}>
-              Socios
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" onClick={handleTodosFilter}>
-              Todos
-            </a>
-          </li>
-        </ul>
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Buscar miembro..."
-            value={searchText}
-            onChange={handleSearch}
-          />
+      <div className="container col-sm-12 col-md-11">
+        <div className="row mt-3 justify-content-center">
+          <div className="input-group mb-3  col-11 col-md-6">
+            <Input
+              className=""
+              placeholder="Buscar . . ."
+              allowClear
+              value={searchText || ""}
+              onChange={handleFilterByAny}
+            />
+          </div>
         </div>
-        <div className="table-responsive">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Email</th>
-                <th>Rol</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMembers.map((member) => (
-                <tr key={member._id}>
-                  <td>{member.name}</td>
-                  <td>{member.lastName}</td>
-                  <td>{member.email}</td>
-                  <td>
-                    {user.id != member._id ? (
-                      <Select
-                        defaultValue={member.role}
-                        style={{ width: 120 }}
-                        disabled={false}
-                        onChange={(value) =>
-                          handleRoleChange(member._id, value)
-                        }
-                      >
-                        <Option value="admin">Admin</Option>
-                        <Option value="manager">Manager</Option>
-                        <Option value="socio">Socio</Option>
-                        <Option value="consultor">Consultor</Option>
-                      </Select>
-                    ) : (
+        <div className="row justify-content-sm-center mb-3 d-none d-md-flex">
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Consultor"
+              name="consultor"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Socio"
+              name="socio"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-primary btn-block"
+              value="Manager"
+              name="manager"
+              onClick={handleFilterByAny}
+            />
+          </div>
+        </div>
+        <div className="row justify-content-center mb-3 d-md-none ">
+          <div className="">
+            <Select
+              style={{ width: 120 }}
+              onChange={handleSelectSearch}
+              value={roleSearch || ""}
+            >
+              <Option value="Consultor">Consultor</Option>
+              <Option value="Socio">Socio</Option>
+              <Option value="Manager">Manager</Option>
+            </Select>
+          </div>
+        </div>
+        <div className="row">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th className="d-none d-md-table-cell">Nombre</th>
+                  <th className="d-none d-md-table-cell">Apellido</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMembers.map((member) => (
+                  <tr key={member._id}>
+                    <td className="d-none d-md-table-cell">{member.name}</td>
+                    <td className="d-none d-md-table-cell">
+                      {member.lastName}
+                    </td>
+                    <td>{member.email}</td>
+                    <td>
                       <Select
                         onClick={() =>
-                          message.warning(
-                            "No puedes quitarte el rol de Admin a ti mismo."
-                          )
+                          user.id == member._id
+                            ? message.warning(
+                                "No puedes quitarte el rol de Admin a ti mismo."
+                              )
+                            : ""
                         }
                         defaultValue={member.role}
                         style={{ width: 120 }}
-                        disabled={true}
+                        disabled={user.id == member._id}
                         onChange={(value) =>
                           handleRoleChange(member._id, value)
                         }
@@ -239,22 +249,38 @@ const Members = () => {
                         <Option value="socio">Socio</Option>
                         <Option value="consultor">Consultor</Option>
                       </Select>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDeleteClick(member._id)}
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleModal(member._id)}
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+      <Modal show={showModal} centered onHide={handleModalToggle}>
+        <Modal.Header closeButton>
+          <Modal.Title>¿Estas seguro de eliminar?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Se eliminara el usuario seleccionado</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="warning" onClick={handleModalToggle}>
+            Volver
+          </Button>
+          <Button variant="primary" onClick={handleDelete}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Layout>
   );
 };

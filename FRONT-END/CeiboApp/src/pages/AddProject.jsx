@@ -3,24 +3,18 @@ import axios from "axios";
 import Select from "react-select";
 import { message } from "antd";
 import Layout from "../components/layouts/Layout";
+import { useCredentials } from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 const ProjectForm = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [code, setCode] = useState("");
-  const [customer, setCustomer] = useState("");
-  const [consultors, setConsultors] = useState([]);
-  const [managers, setManagers] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
+  const [inputs, setInputs] = useState({});
 
+  const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/users/admin/members", {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-        credentials: "include",
-      })
+      .get("http://localhost:3000/api/users/admin/members", useCredentials)
       .then((response) => {
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
@@ -32,11 +26,7 @@ const ProjectForm = () => {
       });
 
     axios
-      .get("http://localhost:3000/api/customers/all", {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-        credentials: "include",
-      })
+      .get("http://localhost:3000/api/customers/all", useCredentials)
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
           if (a.name && b.name) {
@@ -48,46 +38,16 @@ const ProjectForm = () => {
       });
   }, []);
 
-  const handleCustomerChange = (selectedOption) => {
-    setCustomer(selectedOption);
-  };
-
-  const handleConsultorChange = (selectedOptions) => {
-    setConsultors(selectedOptions);
-  };
-
-  const handleManagerChange = (selectedOptions) => {
-    setManagers(selectedOptions);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Crear el objeto de proyecto
-    const project = {
-      name,
-      description,
-      code,
-      customer: customer.value._id,
-      consultors: consultors.map((consultor) => consultor.value._id),
-      managers: managers.map((manager) => manager.value._id),
-    };
     axios
-      .post("http://localhost:3000/api/projects/create", project, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-        credentials: "include",
-      })
+      .post("http://localhost:3000/api/projects/create", inputs, useCredentials)
       .then((response) => {
-        // Manejar la respuesta del servidor
-        message.success(response.data);
+        message.success(`Proyecto ${inputs.name} creado!`);
         // Restablecer los campos del formulario
-        setName("");
-        setDescription("");
-        setCode("");
-        setCustomer("");
-        setConsultors([]);
-        setManagers([]);
+        setInputs({});
+        navigate("/");
       })
       .catch((error) => {
         message.error(error);
@@ -105,10 +65,32 @@ const ProjectForm = () => {
     return { value: member, label: `${member.name} ${member.lastName}` };
   });
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (value === "" || !value || value.length == 0) {
+      setInputs((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      return setInputs((values) => ({ ...values, [name]: value }));
+    }
+    return;
+  };
+
+  const handleChangeSelect = (name, value) => {
+    let valor = value?.value?._id;
+    if (!valor) {
+      valor = value.map((e) => e.value._id);
+    }
+    const res = { target: { name: name, value: valor } };
+    handleChange(res);
+  };
+
   return (
-    <Layout title={"Agregar proyecto"}>
-      <div className="container">
-        <h2>Crear Proyecto</h2>
+    <Layout title="AddProject">
+      <div className="container col-12 col-md-6 mt-2 pb-5">
+        <h2 className="text-center">Crear Proyecto</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Nombre</label>
@@ -116,8 +98,9 @@ const ProjectForm = () => {
               type="text"
               className="form-control"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              value={inputs.name || ""}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3">
@@ -125,8 +108,9 @@ const ProjectForm = () => {
             <textarea
               className="form-control"
               rows="4"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={inputs.description || ""}
+              onChange={handleChange}
             ></textarea>
           </div>
           <div className="mb-3">
@@ -135,8 +119,9 @@ const ProjectForm = () => {
               type="text"
               className="form-control"
               required
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
+              name="code"
+              value={inputs.code || ""}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-3">
@@ -144,8 +129,8 @@ const ProjectForm = () => {
             <Select
               required
               options={customerOptions}
-              value={customer}
-              onChange={handleCustomerChange}
+              onChange={(value) => handleChangeSelect("customer", value)}
+              name="customer"
               isClearable
               placeholder="Seleccionar cliente..."
             />
@@ -157,8 +142,8 @@ const ProjectForm = () => {
                 option.value.role.includes("consultor")
               )}
               isMulti
-              value={consultors}
-              onChange={handleConsultorChange}
+              name="consultors"
+              onChange={(value) => handleChangeSelect("consultors", value)}
               placeholder="Seleccionar consultores..."
             />
           </div>
@@ -169,8 +154,8 @@ const ProjectForm = () => {
                 option.value.role.includes("manager")
               )}
               isMulti
-              value={managers}
-              onChange={handleManagerChange}
+              name="managers"
+              onChange={(value) => handleChangeSelect("managers", value)}
               placeholder="Seleccionar managers..."
             />
           </div>

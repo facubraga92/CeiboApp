@@ -2,10 +2,12 @@ const express = require("express");
 const {
   createNews,
   getAllNews,
+  getNewsProyect,
   getNewsById,
   updateNews,
   deleteNews,
   approveNews,
+  addCommentToNews,
 } = require("../controllers/projectNews.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
@@ -16,9 +18,11 @@ router.post("/", isLogged, validateUser, createNews);
 
 router.get("/", isLogged, validateUser, getAllNews);
 
-router.get("/:id", isLogged, validateUser, getNewsById);
+router.get("/newsProject/:id", isLogged, getNewsProyect);
 
-router.put("/:id", isLogged, validateUser, updateNews);
+router.get("/:id", isLogged, getNewsById);
+
+router.put("/:id", isLogged, validateUser, addCommentToNews);
 
 router.delete("/:id", isLogged, validateUser, deleteNews);
 

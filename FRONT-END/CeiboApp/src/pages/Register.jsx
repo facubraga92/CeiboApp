@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
+import jwt_decode from "jwt-decode";
+import axios from "axios";
+
 const Register = () => {
   const [inputs, setInputs] = useState({});
   const [isChangesOk, setIsChangesOk] = useState(false);
@@ -15,35 +18,26 @@ const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (Object.keys(inputs).length === 0) {
-      setIsChanges(false);
-    } else {
-      setIsChanges(true);
-    }
+    Object.keys(inputs).length === 0 ? setIsChanges(false) : setIsChanges(true);
 
-    if (
-      inputs.name &&
+    return inputs.name &&
       inputs.lastName &&
       inputs.email &&
       inputs.password &&
       inputs.confirmPassword &&
       inputs.password === inputs.confirmPassword &&
       isValidEmail(inputs.email)
-    )
-      return setIsChangesOk(true);
-    else {
-      return setIsChangesOk(false);
-    }
-    return;
+      ? setIsChangesOk(true)
+      : setIsChangesOk(false);
   }, [inputs]);
 
   const handleModalDropChanges = () => {
     setInputs({});
-    setShowModal(false);
+    return setShowModal(false);
   };
 
   const handleModalToggle = () => {
-    setShowModal(!showModal);
+    return setShowModal(!showModal);
   };
 
   function isValidEmail(email) {
@@ -52,8 +46,7 @@ const Register = () => {
   }
 
   const handleChange = (event) => {
-    const value = event.target.value;
-    const name = event.target.name;
+    const { name, value } = event.target;
     if (value === "") {
       setInputs((current) => {
         const { [name]: _, ...rest } = current;
@@ -62,19 +55,29 @@ const Register = () => {
     } else {
       return setInputs((values) => ({ ...values, [name]: value }));
     }
+    return;
   };
 
-  const handleSubmit = (e) => {
-    // faltan los llamados a la api para chequear que el usuario no exista y para crearlo en el caso que no exista
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de registro
-    setBloqInputs(true);
-    setTimeout(() => {
-      return navigate("/login");
-    }, 2000);
-    handleToast();
-    return setIsSubmitOk(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        inputs
+      );
+
+      console.log(response.data);
+
+      setBloqInputs(true);
+      setTimeout(() => {
+        return navigate("/login");
+      }, 2000);
+      handleToast();
+      setIsSubmitOk(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleToast = () => {
@@ -86,6 +89,7 @@ const Register = () => {
       pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
       draggable: true, // Hacer arrastrable la notificación
     });
+    return;
   };
 
   const handleCancel = (e) => {

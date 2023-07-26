@@ -1,14 +1,15 @@
 const ProjectNews = require("../schemas/ProjectNews");
 const Project = require("../schemas/Project");
+const getManagersRelevants = require("../utils/utils");
 
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
-
+    //para probar las rutas en postman y no tener ningun problema comentar los dos if
     if (req.user.role !== "consultor" || req.user.role !== "admin") {
       return res.status(403).json({ success: false, error: "Acceso denegado" });
     }
-
+    console.log(title, description, userId, associatedProject);
     const project = await Project.findById(associatedProject);
 
     if (!project || !project.consultors.includes(req.user._id)) {
@@ -25,9 +26,9 @@ exports.createNews = async (req, res) => {
       associatedProject,
       state: "pendiente",
     });
-
     await news.save();
 
+    await getManagersRelevants(news);
     res.status(201).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -47,6 +48,31 @@ exports.getAllNews = async (req, res) => {
     res.status(200).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.getNewsProyect = async (req, res) => {
+  const projectId = req.params.id;
+
+  try {
+    // Buscar el proyecto por su ID para verificar si existe
+    const project = await Project.findById(projectId);
+    console.log(project);
+    if (!project) {
+      return res.status(404).json({ message: "Proyecto no encontrado" });
+    }
+
+    // Obtener las novedades del proyecto por su ID
+    const projectNews = await ProjectNews.find({
+      associatedProject: projectId,
+    }).populate("userId", "username"); // Esto es opcional, para obtener solo el nombre de usuario en lugar de toda la información del usuario.
+
+    res.json(projectNews);
+  } catch (err) {
+    console.error("Error al obtener las novedades del proyecto:", err);
+    res.status(500).json({
+      message: "Error del servidor al obtener las novedades del proyecto",
+    });
   }
 };
 
@@ -81,27 +107,28 @@ exports.getNewsById = async (req, res) => {
 exports.updateNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { title, description, userId, message, date } = req.body;
 
     const news = await ProjectNews.findById(id);
-
     if (!news) {
       return res
         .status(404)
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (
-      req.user.role !== "consultor" ||
-      !news.userId.equals(req.user._id) ||
-      news.state !== "pendiente"
-    ) {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
+    if (news.title) news.title = title;
+    if (news.description) news.description = description;
+    if (news.state) news.state = "modificada";
+    if (userId && message && date) {
+      const rDate = new Date(date);
+      const newComment = {
+        userId,
+        message,
+        rDate,
+      };
 
-    news.title = title;
-    news.description = description;
-    news.state = "modificada";
+      news.reply.push(newComment);
+    }
     await news.save();
 
     res.status(200).json({ success: true, data: news });
@@ -152,17 +179,36 @@ exports.approveNews = async (req, res) => {
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (
-      req.user.role !== "manager" ||
-      !news.associatedProject.managers.includes(req.user._id)
-    ) {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
-
     news.state = "aprobada";
     await news.save();
-
     res.status(200).json({ success: true, data: news });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.addCommentToNews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, message } = req.body;
+
+    const news = await ProjectNews.findById(id);
+
+    if (!news) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Novedad no encontrada" });
+    }
+
+    const newComment = {
+      userId,
+      message,
+    };
+
+    news.reply.push(newComment);
+    await news.save();
+
+    res.json({ success: true, message: "Comentario agregado correctamente" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
