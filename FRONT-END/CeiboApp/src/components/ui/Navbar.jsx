@@ -100,7 +100,7 @@ const Navbar = () => {
                   <>
                     <li>
                       <Link to="/formNovedades" className="nav-link">
-                        Crear Novedad
+                        Crear Novedadd
                       </Link>
                     </li>
 
