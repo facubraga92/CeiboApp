@@ -224,6 +224,7 @@ export default function FormNovedades() {
                   className="form-control"
                   id="title"
                   name="title"
+                  maxLength={70}
                   rows={4}
                   placeholder="Titulo de la novedad"
                   value={inputs.title || ""}

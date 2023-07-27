@@ -167,7 +167,9 @@ export default function Novedad({ idNews }) {
   return (
     <>
       <tr onClick={toggleShowModal}>
-        <td>{data?.title}</td>
+        <td style={{ maxWidth: "100px" }}>
+          <p className="text-truncate">{data?.title}</p>
+        </td>
         <td>{data?.created_at?.split("T")[0]}</td>
         <td style={{ maxWidth: "100px" }}>
           <p className="text-truncate">{data?.description}</p>
