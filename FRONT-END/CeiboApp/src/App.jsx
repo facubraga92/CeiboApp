@@ -66,7 +66,7 @@ function App() {
               {/* Contributes Routes */}
               <Route path="/" element={<ProtectedRoute onlyContributor />}>
                 <Route
-                  path="/formNovedades"
+                  path="/project/addNews/:idProject"
                   exact
                   element={<FormNovedades />}
                 />
@@ -77,7 +77,7 @@ function App() {
           )}
         </Route>
         {/*Error 404 */}
-        <Route path="*" element={<NotFound/>} />
+        {/* <Route path="*" element={<NotFound/>} /> */}
       </Routes>
       <ToastContainer />
     </>

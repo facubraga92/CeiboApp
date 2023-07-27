@@ -14,6 +14,8 @@ export default function Novedad({ idNews }) {
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [isModifying, setIsModifying] = useState(false); 
+  const [editedData, setEditedData] = useState({}); 
 
   useEffect(() => {
     axios
@@ -93,6 +95,31 @@ export default function Novedad({ idNews }) {
     });
 
     return setData((values) => ({ ...values, ["state"]: "aprobada" }));
+  };
+
+  const handleModify = async () => {
+    try {
+      const modifiedData = {
+        title: inputs.title || data.title,
+        description: inputs.description || data.description,
+      };
+      const response = await axios.put(
+        `http://localhost:3000/api/news/${data._id}/modify`,
+        modifiedData,
+        useCredentials
+      );
+      setData(response.data.data);
+      toast.success("Novedad modificada con éxito!");
+      setIsModifying(false);
+    } catch (error) {
+      console.error("Error al modificar la novedad:", error);
+      toast.error("Error al modificar la novedad. Por favor, intenta de nuevo.");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setData(editedData);
+    setIsModifying(false);
   };
 
   const descRef = useRef(null);
@@ -251,6 +278,44 @@ export default function Novedad({ idNews }) {
               </div>
             )}
           </div>
+          {/*Campo de editar la novedad */}
+          {user.role === "manager" && data.state !== "aprobada" && (
+            <div className="mt-4">
+              {/* Agregar inputs controlados para editar los campos */}
+              <input
+                type="text"
+                name="title"
+                value={isModifying ? inputs.title || editedData.title : data.title}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="Título"
+              />
+              <textarea
+                name="description"
+                value={isModifying ? inputs.description || editedData.description : data.description}
+                onChange={handleChange}
+                className="form-control mt-2"
+                placeholder="Descripción"
+              />
+             {isModifying ? (
+            <div className="mt-2">
+              <Button variant="success" onClick={handleModify}>
+                Modificar
+              </Button>
+              <Button variant="danger" onClick={handleCancelEdit} className="ml-2">
+                Cancelar
+              </Button>
+            </div>
+          ) : (
+            <Button variant="info mt-2" onClick={() => {
+              setIsModifying(true);
+              setEditedData(data); // Copiar el estado data en editedData al iniciar la edición
+            }}>
+              Editar
+            </Button>
+          )}
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer
           className={`d-flex justify-content-between ${
