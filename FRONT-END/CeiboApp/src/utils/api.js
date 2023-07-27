@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
 
 export const userMe = async () => {
@@ -82,4 +83,9 @@ export function getCookieValue(cookieName) {
       return decodeURIComponent(value);
     }
   }
+}
+
+export function getUserByToken() {
+  const token = getCookieValue("token");
+  return jwtDecode(token);
 }

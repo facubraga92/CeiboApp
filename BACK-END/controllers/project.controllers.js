@@ -20,13 +20,21 @@ const getProjectsByUserId = async (req, res) => {
     const { id } = req.params;
     const user = await userModel.findById(id);
 
-    const projects = await projectModel.find({
-      $or: [
-        { managers: user._id },
-        { consultors: user._id },
-        { customer: user._id },
-      ],
-    });
+    const projects = await projectModel
+      .find({
+        $or: [
+          { managers: user._id },
+          { consultors: user._id },
+          { customer: user._id },
+        ],
+      })
+      .populate("customer")
+      .populate("consultors")
+      .populate("managers")
+      .populate("news")
+      .populate("news.reply.user")
+
+      .lean();
 
     res.json(projects);
   } catch (error) {

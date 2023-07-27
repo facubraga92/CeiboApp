@@ -64,7 +64,7 @@ export default function Novedad({ idNews }) {
     const updatedFakeData = {
       ...data,
       reply: [
-        ...data.reply,
+        ...data?.reply,
         {
           user: {
             email: user.email,
