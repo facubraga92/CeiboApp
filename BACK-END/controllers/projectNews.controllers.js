@@ -1,16 +1,13 @@
 const ProjectNews = require("../schemas/ProjectNews");
 const Project = require("../schemas/Project");
 const getManagersRelevants = require("../utils/utils");
+const User = require("../schemas/User");
 
 exports.createNews = async (req, res) => {
   try {
-    const { title, description, userId, associatedProject } = req.body;
-    //para probar las rutas en postman y no tener ningun problema comentar los dos if
-    if (req.user.role !== "consultor" || req.user.role !== "admin") {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
-    console.log(title, description, userId, associatedProject);
-    const project = await Project.findById(associatedProject);
+    const { title, description, userId } = req.body;
+    const { idProject } = req.params;
+    const project = await Project.findById(idProject);
 
     if (!project || !project.consultors.includes(req.user._id)) {
       return res.status(403).json({
@@ -23,7 +20,7 @@ exports.createNews = async (req, res) => {
       title,
       description,
       userId,
-      associatedProject,
+      associatedProject: idProject,
       state: "pendiente",
     });
     await news.save();
@@ -79,9 +76,10 @@ exports.getNewsProyect = async (req, res) => {
 exports.getNewsById = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const news = await ProjectNews.findById(id);
-
+    const news = await ProjectNews.findById(id)
+      .populate("userId")
+      .populate("associatedProject")
+      .populate("reply.user");
     if (!news) {
       return res
         .status(404)
@@ -190,9 +188,10 @@ exports.approveNews = async (req, res) => {
 exports.addCommentToNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId, message } = req.body;
+    const { user, message } = req.body;
 
     const news = await ProjectNews.findById(id);
+    const userDb = await User.findById(user);
 
     if (!news) {
       return res
@@ -201,7 +200,7 @@ exports.addCommentToNews = async (req, res) => {
     }
 
     const newComment = {
-      userId,
+      user: userDb,
       message,
     };
 

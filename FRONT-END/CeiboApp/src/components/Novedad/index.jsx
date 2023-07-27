@@ -5,7 +5,8 @@ import "./Style.Novedad.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useCredentials } from "../../utils/api";
+import { getCookieValue, useCredentials } from "../../utils/api";
+import jwt_decode from "jwt-decode";
 
 const { TextArea } = Input;
 
@@ -14,6 +15,16 @@ export default function Novedad({ idNews }) {
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const handle = () => {
+      const cookie = getCookieValue("token");
+      const user = jwt_decode(cookie);
+      return setUser(user);
+    };
+    handle();
+  }, []);
 
   useEffect(() => {
     axios
@@ -37,16 +48,29 @@ export default function Novedad({ idNews }) {
     return;
   };
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   const handleSubmit = async () => {
     const newReply = {
-      userId: user.id,
+      user: user.id,
       message: inputs.message,
       date: new Date().toLocaleDateString("es-AR"),
     };
 
     const updatedFakeData = {
       ...data,
-      reply: [...data.reply, newReply],
+      reply: [
+        ...data.reply,
+        {
+          user: {
+            email: user.email,
+          },
+          message: newReply.message,
+          date: newReply.date,
+        },
+      ],
     };
 
     await axios.put(
@@ -67,10 +91,6 @@ export default function Novedad({ idNews }) {
   const toggleShowConfirmModal = () => {
     setConfirmModal(!confirmModal);
   };
-
-  const user = useSelector((state) => {
-    return state.user;
-  });
 
   const handleApprove = () => {
     toggleShowConfirmModal();
@@ -111,10 +131,14 @@ export default function Novedad({ idNews }) {
     }, 100);
   };
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   return (
     <>
       <tr onClick={toggleShowModal}>
-        <td>{data.title}</td>
+        <td>{data?.title}</td>
         <td>{data?.created_at?.split("T")[0]}</td>
         <td style={{ maxWidth: "100px" }}>
           <p className="text-truncate">{data?.description}</p>
@@ -136,20 +160,20 @@ export default function Novedad({ idNews }) {
           }`}
         >
           <div>
-            <h2>Novedad: {data.title}</h2>
+            <h2>Novedad: {data?.title}</h2>
             <h5 className="text-muted">
-              <em>Proyecto: {data.e?.project.name}</em>
+              <em>Proyecto: {data?.associatedProject?.name}</em>
             </h5>
           </div>
         </Modal.Header>
         <Modal.Body
           className={`${
-            data.state == "aprobada" ? "back-approve" : "back-normal"
+            data?.state == "aprobada" ? "back-approve" : "back-normal"
           }`}
         >
           <div>
             <div className="d-flex justify-content-center">
-              {user.user?.role == "manager" && data.state != "aprobada" ? (
+              {user?.role == "manager" && data.state != "aprobada" ? (
                 <>
                   <input
                     type="button"
@@ -186,21 +210,25 @@ export default function Novedad({ idNews }) {
               <ul className="list-unstyled">
                 {data?.reply?.length ? (
                   data?.reply?.map((mess, index) => (
-                    <div className="">
+                    <div className="" key={index}>
                       <li
                         key={index}
                         style={{
                           backgroundColor: "#d9d7c7",
                           width: "fit-content",
-                          marginLeft: mess.userId === user.id ? "auto" : "0",
+                          marginLeft:
+                            mess?.user?.email === user?.email ? "auto" : "0",
                         }}
-                        className={`p-3 rounded mb-3 ${
-                          mess.userId === user.id ? "text-right" : "bg-light"
+                        className={`p-2 rounded mb-3 ${
+                          mess?.user?.email === user?.email
+                            ? "text-right pl-4"
+                            : "bg-light pr-4"
                         }`}
                       >
                         <p className="m-0">{mess.message}</p>
                         <p className={`small text-muted m-0 font-italic`}>
-                          {mess.userId} - {mess.date.split("T")[0]}
+                          {mess?.user?.email || mess?.userId} -{" "}
+                          {mess.date.split("T")[0]}
                         </p>
                       </li>
                     </div>
@@ -258,8 +286,8 @@ export default function Novedad({ idNews }) {
           }`}
         >
           <div>
-            <p>{data.userId}</p>
-            <p>{data.creationDate}</p>
+            <p>{data?.userId?.email}</p>
+            <p>{data?.created_at?.split("T")[0]}</p>
           </div>
 
           {data.state != "aprobada" ? (
@@ -279,8 +307,8 @@ export default function Novedad({ idNews }) {
             </div>
           ) : (
             <div className={`d-flex flex-column align-items-end`}>
-              <p>Aprobada por: admin@ceibo.digital</p>
-              <p>20/07/2023</p>
+              <p>XXXX</p>
+              <p>XXXX</p>
             </div>
           )}
         </Modal.Footer>

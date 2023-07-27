@@ -80,12 +80,12 @@ const Register = () => {
 
   const handleToast = () => {
     toast.success("Usuario creado satisfactoriamente", {
-      position: "top-right", // Posición de la notificación
-      autoClose: 3000, // Tiempo en milisegundos antes de cerrarse automáticamente
-      hideProgressBar: false, // Mostrar la barra de progreso
-      closeOnClick: true, // Cerrar al hacer clic en la notificación
-      pauseOnHover: true, // Pausar al pasar el ratón sobre la notificación
-      draggable: true, // Hacer arrastrable la notificación
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
     });
     return;
   };
