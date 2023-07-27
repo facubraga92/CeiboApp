@@ -26,8 +26,8 @@ const Navbar = () => {
     handle();
   }, []);
 
-  const handleLogout = () => {
-    axios.post(`${VITE_BACKEND_URL}/users/logout`, null, {
+  const handleLogout = async () => {
+    const call = await axios.post(`${VITE_BACKEND_URL}/users/logout`, null, {
       withCredentials: true,
       credentials: "include",
     });
