@@ -6,14 +6,11 @@ import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
 import { useCredentials, userMe } from "../utils/api";
 import { Spin } from "antd";
-import { envs } from "../config/env/env.config";
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(-1);
   const [user, setUser] = useState(null);
-
-  const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     const handle = async () => {
@@ -27,7 +24,7 @@ const Home = () => {
     if (!user) return;
     axios
       .get(
-        `${VITE_BACKEND_URL}/projects/getProjectsUser/${user.id}`,
+        `http://localhost:3000/api/projects/getProjectsUser/${user.id}`,
         useCredentials
       )
       .then((project) => {

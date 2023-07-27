@@ -4,7 +4,6 @@ import { Input, Spin, message } from "antd";
 import Select from "react-select";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
-import { envs } from "../config/env/env.config";
 
 const Partners = () => {
   const [partners, setPartners] = useState([]);
@@ -13,11 +12,9 @@ const Partners = () => {
   const [customersList, setCustomersList] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null); // Nuevo estado
 
-  const { VITE_BACKEND_URL } = envs;
-
   useEffect(() => {
     axios
-      .get(`${VITE_BACKEND_URL}/users/admin/socio`, useCredentials)
+      .get("http://localhost:3000/api/users/admin/socio", useCredentials)
       .then((response) => {
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
@@ -32,7 +29,7 @@ const Partners = () => {
         setFilteredPartners(sortedPartners);
       });
     axios
-      .get(`${VITE_BACKEND_URL}/customers/all`, useCredentials)
+      .get("http://localhost:3000/api/customers/all", useCredentials)
       .then((response) => {
         const sortedCustomers = response.data.sort((a, b) => {
           if (a.name && b.name) {
@@ -92,7 +89,7 @@ const Partners = () => {
 
     axios
       .put(
-        `${VITE_BACKEND_URL}/users/admin/members/${partnerId}`,
+        `http://localhost:3000/api/users/admin/members/${partnerId}`,
         updatedPartner,
         {
           withCredentials: true,

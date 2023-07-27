@@ -8,16 +8,12 @@ import { Select, DatePicker, Spin } from "antd";
 import moment from "moment";
 import axios from "axios";
 import { useCredentials, userMe } from "../utils/api";
-import { envs } from "../config/env/env.config";
-
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
  */
 export default function FormNovedades() {
   const params = useParams();
-
-  const { VITE_BACKEND_URL } = envs;
 
   const [selectedOption, setSelectedOption] = useState(1);
   const [selectInput, setSelectInput] = useState("default");
@@ -49,7 +45,7 @@ export default function FormNovedades() {
       try {
         axios
           .get(
-            `${VITE_BACKEND_URL}/projects/project/${params.idProject}`,
+            `http://localhost:3000/api/projects/project/${params.idProject}`,
             useCredentials
           )
           .then((response) => {
@@ -109,7 +105,7 @@ export default function FormNovedades() {
 
     try {
       await axios.post(
-        `${VITE_BACKEND_URL}/projects/project/addNews/${params.idProject}`,
+        `http://localhost:3000/api/projects/project/addNews/${params.idProject}`,
         inputs,
         useCredentials
       );
