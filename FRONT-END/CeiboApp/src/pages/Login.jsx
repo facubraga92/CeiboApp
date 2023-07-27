@@ -108,7 +108,11 @@ const Login = () => {
     e?.preventDefault();
 
     axios
-      .post("http://localhost:3000/api/users/login", { ...inputs })
+      .post(
+        "http://localhost:3000/api/users/login",
+        { ...inputs },
+        useCredentials
+      )
       .then((loginResponse) => {
         const user = loginResponse.data;
         delete user?.status;
