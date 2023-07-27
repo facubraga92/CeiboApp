@@ -82,7 +82,6 @@ export default function FormNovedades() {
         inputs.week &&
         inputs.title
     );
-    console.log(inputs);
   }, [inputs]);
 
   /**
@@ -130,7 +129,7 @@ export default function FormNovedades() {
       pauseOnHover: true,
       draggable: true,
     });
-    // por ahora no hace nada, simula un envio de datos, a la espera de la ruta para crear novedades
+
     return setTimeout(() => {
       return navigate("/home");
     }, 2000);

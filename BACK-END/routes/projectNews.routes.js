@@ -8,6 +8,7 @@ const {
   deleteNews,
   approveNews,
   addCommentToNews,
+  updateNewsManager
 } = require("../controllers/projectNews.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
@@ -27,5 +28,7 @@ router.put("/:id", isLogged, validateUser, addCommentToNews);
 router.delete("/:id", isLogged, validateUser, deleteNews);
 
 router.put("/:id/approve", isLogged, validateUser, approveNews);
+
+router.put("/:id/modify", isLogged, validateUser, updateNewsManager);
 
 module.exports = router;
