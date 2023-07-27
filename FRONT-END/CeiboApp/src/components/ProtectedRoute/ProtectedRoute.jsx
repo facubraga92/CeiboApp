@@ -23,8 +23,7 @@ export const ProtectedRoute = ({
 
   if (onlyAdmin && !isAdmin) return <Navigate to="/home" replace />;
   if (onlyManager && !isManager) return <Navigate to="/home" replace />;
-  if (onlyConsultor && !isManager && !isConsultor)
-    return <Navigate to="/home" replace />;
+  if (onlyConsultor && !isConsultor) return <Navigate to="/home" replace />;
 
   return children ? children : <Outlet />;
 };

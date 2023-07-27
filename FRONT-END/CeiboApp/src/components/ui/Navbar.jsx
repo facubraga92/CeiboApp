@@ -14,7 +14,6 @@ const Navbar = () => {
   const location = useLocation();
 
   const isLogin = location.pathname === "/login";
-  const isRegister = location.pathname === "/register";
 
   useEffect(() => {
     const handle = async () => {
@@ -102,12 +101,6 @@ const Navbar = () => {
                 )}
                 {userE?.role === "consultor" && (
                   <>
-                    <li>
-                      <Link to="/formNovedades" className="nav-link">
-                        Crear Novedad
-                      </Link>
-                    </li>
-
                     <li>
                       <Link to="/profile" className="nav-link">
                         Perfil

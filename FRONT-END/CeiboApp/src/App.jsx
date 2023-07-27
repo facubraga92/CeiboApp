@@ -54,13 +54,12 @@ function App() {
             </Route>
 
             {/* Contributes Routes */}
-            <Route path="/" element={<ProtectedRoute onlyContributor />}>
+            <Route path="/" element={<ProtectedRoute onlyConsultor />}>
               <Route
                 path="/project/addNews/:idProject"
                 exact
                 element={<FormNovedades />}
               />
-              <Route path="/formNovedades" exact element={<FormNovedades />} />
             </Route>
           </>
         </Route>
