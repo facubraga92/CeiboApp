@@ -60,7 +60,6 @@ function App() {
                 exact
                 element={<FormNovedades />}
               />
-
               <Route path="/formNovedades" exact element={<FormNovedades />} />
             </Route>
           </>
@@ -70,6 +69,7 @@ function App() {
           path="*"
           element={getCookieValue("token") ? <NotFound /> : <Login />}
         />
+
       </Routes>
       <ToastContainer />
     </>

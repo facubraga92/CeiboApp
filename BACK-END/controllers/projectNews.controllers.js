@@ -212,3 +212,37 @@ exports.addCommentToNews = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.updateNewsManager = async (req, res)=>{
+  try {
+    const { id } = req.params;
+    const { title, description, userId, message, date } = req.body;
+
+    const news = await ProjectNews.findById(id);
+    if (!news) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Novedad no encontrada" });
+    }
+    if (req.user.role !== "manager") {
+      return res.status(403).json({ success: false, error: "Acceso denegado" });
+    }
+    if (news.title) news.title = title;
+    if (news.description) news.description = description;
+    if (userId && message && date) {
+      const rDate = new Date(date);
+      const newComment = {
+        userId,
+        message,
+        rDate,
+      };
+
+      news.reply.push(newComment);
+    }
+    await news.save();
+
+    res.status(200).json({ success: true, data: news });
+  } catch (error) {
+    res.status(404).json({ success: false, error: error.message });
+  }
+};
