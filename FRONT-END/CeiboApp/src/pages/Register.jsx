@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 
 import jwt_decode from "jwt-decode";
 import axios from "axios";
+import { envs } from "../config/env/env.config";
+
 
 const Register = () => {
   const [inputs, setInputs] = useState({});
@@ -14,6 +16,8 @@ const Register = () => {
   const [isChanges, setIsChanges] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [bloqInputs, setBloqInputs] = useState(false);
+
+  const { VITE_BACKEND_URL } = envs;
 
   const navigate = useNavigate();
 
@@ -63,7 +67,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/register",
+        `${VITE_BACKEND_URL}/users/register`,
         inputs
       );
 

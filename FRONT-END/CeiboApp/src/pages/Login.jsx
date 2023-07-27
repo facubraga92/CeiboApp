@@ -8,11 +8,12 @@ import jwt_decode from "jwt-decode";
 import { setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
-
+import { envs } from "../config/env/env.config";
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
-
+  const [disableInputs, setDisableInputs] = useState(false);
+  const { VITE_BACKEND_URL } = envs;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

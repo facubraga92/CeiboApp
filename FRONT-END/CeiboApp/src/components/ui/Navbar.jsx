@@ -5,6 +5,7 @@ import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userMe } from "../../utils/api";
+import { envs } from "../../config/env/env.config";
 
 const Navbar = () => {
   const [userE, setUsere] = useState(null);
@@ -15,6 +16,8 @@ const Navbar = () => {
 
   const isLogin = location.pathname === "/login";
 
+  const { VITE_BACKEND_URL } = envs;
+
   useEffect(() => {
     const handle = async () => {
       const user = await userMe();
@@ -23,15 +26,11 @@ const Navbar = () => {
     handle();
   }, []);
 
-  const handleLogout = async () => {
-    const call = await axios.post(
-      "http://localhost:3000/api/users/logout",
-      null,
-      {
-        withCredentials: true,
-        credentials: "include",
-      }
-    );
+  const handleLogout = () => {
+    axios.post(`${VITE_BACKEND_URL}/users/logout`, null, {
+      withCredentials: true,
+      credentials: "include",
+    });
     if (call.status == 204) {
       dispatch(setUser(userInitialState));
       localStorage.removeItem("user");
