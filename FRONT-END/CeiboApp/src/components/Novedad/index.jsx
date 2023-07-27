@@ -16,6 +16,8 @@ export default function Novedad({ idNews }) {
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [user, setUser] = useState({});
+  const [isModifying, setIsModifying] = useState(false);
+  const [editedData, setEditedData] = useState({});
 
   useEffect(() => {
     const handle = () => {
@@ -131,7 +133,9 @@ export default function Novedad({ idNews }) {
       setIsModifying(false);
     } catch (error) {
       console.error("Error al modificar la novedad:", error);
-      toast.error("Error al modificar la novedad. Por favor, intenta de nuevo.");
+      toast.error(
+        "Error al modificar la novedad. Por favor, intenta de nuevo."
+      );
     }
   };
 
@@ -311,35 +315,48 @@ export default function Novedad({ idNews }) {
               <input
                 type="text"
                 name="title"
-                value={isModifying ? inputs.title || editedData.title : data.title}
+                value={
+                  isModifying ? inputs.title || editedData.title : data.title
+                }
                 onChange={handleChange}
                 className="form-control"
                 placeholder="Título"
               />
               <textarea
                 name="description"
-                value={isModifying ? inputs.description || editedData.description : data.description}
+                value={
+                  isModifying
+                    ? inputs.description || editedData.description
+                    : data.description
+                }
                 onChange={handleChange}
                 className="form-control mt-2"
                 placeholder="Descripción"
               />
-             {isModifying ? (
-            <div className="mt-2">
-              <Button variant="success" onClick={handleModify}>
-                Modificar
-              </Button>
-              <Button variant="danger" onClick={handleCancelEdit} className="ml-2">
-                Cancelar
-              </Button>
-            </div>
-          ) : (
-            <Button variant="info mt-2" onClick={() => {
-              setIsModifying(true);
-              setEditedData(data); // Copiar el estado data en editedData al iniciar la edición
-            }}>
-              Editar
-            </Button>
-          )}
+              {isModifying ? (
+                <div className="mt-2">
+                  <Button variant="success" onClick={handleModify}>
+                    Modificar
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={handleCancelEdit}
+                    className="ml-2"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="info mt-2"
+                  onClick={() => {
+                    setIsModifying(true);
+                    setEditedData(data); // Copiar el estado data en editedData al iniciar la edición
+                  }}
+                >
+                  Editar
+                </Button>
+              )}
             </div>
           )}
         </Modal.Body>
