@@ -25,10 +25,13 @@ export const ProtectedRoute = ({
   const isConsultor = role === "consultor";
 
   if (onlyAdmin && !isAdmin) return <Navigate to="/home" replace />;
-  if (onlyManager && !isManager) return <Navigate to="/home" replace />;
+  //if (onlyManager && !isManager) return <Navigate to="/home" replace />;
   if (onlyConsultor && !isConsultor) return <Navigate to="/home" replace />;
 
-  if (isAdmin && location.pathname === "/home" || isAdmin && location.pathname === "/profile") {
+  if (
+    (isAdmin && location.pathname === "/home") ||
+    (isAdmin && location.pathname === "/profile")
+  ) {
     return <Navigate to="/admin/members" replace />;
   }
 

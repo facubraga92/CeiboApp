@@ -29,7 +29,7 @@ export default function Novedad({ news, projectProp }) {
     };
     handle();
   }, []);
-  
+
   const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
@@ -162,7 +162,9 @@ export default function Novedad({ news, projectProp }) {
   return (
     <>
       <div
-        className="card shadow onHoverCard"
+        className={`card shadow onHoverCard ${
+          news.state === "aprobada" ? "" : ""
+        }`}
         onClick={toggleShowModal}
         style={{ cursor: "pointer" }}
       >
@@ -181,8 +183,6 @@ export default function Novedad({ news, projectProp }) {
           <p className="card-date">Fecha: {data?.created_at?.split("T")[0]}</p>
           <p>Creador: {data?.userId?.email}</p>
         </div>
-        {/* Add modal content here if needed */}
-        {showModal && <div className="modal">Modal content goes here</div>}
       </div>
       <Modal
         show={showModal}
