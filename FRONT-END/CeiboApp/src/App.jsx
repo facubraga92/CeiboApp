@@ -43,7 +43,6 @@ function App() {
 
             <Route path="/" element={<ProtectedRoute onlyManager />}>
               <Route path="/home" exact element={<Projects />} />
-              <Route path="/manager" exact element={<Manager />} />
               <Route path="/projects" exact element={<Projects />} />
 
               <Route path="/projects/add" exact element={<AddProject />} />
