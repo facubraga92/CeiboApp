@@ -121,7 +121,7 @@ export default function FormNovedades() {
     if (selectInput === "default") return setFormSubmitted(false);
 
     setShowModalSave(false);
-    toast.success(`Novedad prioridad: ${inputs.prioridad} creada`, {
+    toast.success(`Novedad prioridad: ${inputs.priority} creada`, {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,

@@ -1,3 +1,19 @@
 .onHoverRow :hover {
   background: #e1e4e8;
 }
+
+.tarjeta {
+  border: 1px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+.tarjeta:hover {
+  transform: scale(1.2) translateZ(10px);
+  z-index: 1;
+}
+
+@media (max-width: 800px) {
+  .tarjeta:hover {
+    transform: none; /* Desactiva el efecto de hover en pantallas pequeñas */
+  }
+}

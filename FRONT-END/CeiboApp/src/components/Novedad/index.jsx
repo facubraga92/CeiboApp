@@ -162,26 +162,27 @@ export default function Novedad({ news, projectProp }) {
   return (
     <>
       <div
-        className={`card shadow onHoverCard ${
+        className={`card shadow tarjeta lead ${
           news.state === "aprobada" ? "" : ""
         }`}
         onClick={toggleShowModal}
         style={{ cursor: "pointer" }}
       >
         <div className="card-header">
-          <p className="card-title text-truncate">
-            <span>Titulo: </span>
+          <p className="card-title text-truncate text-uppercase">
             <span>{data?.title}</span>
           </p>
         </div>
         <div className="card-body">
           <p className="card-description text-truncate">{data?.description}</p>
-          <p className="card-state">{data?.state}</p>
+          <p className="card-state">Estado: {data?.state?.toUpperCase()}</p>
+          <p className="card-comments">Tipo: {data?.type}</p>
           <p className="card-comments">Comentarios: {data?.reply?.length}</p>
+          <p className="card-comments display-4">Prioridad: {data?.priority}</p>
         </div>
-        <div className="card-footer">
-          <p className="card-date">Fecha: {data?.created_at?.split("T")[0]}</p>
-          <p>Creador: {data?.userId?.email}</p>
+        <div className="card-footer d-flex flex-wrap justify-content-between">
+          <p>{data?.userId?.email}</p>
+          <p className="card-date">{data?.created_at?.split("T")[0]}</p>
         </div>
       </div>
       <Modal

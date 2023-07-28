@@ -7,6 +7,7 @@ import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 const { Option } = Select;
 import { envs } from "../config/env/env.config";
+import { toastSuccess } from "../utils/api";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -111,6 +112,7 @@ const Members = () => {
         credentials: "include",
       })
       .then(() => {
+        toastSuccess("Usuario eliminado!");
         // Eliminar el usuario de los estados locales
         setMembers((prevMembers) =>
           prevMembers.filter((member) => member._id !== idDelete)

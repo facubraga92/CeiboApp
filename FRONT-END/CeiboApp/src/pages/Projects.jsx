@@ -83,9 +83,7 @@ const Projects = () => {
                       <div className="justify-content-between">
                         <div className="d-flex">
                           <p className="">
-                            {e.name}
-
-                            {e.description}
+                            {e.name} - {e.description}
                           </p>
                         </div>
                         <div
@@ -113,7 +111,7 @@ const Projects = () => {
                         {e.news.length > 0 ? (
                           <div className="d-flex flex-wrap">
                             {e.news.map((news, index) => (
-                              <div className="col col-4 mb-2">
+                              <div className="col col-sm-12 col-md-6 col-lg-4 mb-2 tarjeta-contenedor">
                                 <Novedad key={index} news={news} project={e} />
                               </div>
                             ))}
