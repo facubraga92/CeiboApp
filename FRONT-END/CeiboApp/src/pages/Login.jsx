@@ -62,18 +62,18 @@ const Login = () => {
     };
 
     await axios
-      .post("http://localhost:3000/api/users/googleVerify", {
+      .post(`${VITE_BACKEND_URL}/users/googleVerify`, {
         email: userState.email,
       })
       .then(async (res) => {
         if (!res.data) {
-          await axios.post("http://localhost:3000/api/users/register", {
+          await axios.post(`${VITE_BACKEND_URL}/users/register`, {
             ...userState,
           });
         }
         axios
           .post(
-            "http://localhost:3000/api/users/login",
+            `${VITE_BACKEND_URL}/users/login`,
             {
               email: email,
               password: `${userState.password}`,
@@ -110,7 +110,7 @@ const Login = () => {
 
     axios
       .post(
-        "http://localhost:3000/api/users/login",
+        `${VITE_BACKEND_URL}/users/login`,
         { ...inputs },
         useCredentials
       )
