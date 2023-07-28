@@ -61,11 +61,6 @@ const Navbar = () => {
           id="navbarNav"
         >
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/home" className="nav-link">
-                {userE?.role === "manager" ? "Proyectos" : "Inicio"}
-              </Link>
-            </li>
             {userE?.email ? (
               <>
                 {userE?.role === "admin" && (
@@ -75,16 +70,16 @@ const Navbar = () => {
                         Administrar Miembros
                       </Link>
                     </li>
-
-                    <li>
-                      <Link to="/profile" className="nav-link">
-                        Perfil
-                      </Link>
-                    </li>
                   </>
                 )}
                 {userE?.role === "manager" && (
                   <>
+                    <li className="nav-item">
+                      <Link to="/home" className="nav-link">
+                        Proyectos
+                      </Link>
+                    </li>
+
                     <li className="nav-item">
                       <Link to="/partners" className="nav-link">
                         Socios
@@ -100,6 +95,12 @@ const Navbar = () => {
                 )}
                 {userE?.role === "consultor" && (
                   <>
+                    <li className="nav-item">
+                      <Link to="/home" className="nav-link">
+                        Proyectos
+                      </Link>
+                    </li>
+
                     <li>
                       <Link to="/profile" className="nav-link">
                         Perfil
