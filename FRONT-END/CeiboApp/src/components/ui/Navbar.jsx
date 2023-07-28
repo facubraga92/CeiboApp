@@ -44,7 +44,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container col-12">
-        <Link className="navbar-brand" to="/home">
+        <Link className="navbar-brand" to="/">
           CeiboApp
         </Link>
         <button

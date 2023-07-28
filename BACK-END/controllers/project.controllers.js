@@ -26,15 +26,31 @@ const getProjectsByUserId = async (req, res) => {
           { managers: user._id },
           { consultors: user._id },
           { customer: user._id },
+          { created_by: user._id },
         ],
       })
       .populate("customer")
+      .populate({
+        path: "customer",
+        populate: { path: "associatedProjects" },
+      })
       .populate("consultors")
       .populate("managers")
       .populate("news")
-      .populate("news.reply.user")
-
-      .lean();
+      .populate({
+        path: "news",
+        populate: { path: "userId" },
+      })
+      .populate({
+        path: "news",
+        populate: { path: "reply.user" },
+      })
+      .populate({
+        path: "news",
+        populate: { path: "associatedProject" },
+      })
+      .populate("created_by")
+      .exec();
 
     res.json(projects);
   } catch (error) {

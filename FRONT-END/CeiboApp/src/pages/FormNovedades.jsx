@@ -127,7 +127,7 @@ export default function FormNovedades() {
     });
 
     return setTimeout(() => {
-      return navigate("/home");
+      return navigate("/Projects");
     }, 2000);
   };
 

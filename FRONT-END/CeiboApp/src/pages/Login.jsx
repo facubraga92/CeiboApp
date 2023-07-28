@@ -86,7 +86,7 @@ const Login = () => {
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
-            navigate("/home");
+            navigate("/");
           });
       });
   };
@@ -120,7 +120,7 @@ const Login = () => {
         message.success(
           `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
         );
-        navigate("/home");
+        navigate("/");
       })
       .catch((error) => {
         if (error.response && error.response.data) {

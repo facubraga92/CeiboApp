@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Members from "./pages/Members";
 import { Manager } from "./pages/Manager";
@@ -13,17 +14,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
-import { getCookieValue } from "./utils/api";
+import { getCookieValue, getUserByToken } from "./utils/api";
 import Projects from "./pages/Projects";
-import Home from "./pages/Home";
 
 function App() {
   return (
     <>
       <Routes>
         {/* Public Routes */}
-
-        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verification/:token" element={<VerificationPage />} />
@@ -36,16 +34,16 @@ function App() {
         <Route path="/" element={<ProtectedRoute />}>
           <>
             {/* User Routes, cualquier usuario ya loggeado! */}
-            <Route path="/profile" exact element={<Profile />} />
-
             {/* Admin Routes */}
             <Route path="/" element={<ProtectedRoute onlyAdmin />}>
+              <Route path="/" exact element={<Members />} />
               <Route path="/admin/members" exact element={<Members />} />
             </Route>
 
             {/* Manager Routes */}
 
             <Route path="/" element={<ProtectedRoute onlyManager />}>
+              <Route path="/home" exact element={<Projects />} />
               <Route path="/manager" exact element={<Manager />} />
               <Route path="/projects" exact element={<Projects />} />
               <Route path="/projects/add" exact element={<AddProject />} />
@@ -53,13 +51,12 @@ function App() {
             </Route>
 
             {/* Contributes Routes */}
-            <Route path="/" element={<ProtectedRoute onlyContributor />}>
+            <Route path="/" element={<ProtectedRoute onlyConsultor />}>
               <Route
                 path="/project/addNews/:idProject"
                 exact
                 element={<FormNovedades />}
               />
-              <Route path="/formNovedades" exact element={<FormNovedades />} />
             </Route>
           </>
         </Route>

@@ -36,33 +36,34 @@ const Projects = () => {
       });
   }, [user]);
 
-  useEffect(() => {
-    console.log(projects);
-  }, [projects]);
-
   const handleShowDetails = (index) => {
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
+
   return (
     <Layout title="Projects">
-      <div className="container col-sm-12 col-md-10">
-        <div>
-          <Link to="/projects/add">
-            <input
-              type="button"
-              value="Crear proyecto"
-              className="btn btn-warning mt-2"
-            />
-          </Link>
-        </div>
-
+      <div className="container-fluid col-sm-12 col-md-10 ">
+        {user?.role === "manager" && (
+          <div>
+            <Link to="/projects/add">
+              <input
+                type="button"
+                value="Crear proyecto"
+                className="btn btn-warning mt-2"
+              />
+            </Link>
+          </div>
+        )}
         <div className="mt-1 shadow" style={{ backgroundColor: "#f6f8fa" }}>
           {projects.length > 0 ? (
             projects.map((e, index) => (
               <>
                 <div
-                  className={`border onHoverDiv ${
+                  className={`onHoverRow border ${
                     index === 0
                       ? "rounded-top"
                       : index === projects.length - 1
@@ -70,26 +71,32 @@ const Projects = () => {
                       : ""
                   } `}
                 >
-                  <div style={{}} className={"p-1"}>
+                  <div style={{}} className={"p-1"} title={e.name}>
                     <div
                       key={index}
-                      title={index}
-                      className={`d-flex justify-content-between`}
+                      className={`d-flex justify-content-between align-items-center`}
                       style={{
                         cursor: "pointer",
                       }}
                       onClick={() => handleShowDetails(index)}
                     >
-                      <div className="d-flex justify-content-between">
-                        <strong
-                          className="mr-4 text-truncate"
-                          style={{ maxWidth: "250px" }}
+                      <div className="justify-content-between">
+                        <div className="d-flex">
+                          <p className="">
+                            {e.name}
+
+                            {e.description}
+                          </p>
+                        </div>
+                        <div
+                          className="d-flex p-0 m-0"
+                          style={{ fontSize: "0.7em" }}
                         >
-                          {e.name}
-                        </strong>
-                        <p className="text-truncate" style={{ width: "20em" }}>
-                          {e.description}
-                        </p>
+                          <p className="text-lowercase ">
+                            {e?.created_by?.email} -{" "}
+                            {e?.created_at.split("T")[0]}
+                          </p>
+                        </div>
                       </div>
                       <div>
                         <Link to={`/project/addNews/${e._id}`}>
@@ -102,28 +109,14 @@ const Projects = () => {
                       </div>
                     </div>
                     {selectedProject === index && (
-                      <div className="ml-5 mt-0">
+                      <div className="">
                         {e.news.length > 0 ? (
-                          <div className="table-responsive ">
-                            <table className="table table-striped table-hover table-sm">
-                              <thead className="">
-                                <tr className="">
-                                  <th>Título</th>
-                                  <th>Fecha de Creación</th>
-                                  <th>Descripción</th>
-                                  <th>Estado</th>
-                                  <th>Comentarios</th>
-                                </tr>
-                              </thead>
-                              <tbody
-                                style={{ cursor: "pointer" }}
-                                className="container"
-                              >
-                                {e.news.map((news, index) => (
-                                  <Novedad key={index} idNews={news._id} />
-                                ))}
-                              </tbody>
-                            </table>
+                          <div className="d-flex flex-wrap">
+                            {e.news.map((news, index) => (
+                              <div className="col col-4 mb-2">
+                                <Novedad key={index} news={news} project={e} />
+                              </div>
+                            ))}
                           </div>
                         ) : (
                           <div>
