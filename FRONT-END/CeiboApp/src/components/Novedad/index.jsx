@@ -183,8 +183,6 @@ export default function Novedad({ news, projectProp }) {
           <p className="card-date">Fecha: {data?.created_at?.split("T")[0]}</p>
           <p>Creador: {data?.userId?.email}</p>
         </div>
-        {/* Add modal content here if needed */}
-        {showModal && <div className="modal">Modal content goes here</div>}
       </div>
       <Modal
         show={showModal}

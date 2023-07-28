@@ -101,11 +101,6 @@ const Navbar = () => {
                         Proyectos
                       </Link>
                     </li>
-                    <li>
-                      <Link to="/profile" className="nav-link">
-                        Perfil
-                      </Link>
-                    </li>
                   </>
                 )}
                 {userE?.role === "socio" && (
@@ -118,11 +113,6 @@ const Navbar = () => {
                     <li>
                       <Link to="/home" className="nav-link">
                         Ver Novedades
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/profile" className="nav-link">
-                        Perfil
                       </Link>
                     </li>
                   </>

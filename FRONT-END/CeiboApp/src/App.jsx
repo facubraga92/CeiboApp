@@ -55,6 +55,7 @@ function App() {
 
             {/* Contributes Routes */}
             <Route path="/" element={<ProtectedRoute onlyConsultor />}>
+              <Route path="/home" exact element={<Projects />} />
               <Route
                 path="/project/addNews/:idProject"
                 exact
