@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
+import { envs } from "../../config/env/env.config";
 
 const { TextArea } = Input;
 
@@ -28,6 +29,8 @@ export default function Novedad({ news, projectProp }) {
     };
     handle();
   }, []);
+  
+  const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     setData(news);
@@ -72,7 +75,7 @@ export default function Novedad({ news, projectProp }) {
     };
 
     await axios.put(
-      `http://localhost:3000/api/news/${data._id}`,
+      `${VITE_BACKEND_URL}/news/${data._id}`,
       newReply,
       useCredentials
     );
@@ -96,7 +99,7 @@ export default function Novedad({ news, projectProp }) {
     descRef.current.classList.add("text-truncate");
 
     const call = axios.put(
-      `http://localhost:3000/api/news/${data._id}/approve`,
+      `${VITE_BACKEND_URL}/news/${data._id}/approve`,
       user,
       useCredentials
     );

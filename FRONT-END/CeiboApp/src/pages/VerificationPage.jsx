@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Spin, Result } from "antd";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { envs } from "../config/env/env.config";
 
 const VerificationPage = () => {
   const { token } = useParams();
@@ -9,11 +10,13 @@ const VerificationPage = () => {
   const [verificationResult, setVerificationResult] = useState("");
   const tokenWithDots = token.replace(/@/g, ".");
 
+  const { VITE_BACKEND_URL } = envs;
+
   useEffect(() => {
     setTimeout(() => {
       axios
         .get(
-          `http://localhost:3000/api/users/verify-account/${tokenWithDots}`,
+          `${VITE_BACKEND_URL}/users/verify-account/${tokenWithDots}`,
           { token },
           {
             headers: { "Content-Type": "application/json" },

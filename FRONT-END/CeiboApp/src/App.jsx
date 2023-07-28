@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Members from "./pages/Members";
-import { Manager } from "./pages/Manager";
 import { ProtectedRoute } from "./components";
 import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
@@ -46,6 +45,7 @@ function App() {
               <Route path="/home" exact element={<Projects />} />
               <Route path="/manager" exact element={<Manager />} />
               <Route path="/projects" exact element={<Projects />} />
+
               <Route path="/projects/add" exact element={<AddProject />} />
               <Route path="/partners" exact element={<Partners />} />
             </Route>

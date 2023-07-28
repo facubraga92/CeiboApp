@@ -6,6 +6,7 @@ import Layout from "../components/layouts/Layout";
 import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 const { Option } = Select;
+import { envs } from "../config/env/env.config";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -16,9 +17,11 @@ const Members = () => {
   const [idDelete, setIdDelete] = useState("");
   const [roleSearch, setRoleSearch] = useState("");
 
+  const { VITE_BACKEND_URL } = envs;
+
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/users/admin/members", {
+      .get(`${VITE_BACKEND_URL}/users/admin/members`, {
         withCredentials: true,
         credentials: "include",
       })
@@ -65,7 +68,7 @@ const Members = () => {
   const handleRoleChange = (memberId, selectedRole) => {
     axios
       .put(
-        `http://localhost:3000/api/users/admin/members/${memberId}`,
+        `${VITE_BACKEND_URL}/users/admin/members/${memberId}`,
         { role: selectedRole },
         {
           headers: { "Content-Type": "application/json" },
@@ -103,7 +106,7 @@ const Members = () => {
   const handleDelete = () => {
     handleModalToggle();
     axios
-      .delete(`http://localhost:3000/api/users/admin/members/${idDelete}`, {
+      .delete(`${VITE_BACKEND_URL}/users/admin/members/${idDelete}`, {
         withCredentials: true,
         credentials: "include",
       })

@@ -5,6 +5,7 @@ import { Modal, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { envs } from "../config/env/env.config";
 
 export default function Profile() {
   const [isChanges, setIsChanges] = useState(false);
@@ -12,6 +13,8 @@ export default function Profile() {
   const [disabled, setDisabled] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
+
+  const { VITE_BACKEND_URL } = envs;
 
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ export default function Profile() {
   useEffect(() => {
     const handle = async function () {
       let call = await axios
-        .get(`http://localhost:3000/api/users/admin/members/${user.id}`, {
+        .get(`${VITE_BACKEND_URL}/users/admin/members/${user.id}`, {
           withCredentials: true,
           credentials: "include",
         })
@@ -80,7 +83,7 @@ export default function Profile() {
     event.preventDefault();
 
     let call = await axios.put(
-      `http://localhost:3000/api/users/admin/members/${user.id}`,
+      `${VITE_BACKEND_URL}/users/admin/members/${user.id}`,
       inputs,
       {
         withCredentials: true,
