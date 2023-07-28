@@ -44,9 +44,13 @@ function App() {
             <Route path="/" element={<ProtectedRoute onlyManager />}>
               <Route path="/home" exact element={<Projects />} />
               <Route path="/projects" exact element={<Projects />} />
-
               <Route path="/projects/add" exact element={<AddProject />} />
               <Route path="/partners" exact element={<Partners />} />
+              <Route
+                path="/project/addNews/:idProject"
+                exact
+                element={<FormNovedades />}
+              />
             </Route>
 
             {/* Contributes Routes */}
