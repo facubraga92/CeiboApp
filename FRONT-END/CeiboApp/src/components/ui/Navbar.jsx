@@ -42,7 +42,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container col-12">
-        <Link className="navbar-brand" to="/home">
+        <Link className="navbar-brand" to="/">
           CeiboApp
         </Link>
         <button
@@ -61,6 +61,14 @@ const Navbar = () => {
           id="navbarNav"
         >
           <ul className="navbar-nav ms-auto">
+            {userE?.role === "manager" ||
+              (userE?.role === "consultor" && (
+                <li className="nav-item">
+                  <Link to="/Projects" className="nav-link">
+                    {userE?.role === "manager" ? "Proyectos" : "Inicio"}
+                  </Link>
+                </li>
+              ))}
             {userE?.email ? (
               <>
                 {userE?.role === "admin" && (
@@ -75,20 +83,13 @@ const Navbar = () => {
                 {userE?.role === "manager" && (
                   <>
                     <li className="nav-item">
-                      <Link to="/home" className="nav-link">
-                        Proyectos
+                      <Link to="/Projects" className="nav-link">
+                        Projectos
                       </Link>
                     </li>
-
                     <li className="nav-item">
                       <Link to="/partners" className="nav-link">
                         Socios
-                      </Link>
-                    </li>
-
-                    <li>
-                      <Link to="/profile" className="nav-link">
-                        Perfil
                       </Link>
                     </li>
                   </>
@@ -100,7 +101,6 @@ const Navbar = () => {
                         Proyectos
                       </Link>
                     </li>
-
                     <li>
                       <Link to="/profile" className="nav-link">
                         Perfil

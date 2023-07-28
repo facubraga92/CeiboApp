@@ -14,6 +14,7 @@ const projectSchema = new mongoose.Schema({
     setDefaultsOnInsert: true,
   },
   modified_at: { type: Date, default: Date.now },
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 const projectModel = mongoose.model("Project", projectSchema);

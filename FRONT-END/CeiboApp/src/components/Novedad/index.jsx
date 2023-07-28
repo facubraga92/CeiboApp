@@ -11,7 +11,7 @@ import { envs } from "../../config/env/env.config";
 
 const { TextArea } = Input;
 
-export default function Novedad({ idNews }) {
+export default function Novedad({ news, projectProp }) {
   const [data, setData] = useState({});
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +19,7 @@ export default function Novedad({ idNews }) {
   const [user, setUser] = useState({});
   const [isModifying, setIsModifying] = useState(false);
   const [editedData, setEditedData] = useState({});
+  const [project, setProject] = useState({});
 
   useEffect(() => {
     const handle = () => {
@@ -28,16 +29,16 @@ export default function Novedad({ idNews }) {
     };
     handle();
   }, []);
+  
   const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
-    axios
-      .get(`${VITE_BACKEND_URL}/news/${idNews}`, useCredentials)
-      .then((result) => {
-        setData(result.data.data);
-      })
-      .catch((err) => {});
-  }, [idNews]);
+    setData(news);
+  }, [news]);
+
+  useEffect(() => {
+    setProject(projectProp);
+  }, [project]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,10 +53,6 @@ export default function Novedad({ idNews }) {
     return;
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   const handleSubmit = async () => {
     const newReply = {
       user: user.id,
@@ -66,7 +63,7 @@ export default function Novedad({ idNews }) {
     const updatedFakeData = {
       ...data,
       reply: [
-        ...data.reply,
+        ...data?.reply,
         {
           user: {
             email: user.email,
@@ -162,21 +159,31 @@ export default function Novedad({ idNews }) {
     }, 100);
   };
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   return (
     <>
-      <tr onClick={toggleShowModal}>
-        <td>{data?.title}</td>
-        <td>{data?.created_at?.split("T")[0]}</td>
-        <td style={{ maxWidth: "100px" }}>
-          <p className="text-truncate">{data?.description}</p>
-        </td>
-        <td>{data?.state}</td>
-        <td>Comentarios: {data?.reply?.length}</td>
-      </tr>
+      <div
+        className="card shadow onHoverCard"
+        onClick={toggleShowModal}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="card-header">
+          <p className="card-title text-truncate">
+            <span>Titulo: </span>
+            <span>{data?.title}</span>
+          </p>
+        </div>
+        <div className="card-body">
+          <p className="card-description text-truncate">{data?.description}</p>
+          <p className="card-state">{data?.state}</p>
+          <p className="card-comments">Comentarios: {data?.reply?.length}</p>
+        </div>
+        <div className="card-footer">
+          <p className="card-date">Fecha: {data?.created_at?.split("T")[0]}</p>
+          <p>Creador: {data?.userId?.email}</p>
+        </div>
+        {/* Add modal content here if needed */}
+        {showModal && <div className="modal">Modal content goes here</div>}
+      </div>
       <Modal
         show={showModal}
         centered

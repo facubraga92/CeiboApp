@@ -3,7 +3,7 @@ import axios from "axios";
 import Select from "react-select";
 import { message } from "antd";
 import Layout from "../components/layouts/Layout";
-import { useCredentials } from "../utils/api";
+import { getUserByToken, useCredentials } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { envs } from "../config/env/env.config";
 
@@ -11,11 +11,17 @@ const ProjectForm = () => {
   const [membersList, setMembersList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
   const [inputs, setInputs] = useState({});
+  const [created_by, setCreated_by] = useState({});
 
   const { VITE_BACKEND_URL } = envs;
 
   const navigate = useNavigate();
   useEffect(() => {
+    const handle = () => {
+      const user = getUserByToken();
+      setCreated_by(user);
+    };
+
     axios
       .get(`${VITE_BACKEND_URL}/users/admin/members`, useCredentials)
       .then((response) => {
@@ -39,18 +45,23 @@ const ProjectForm = () => {
         });
         setCustomersList(sortedCustomers);
       });
+
+    handle();
   }, []);
+  useEffect(() => {
+    console.log(inputs);
+  }, [inputs]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     axios
       .post(`${VITE_BACKEND_URL}/projects/create`, inputs, useCredentials)
       .then((response) => {
+        console.log(inputs);
         message.success(`Proyecto ${inputs.name} creado!`);
         // Restablecer los campos del formulario
         setInputs({});
-        navigate("/");
+        navigate("/Projects");
       })
       .catch((error) => {
         message.error(error);
@@ -69,6 +80,7 @@ const ProjectForm = () => {
   });
 
   const handleChange = (event) => {
+    setInputs({ ...inputs, created_by: created_by.id });
     const { name, value } = event.target;
     if (value === "" || !value || value.length == 0) {
       setInputs((current) => {

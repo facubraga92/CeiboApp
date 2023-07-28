@@ -2,7 +2,6 @@ const userModel = require("../schemas/User");
 
 async function isManager(req, res, next) {
   const managerId = req.body.managers;
-  console.log(managerId);
   try {
     const isManager = await userModel.exists({
       _id: managerId,
