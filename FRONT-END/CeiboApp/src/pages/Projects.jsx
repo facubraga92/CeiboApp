@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
-import { getUserByToken, useCredentials, userMe } from "../utils/api";
+import { getUserByToken, useCredentials } from "../utils/api";
 import { Spin } from "antd";
 import "../styles/projects.css";
 
@@ -58,6 +57,7 @@ const Projects = () => {
             </Link>
           </div>
         )}
+
         <div className="mt-1 shadow" style={{ backgroundColor: "#f6f8fa" }}>
           {projects.length > 0 ? (
             projects.map((e, index) => (
@@ -83,9 +83,9 @@ const Projects = () => {
                       <div className="justify-content-between">
                         <div className="d-flex">
                           <p className="">
-                            {e.name}
-
-                            {e.description}
+                            <span className="lead">{e.name}</span>
+                            {" - "}
+                            <span className="font-italic">{e.description}</span>
                           </p>
                         </div>
                         <div

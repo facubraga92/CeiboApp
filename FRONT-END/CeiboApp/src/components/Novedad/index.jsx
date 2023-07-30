@@ -331,6 +331,7 @@ export default function Novedad({ news, projectProp }) {
                 className="form-control"
                 placeholder="Título"
               />
+
               <textarea
                 name="description"
                 value={
@@ -342,6 +343,7 @@ export default function Novedad({ news, projectProp }) {
                 className="form-control mt-2"
                 placeholder="Descripción"
               />
+
               {isModifying ? (
                 <div className="mt-2">
                   <Button variant="success" onClick={handleModify}>

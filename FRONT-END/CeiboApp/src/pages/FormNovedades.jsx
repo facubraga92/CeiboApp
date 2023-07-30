@@ -57,7 +57,7 @@ export default function FormNovedades() {
             handleChange({
               target: {
                 name: "associatedProject",
-                value: project._id,
+                value: response.data._id,
               },
             });
             handleChange({
@@ -106,7 +106,6 @@ export default function FormNovedades() {
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       await axios.post(
         `${VITE_BACKEND_URL}/projects/project/addNews/${params.idProject}`,
@@ -132,7 +131,7 @@ export default function FormNovedades() {
 
     return setTimeout(() => {
       return navigate("/Projects");
-    }, 2000);
+    }, 1000);
   };
 
   const handleCancel = (e) => {

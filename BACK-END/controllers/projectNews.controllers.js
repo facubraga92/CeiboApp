@@ -5,8 +5,7 @@ const User = require("../schemas/User");
 
 exports.createNews = async (req, res) => {
   try {
-    const { title, description, userId } = req.body;
-    const { idProject } = req.params;
+    const { title, description, userId, associatedProject } = req.body;
     const project = await Project.findById(idProject);
 
     if (!project || !project.consultors.includes(req.user._id)) {
@@ -20,7 +19,7 @@ exports.createNews = async (req, res) => {
       title,
       description,
       userId,
-      associatedProject: idProject,
+      associatedProject,
       state: "pendiente",
     });
     await news.save();
@@ -213,7 +212,7 @@ exports.addCommentToNews = async (req, res) => {
   }
 };
 
-exports.updateNewsManager = async (req, res)=>{
+exports.updateNewsManager = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, userId, message, date } = req.body;
