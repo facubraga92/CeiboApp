@@ -6,3 +6,7 @@
   border: 1px dashed #000000 !important;
   background: #e1e4e8;
 }
+
+body {
+  font-family: "Titillium Web", sans-serif;
+}
