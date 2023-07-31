@@ -11,7 +11,7 @@ const Partners = () => {
   const [filteredPartners, setFilteredPartners] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [customersList, setCustomersList] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null); // Nuevo estado
+  const [selectedCustomer, setSelectedCustomer] = useState({});
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -19,6 +19,7 @@ const Partners = () => {
     axios
       .get(`${VITE_BACKEND_URL}/users/admin/socio`, useCredentials)
       .then((response) => {
+        console.log(response, "jol");
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
             return a.lastName.localeCompare(b.lastName);
@@ -44,10 +45,24 @@ const Partners = () => {
       });
   }, []);
 
+  useEffect(() => {
+    // Cargar las selecciones previas del almacenamiento local al estado selectedCustomer
+    const savedSelectedCustomers = localStorage.getItem("selectedCustomers");
+    if (savedSelectedCustomers) {
+      setSelectedCustomer(JSON.parse(savedSelectedCustomers));
+    } else {
+      setSelectedCustomer({});
+    }
+  }, []);
+
+  useEffect(() => {
+    // Actualizar el almacenamiento local cuando cambia el estado selectedCustomer
+    localStorage.setItem("selectedCustomers", JSON.stringify(selectedCustomer));
+  }, [selectedCustomer]);
+
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchText(value);
-
     const filtered = partners.filter((partner) => {
       const isNameMatch =
         partner.name &&
@@ -83,13 +98,7 @@ const Partners = () => {
     };
   });
 
-  const handleUpdateClick = (partnerId) => {
-    const updatedPartner = {
-      associatedCustomers: selectedCustomer
-        ? selectedCustomer.value.map((customer) => customer.value)
-        : null,
-    };
-
+  const handleUpdatePartner = (partnerId, updatedPartner) => {
     axios
       .put(
         `${VITE_BACKEND_URL}/users/admin/members/${partnerId}`,
@@ -100,27 +109,26 @@ const Partners = () => {
         }
       )
       .then(() => {
-        // Actualizar el socio en los estados locales
         setPartners((prevPartners) =>
-          prevPartners.map((partner) => {
-            if (partner._id === partnerId) {
+          prevPartners.map((prevPartner) => {
+            if (prevPartner._id === partnerId) {
               return {
-                ...partner,
+                ...prevPartner,
                 associatedCustomers: updatedPartner.associatedCustomers,
               };
             }
-            return partner;
+            return prevPartner;
           })
         );
         setFilteredPartners((prevFilteredPartners) =>
-          prevFilteredPartners.map((partner) => {
-            if (partner._id === partnerId) {
+          prevFilteredPartners.map((prevFilteredPartner) => {
+            if (prevFilteredPartner._id === partnerId) {
               return {
-                ...partner,
+                ...prevFilteredPartner,
                 associatedCustomers: updatedPartner.associatedCustomers,
               };
             }
-            return partner;
+            return prevFilteredPartner;
           })
         );
 
@@ -143,7 +151,6 @@ const Partners = () => {
             value={searchText}
             onChange={handleSearch}
             allowClear
-            autoSize
           />
         </div>
         <div className="">
@@ -153,69 +160,40 @@ const Partners = () => {
                 <th className="d-none d-md-table-cell">Nombre</th>
                 <th className="d-none d-md-table-cell">Apellido</th>
                 <th>Email</th>
-                <th>Cliente Asignado</th>
-                <th>Lista de Clientes</th>
-                <th></th>
+                <th>Editar lista de Clientes</th>
               </tr>
             </thead>
             {filteredPartners.length > 0 ? (
               filteredPartners.map((partner) => (
-                <tbody>
-                  <tr key={partner._id}>
+                <tbody key={partner._id}>
+                  <tr>
                     <td className="d-none d-md-table-cell">{partner.name}</td>
                     <td className="d-none d-md-table-cell">
                       {partner.lastName}
                     </td>
                     <td>{partner.email}</td>
                     <td>
-                      {partner.associatedCustomers &&
-                      partner.associatedCustomers.length > 0
-                        ? partner.associatedCustomers.map((customerId) => {
-                            const customer = customersList.find(
-                              (customer) => customer._id === customerId
-                            );
-                            return customer ? ` "${customer.name}"; ` : "";
-                          })
-                        : ""}
-                    </td>
-                    <td>
                       <Select
                         options={customerOptions}
-                        value={
-                          partner._id === selectedCustomer?.partnerId
-                            ? selectedCustomer.value
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          setSelectedCustomer({
-                            partnerId: partner._id,
-                            value: selectedOption,
-                          })
-                        }
+                        value={selectedCustomer[partner._id] || null}
+                        onChange={(selectedOption) => {
+                          setSelectedCustomer((prevSelectedCustomer) => ({
+                            ...prevSelectedCustomer,
+                            [partner._id]: selectedOption,
+                          }));
+
+                          const updatedPartner = {
+                            associatedCustomers: selectedOption
+                              ? selectedOption.map((customer) => customer.value)
+                              : null,
+                          };
+
+                          handleUpdatePartner(partner._id, updatedPartner);
+                        }}
                         isClearable={true}
                         isMulti={true}
                         placeholder="Selecciona un Cliente"
                       />
-                    </td>
-                    <td>
-                      {partner._id == selectedCustomer?.partnerId &&
-                      selectedCustomer?.value?.value == "" ? (
-                        <button
-                          title="Quitar Cliente al Usuario Seleccionado"
-                          className="btn btn-danger"
-                          onClick={() => handleUpdateClick(partner._id)}
-                        >
-                          Quitar Cliente
-                        </button>
-                      ) : (
-                        <button
-                          title="Asignar Cliente al Usuario Seleccionado"
-                          className="btn btn-warning"
-                          onClick={() => handleUpdateClick(partner._id)}
-                        >
-                          Asignar Cliente
-                        </button>
-                      )}
                     </td>
                   </tr>
                 </tbody>
@@ -223,7 +201,7 @@ const Partners = () => {
             ) : (
               <tbody>
                 <tr>
-                  <td colSpan="6" className="text-center">
+                  <td colSpan="4" className="text-center">
                     <Spin size="large" />
                   </td>
                 </tr>
