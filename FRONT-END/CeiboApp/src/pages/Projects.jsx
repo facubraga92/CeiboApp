@@ -3,8 +3,8 @@ import Layout from "../components/layouts/Layout";
 import axios from "axios";
 import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
-import { getUserByToken, useCredentials } from "../utils/api";
-import { Spin } from "antd";
+import { getAllClients, getUserByToken, useCredentials } from "../utils/api";
+import { Select, Spin } from "antd";
 import "../styles/projects.css";
 import { BiRefresh } from "react-icons/bi";
 
@@ -12,14 +12,22 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(-1);
   const [user, setUser] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [clientSearch, setClientSearch] = useState(undefined);
 
   useEffect(() => {
     const handle = async () => {
-      const user = getUserByToken();
+      const user = await getUserByToken();
+      const clients = await getAllClients();
+      setClients(clients);
       return setUser(user);
     };
     handle();
   }, []);
+
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
 
   useEffect(() => {
     if (!user) return;
@@ -40,16 +48,25 @@ const Projects = () => {
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
+  const clientOption = clients.map((client) => ({
+    value: client.name,
+    label: client.name,
+  }));
+
+  const handleSearch = (name) => {
+    setClientSearch(name);
+  };
+
   useEffect(() => {
-    console.log(projects);
-  }, [projects]);
+    console.log(clientSearch);
+  }, [clientSearch]);
 
   return (
     <Layout title="Projects">
-      <div className="container-fluid col-sm-12 col-md-10 ">
-        <div className="d-flex justify-content-between align-items-end">
+      <div className="container">
+        <div className="row">
           {user?.role === "manager" && (
-            <div>
+            <div className="col">
               <Link to="/projects/add">
                 <input
                   type="button"
@@ -59,12 +76,32 @@ const Projects = () => {
               </Link>
             </div>
           )}
-          <div className="d-flex justify-content-around align-content-end">
-            <span className="font-italic"></span>
-            <BiRefresh size={30} />
+          <div className="col">
+            <div className="d-flex justify-content-end">
+              <span className="font-italic"></span>
+              <BiRefresh size={30} />
+            </div>
           </div>
         </div>
-        <div className="mt-1 shadow" style={{ backgroundColor: "#f6f8fa" }}>
+        <div className="row mt-1">
+          <div className="col col-sm-12 col-md-4">
+            <Select
+              allowClear
+              showSearch
+              placeholder="Seleccione un cliente . . ."
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={clientOption}
+              style={{ width: "100%" }}
+              onChange={handleSearch}
+            />
+          </div>
+        </div>
+        <div className="mt-1 shadow">
           {projects.length > 0 ? (
             projects.map((e, index) => (
               <>
@@ -79,6 +116,13 @@ const Projects = () => {
                       ? "rounded-bottom"
                       : ""
                   } `}
+                  style={{
+                    display:
+                      clientSearch === e.customer.name ||
+                      clientSearch === undefined
+                        ? "block"
+                        : "none",
+                  }}
                 >
                   <div style={{}} className={"p-1 pb-1"} title={e.name}>
                     <div
