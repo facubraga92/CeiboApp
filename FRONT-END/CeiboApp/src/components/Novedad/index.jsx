@@ -211,7 +211,7 @@ export default function Novedad({ news }) {
             {!canModify.title ? (
               <>
                 <div className="d-flex justify-content-center">
-                  <h2 className="text-center mr-2">{data.title}</h2>
+                  <h2 className="text-center mr-2 display-5">{data.title}</h2>
                   {data.state !== "aprobada" && (
                     <RiEditBoxLine
                       size={50}
@@ -259,11 +259,11 @@ export default function Novedad({ news }) {
           </div>
         </Modal.Header>
         <Modal.Body
-          className={`${
+          className={` ${
             data?.state == "aprobada" ? "back-approve" : "back-normal"
           }`}
         >
-          <div>
+          <div className="">
             <div className="d-flex justify-content-center pb-2">
               {user?.role == "manager" && data.state != "aprobada" ? (
                 <>
@@ -275,8 +275,8 @@ export default function Novedad({ news }) {
                   />
                 </>
               ) : (
-                <p className="display-4">
-                  Estado:{" "}
+                <p className="display-4 d-flex d-md-block d-lg-flex">
+                  <span className="d-none d-md-block">Estado:</span>{" "}
                   <span className="bg-warning text-uppercase">
                     {data?.state}
                   </span>
@@ -362,7 +362,7 @@ export default function Novedad({ news }) {
                             : "bg-light pr-4"
                         }`}
                       >
-                        <p className="m-0">{mess.message}</p>
+                        <p className="m-0 text-break">{mess.message}</p>
                         <p className={`small text-muted m-0 font-italic`}>
                           {mess?.user?.email || mess?.userId} -{" "}
                           {mess.date.split("T")[0]}
@@ -446,7 +446,9 @@ export default function Novedad({ news }) {
               )}
             </div>
           ) : (
-            <div className={`d-flex flex-column align-items-end`}>
+            <div
+              className={`d-flex flex-column align-items-sm-center align-items-md-end `}
+            >
               <h5>Aprobada</h5>
               <p className="m-0">{data?.approved_by?.email || ""}</p>
               <p className="m-0">{data?.approved_date?.split("T")[0] || ""}</p>
