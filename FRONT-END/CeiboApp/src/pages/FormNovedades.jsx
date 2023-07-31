@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { Select, DatePicker, Spin } from "antd";
 import moment from "moment";
 import axios from "axios";
-import { useCredentials, userMe } from "../utils/api";
+import { getUserByToken, useCredentials, userMe } from "../utils/api";
 import { envs } from "../config/env/env.config";
 import Input from "antd/es/input/Input";
 import TextArea from "antd/es/input/TextArea";
@@ -29,16 +29,14 @@ export default function FormNovedades() {
   const [showModal, setShowModal] = useState(false);
   const [isChangesOk, setIsChangesOk] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
-
   const [project, setProject] = useState({});
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
     const handle = async () => {
-      const user = await userMe();
+      const user = await getUserByToken();
       return setUser(user);
     };
     handle();
