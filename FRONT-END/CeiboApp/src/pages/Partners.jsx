@@ -146,7 +146,7 @@ const Partners = () => {
             autoSize
           />
         </div>
-        <div className="table-responsive">
+        <div className="">
           <table className="table table-striped">
             <thead>
               <tr>
