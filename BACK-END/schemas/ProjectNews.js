@@ -15,6 +15,8 @@ const projectNewsSchema = new mongoose.Schema({
     default: Date.now,
     setDefaultsOnInsert: true,
   },
+  approved_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  approved_date: { type: Date },
   modified_at: { type: Date, default: Date.now },
   week: { type: Number },
   priority: { type: Number },

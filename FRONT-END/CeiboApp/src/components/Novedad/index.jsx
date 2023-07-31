@@ -3,23 +3,30 @@ import { Modal, Button, Toast } from "react-bootstrap";
 import { Input } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
 import { envs } from "../../config/env/env.config";
+import { BsSave } from "react-icons/bs";
+import { FcCancel } from "react-icons/fc";
+import { RiEditBoxLine } from "react-icons/ri";
 
 const { TextArea } = Input;
 
-export default function Novedad({ news, projectProp }) {
+export default function Novedad({ news }) {
+  const [user, setUser] = useState({});
   const [data, setData] = useState({});
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
-  const [user, setUser] = useState({});
-  const [isModifying, setIsModifying] = useState(false);
-  const [editedData, setEditedData] = useState({});
-  const [project, setProject] = useState({});
+
+  const [canModify, setCanModify] = useState({
+    title: false,
+    description: false,
+  });
+  const [inputsModify, setInputsModify] = useState({});
+
+  const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     const handle = () => {
@@ -30,15 +37,24 @@ export default function Novedad({ news, projectProp }) {
     handle();
   }, []);
 
-  const { VITE_BACKEND_URL } = envs;
-
   useEffect(() => {
     setData(news);
+    const { title, description } = news;
+    setInputsModify({ title: title, description: description });
   }, [news]);
 
-  useEffect(() => {
-    setProject(projectProp);
-  }, [project]);
+  const handleModifyChange = (e) => {
+    const { name, value } = e.target;
+    if (value === "") {
+      setInputsModify((current) => {
+        const { [name]: _, ...rest } = current;
+        return rest;
+      });
+    } else {
+      return setInputsModify((values) => ({ ...values, [name]: value }));
+    }
+    return;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -113,34 +129,28 @@ export default function Novedad({ news, projectProp }) {
       draggable: true,
     });
 
-    return setData((values) => ({ ...values, ["state"]: "aprobada" }));
+    return setData((values) => ({
+      ...values,
+      ["state"]: "aprobada",
+      approved_by: { email: `${user?.email}` },
+    }));
   };
 
-  const handleModify = async () => {
+  const handleSubmitModify = async (e) => {
+    e.preventDefault();
     try {
-      const modifiedData = {
-        title: inputs.title || data.title,
-        description: inputs.description || data.description,
-      };
       const response = await axios.put(
         `http://localhost:3000/api/news/${data._id}/modify`,
-        modifiedData,
+        inputsModify,
         useCredentials
       );
       setData(response.data.data);
-      toast.success("Novedad modificada con éxito!");
-      setIsModifying(false);
+      toast.success("Modificado con exito!");
     } catch (error) {
-      console.error("Error al modificar la novedad:", error);
       toast.error(
         "Error al modificar la novedad. Por favor, intenta de nuevo."
       );
     }
-  };
-
-  const handleCancelEdit = () => {
-    setData(editedData);
-    setIsModifying(false);
   };
 
   const descRef = useRef(null);
@@ -192,16 +202,59 @@ export default function Novedad({ news, projectProp }) {
         backdropClassName="background-blur"
       >
         <Modal.Header
-          closeButton
           className={`${
             data.state == "aprobada" ? "back-approve" : "back-normal"
           }`}
         >
-          <div>
-            <h2>Novedad: {data?.title}</h2>
-            <h5 className="text-muted">
-              <em>Proyecto: {data?.associatedProject?.name}</em>
-            </h5>
+          <div className="container">
+            {!canModify.title ? (
+              <>
+                <div className="d-flex justify-content-center">
+                  <h2 className="text-center mr-2">{data.title}</h2>
+                  {data.state !== "aprobada" && (
+                    <RiEditBoxLine
+                      size={50}
+                      display={canModify.title ? "none" : ""}
+                      onClick={() => {
+                        setCanModify({ ...canModify, title: true });
+                      }}
+                    />
+                  )}
+                </div>
+              </>
+            ) : (
+              <form className="d-flex" onSubmit={handleSubmitModify}>
+                <Input
+                  placeholder=""
+                  onChange={handleModifyChange}
+                  name="title"
+                  value={inputsModify.title || ""}
+                  disabled={!canModify.title}
+                  bordered={canModify.title}
+                  className="lead mr-1"
+                  showCount
+                  maxLength={20}
+                  minLength={1}
+                  required
+                />
+
+                <button type="submit" className="btn">
+                  <BsSave size={50} display={!canModify.title ? "none" : ""} />
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCanModify({ ...canModify, title: false });
+                  }}
+                  className="btn"
+                >
+                  <FcCancel
+                    size={50}
+                    display={!canModify.title ? "none" : ""}
+                  />
+                </button>
+              </form>
+            )}
           </div>
         </Modal.Header>
         <Modal.Body
@@ -210,7 +263,7 @@ export default function Novedad({ news, projectProp }) {
           }`}
         >
           <div>
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center pb-2">
               {user?.role == "manager" && data.state != "aprobada" ? (
                 <>
                   <input
@@ -229,14 +282,59 @@ export default function Novedad({ news, projectProp }) {
                 </p>
               )}
             </div>
-            <div>
-              <p
-                className="lead mt-2 text-justify"
-                ref={descRef}
-                onClick={handleDesc}
-              >
-                {data?.description}
-              </p>
+            <div className="pb-2">
+              {!canModify.description ? (
+                <div className="d-flex flex-wrap">
+                  {data.state !== "aprobada" && (
+                    <RiEditBoxLine
+                      size={50}
+                      display={canModify.description ? "none" : ""}
+                      onClick={() => {
+                        setCanModify({ ...canModify, description: true });
+                      }}
+                    />
+                  )}
+                  <p
+                    className="lead mt-2 text-justify text-break"
+                    ref={descRef}
+                    onClick={handleDesc}
+                  >
+                    {inputsModify?.description}
+                  </p>
+                </div>
+              ) : (
+                <form className="col d-flex" onSubmit={handleSubmitModify}>
+                  <TextArea
+                    placeholder=""
+                    onChange={handleModifyChange}
+                    name="description"
+                    value={inputsModify.description || ""}
+                    disabled={!canModify.description}
+                    bordered={canModify.description}
+                    showCount
+                    maxLength={1000}
+                    minLength={1}
+                    required
+                  />
+
+                  <button type="submit" className="btn">
+                    <BsSave
+                      size={50}
+                      display={!canModify.description ? "none" : ""}
+                    />
+                  </button>
+
+                  <button className="btn">
+                    <FcCancel
+                      size={50}
+                      onClick={() => {
+                        setCanModify({ ...canModify, description: false });
+                      }}
+                      display={!canModify.description ? "none" : ""}
+                    />
+                  </button>
+                </form>
+              )}
             </div>
 
             <hr className="" />
@@ -302,6 +400,8 @@ export default function Novedad({ news, projectProp }) {
                   onChange={handleChange}
                   name="message"
                   onPressEnter={inputs.message ? handleSubmit : ""}
+                  maxLength={140}
+                  showCount
                 />
                 <Button
                   variant="primary mt-2"
@@ -317,59 +417,6 @@ export default function Novedad({ news, projectProp }) {
               </div>
             )}
           </div>
-          {/*Campo de editar la novedad */}
-          {user.role === "manager" && data.state !== "aprobada" && (
-            <div className="mt-4">
-              {/* Agregar inputs controlados para editar los campos */}
-              <input
-                type="text"
-                name="title"
-                value={
-                  isModifying ? inputs.title || editedData.title : data.title
-                }
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Título"
-              />
-
-              <textarea
-                name="description"
-                value={
-                  isModifying
-                    ? inputs.description || editedData.description
-                    : data.description
-                }
-                onChange={handleChange}
-                className="form-control mt-2"
-                placeholder="Descripción"
-              />
-
-              {isModifying ? (
-                <div className="mt-2">
-                  <Button variant="success" onClick={handleModify}>
-                    Modificar
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={handleCancelEdit}
-                    className="ml-2"
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="info mt-2"
-                  onClick={() => {
-                    setIsModifying(true);
-                    setEditedData(data); // Copiar el estado data en editedData al iniciar la edición
-                  }}
-                >
-                  Editar
-                </Button>
-              )}
-            </div>
-          )}
         </Modal.Body>
         <Modal.Footer
           className={`d-flex justify-content-between ${
@@ -377,8 +424,9 @@ export default function Novedad({ news, projectProp }) {
           }`}
         >
           <div>
-            <p>{data?.userId?.email}</p>
-            <p>{data?.created_at?.split("T")[0]}</p>
+            <h5>Creada </h5>
+            <p className="m-0">{data?.userId?.email}</p>
+            <p className="m-0"> {data?.created_at?.split("T")[0]}</p>
           </div>
 
           {data.state != "aprobada" ? (
@@ -398,8 +446,9 @@ export default function Novedad({ news, projectProp }) {
             </div>
           ) : (
             <div className={`d-flex flex-column align-items-end`}>
-              <p>XXXX</p>
-              <p>XXXX</p>
+              <h5>Aprobada</h5>
+              <p className="m-0">{data?.approved_by?.email || ""}</p>
+              <p className="m-0">{data?.approved_date?.split("T")[0] || ""}</p>
             </div>
           )}
         </Modal.Footer>

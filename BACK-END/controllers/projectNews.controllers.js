@@ -167,8 +167,9 @@ exports.deleteNews = async (req, res) => {
 exports.approveNews = async (req, res) => {
   try {
     const { id } = req.params;
-
+    const idUser = req.body.id;
     const news = await ProjectNews.findById(id);
+    const userDb = await User.findById(idUser);
 
     if (!news) {
       return res
@@ -176,6 +177,8 @@ exports.approveNews = async (req, res) => {
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
+    news.approved_date = Date.now();
+    news.approved_by = userDb;
     news.state = "aprobada";
     await news.save();
     res.status(200).json({ success: true, data: news });

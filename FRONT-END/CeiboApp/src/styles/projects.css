@@ -1,3 +1,8 @@
 .onHoverRow :hover {
   background: #e1e4e8;
 }
+
+.onClickedRow {
+  border: 1px dashed #000000 !important;
+  background: #e1e4e8;
+}
