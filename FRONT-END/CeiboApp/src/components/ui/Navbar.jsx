@@ -4,23 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { userMe } from "../../utils/api";
+import { getUserByToken, userMe } from "../../utils/api";
 import { envs } from "../../config/env/env.config";
 
 const Navbar = () => {
   const [userE, setUsere] = useState(null);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-
-  const isLogin = location.pathname === "/login";
-
   const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     const handle = async () => {
-      const user = await userMe();
+      const user = getUserByToken();
       return setUsere(user);
     };
     handle();
@@ -38,6 +33,17 @@ const Navbar = () => {
     }
     return;
   };
+
+  const navbarOptions = [
+    {
+      label: "Proyectos",
+      path: "/Projects",
+      role: ["manager", "consultor"],
+    },
+    { label: "Administrar Miembros", path: "/admin/members", role: "admin" },
+    { label: "Socios", path: "/partners", role: "manager" },
+    { label: "Ver Novedades", path: "/home", role: ["socio", "manager"] },
+  ];
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -61,6 +67,29 @@ const Navbar = () => {
           id="navbarNav"
         >
           <ul className="navbar-nav ms-auto">
+            {navbarOptions.map(
+              (option, index) =>
+                userE?.email &&
+                option.role.includes(userE.role) && (
+                  <li key={index} className={`nav-item `}>
+                    <Link to={option.path} className="nav-link">
+                      {option.label}
+                    </Link>
+                  </li>
+                )
+            )}
+
+            {!userE?.email && (
+              <li className="nav-item">
+                <Link to="/Register" className="nav-link">
+                  Register
+                </Link>
+              </li>
+            )}
+            {/* 
+            
+              *** CODIGO VIEJO POR LAS DUDAS ***
+
             {userE?.role === "manager" ||
               (userE?.role === "consultor" && (
                 <li className="nav-item">
@@ -127,7 +156,7 @@ const Navbar = () => {
                   {isLogin ? "Register" : "Login"}
                 </Link>
               </li>
-            )}
+            )} */}
           </ul>
           <div>
             {userE?.email ? (

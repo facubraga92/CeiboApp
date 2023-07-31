@@ -1,6 +1,9 @@
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import { toast } from "react-toastify";
+import { envs } from "../config/env/env.config";
+
+const { VITE_BACKEND_URL } = envs;
 
 export const userMe = async () => {
   try {
@@ -88,4 +91,9 @@ export function getCookieValue(cookieName) {
 export function getUserByToken() {
   const token = getCookieValue("token");
   return jwtDecode(token);
+}
+
+export async function getAllClients() {
+  const { data } = await axios.get(`${VITE_BACKEND_URL}/customers/all`);
+  return data;
 }

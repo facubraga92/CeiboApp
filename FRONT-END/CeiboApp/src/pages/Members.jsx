@@ -160,12 +160,14 @@ const Members = () => {
   return (
     <Layout title={"Miembros"}>
       <div className="container col-sm-12 col-md-11">
+        <div className="text-center mt-1">
+          <h2 className="display-4">Administrador de usuarios</h2>
+        </div>
         <div className="row mt-3 justify-content-center">
           <div className="input-group mb-3  col-11 col-md-6">
             <Input
               className=""
-              placeholder="Buscar . . ."
-              allowClear
+              placeholder="Buscar usuario . . . "
               value={searchText || ""}
               onChange={handleFilterByAny}
             />

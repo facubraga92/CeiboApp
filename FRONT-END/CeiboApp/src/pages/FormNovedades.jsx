@@ -9,6 +9,8 @@ import moment from "moment";
 import axios from "axios";
 import { useCredentials, userMe } from "../utils/api";
 import { envs } from "../config/env/env.config";
+import Input from "antd/es/input/Input";
+import TextArea from "antd/es/input/TextArea";
 
 /**
  * Componente FormNovedades
@@ -21,9 +23,7 @@ export default function FormNovedades() {
 
   const [selectedOption, setSelectedOption] = useState(1);
   const [selectInput, setSelectInput] = useState("default");
-  const [inputs, setInputs] = useState({
-    priority: "1",
-  });
+  const [inputs, setInputs] = useState({});
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -57,7 +57,7 @@ export default function FormNovedades() {
             handleChange({
               target: {
                 name: "associatedProject",
-                value: project._id,
+                value: response.data._id,
               },
             });
             handleChange({
@@ -78,7 +78,6 @@ export default function FormNovedades() {
     setIsChangesOk(
       Object.keys(inputs).length > 1 &&
         inputs.description &&
-        inputs.type &&
         inputs.week &&
         inputs.title
     );
@@ -106,7 +105,6 @@ export default function FormNovedades() {
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       await axios.post(
         `${VITE_BACKEND_URL}/projects/project/addNews/${params.idProject}`,
@@ -117,11 +115,8 @@ export default function FormNovedades() {
       return console.log(error);
     }
 
-    setFormSubmitted(true);
-    if (selectInput === "default") return setFormSubmitted(false);
-
     setShowModalSave(false);
-    toast.success(`Novedad prioridad: ${inputs.priority} creada`, {
+    toast.success(`Novedad "${inputs.title}" creada`, {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: false,
@@ -132,7 +127,7 @@ export default function FormNovedades() {
 
     return setTimeout(() => {
       return navigate("/Projects");
-    }, 2000);
+    }, 1000);
   };
 
   const handleCancel = (e) => {
@@ -223,25 +218,23 @@ export default function FormNovedades() {
             <form method="post" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="title">Titulo</label>
-                <input
+                <Input
                   type="text"
-                  className="form-control"
                   id="title"
                   name="title"
-                  maxLength={70}
-                  rows={4}
+                  maxLength={20}
                   placeholder="Titulo de la novedad"
                   value={inputs.title || ""}
                   onChange={handleChange}
                   required
+                  showCount
                   disabled={!isEditable || formSubmitted}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="detalles">Detalles</label>
-                <textarea
+                <TextArea
                   type="text"
-                  className="form-control"
                   id="detalles"
                   name="description"
                   rows={4}
@@ -250,10 +243,12 @@ export default function FormNovedades() {
                   onChange={handleChange}
                   required
                   disabled={!isEditable || formSubmitted}
+                  showCount
+                  maxLength={1000}
                 />
               </div>
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label htmlFor="tipoNovedad">Tipo de Novedad</label>
                 <div>
                   <Select
@@ -292,7 +287,7 @@ export default function FormNovedades() {
                     ]}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <label>Prioridad</label>
               <div className="d-flex justify-content-center">
