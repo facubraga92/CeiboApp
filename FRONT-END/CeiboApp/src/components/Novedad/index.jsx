@@ -172,7 +172,7 @@ export default function Novedad({ news }) {
   return (
     <>
       <div
-        className={`card shadow onHoverCard ${
+        className={`card shadow tarjeta lead ${
           news.state === "aprobada" ? "" : ""
         }`}
         onClick={toggleShowModal}
