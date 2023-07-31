@@ -179,19 +179,20 @@ export default function Novedad({ news }) {
         style={{ cursor: "pointer" }}
       >
         <div className="card-header">
-          <p className="card-title text-truncate">
+          <p className="text-truncate">
             <span>Titulo: </span>
             <span>{data?.title}</span>
           </p>
         </div>
         <div className="card-body">
-          <p className="card-description text-truncate">{data?.description}</p>
-          <p className="card-state">{data?.state}</p>
-          <p className="card-comments">Comentarios: {data?.reply?.length}</p>
+          <p className="text-truncate">{data?.description}</p>
+          <p className="">{data?.state}</p>
+          <p className="">Comentarios: {data?.reply?.length}</p>
         </div>
         <div className="card-footer">
-          <p className="card-date">Fecha: {data?.created_at?.split("T")[0]}</p>
-          <p>Creador: {data?.userId?.email}</p>
+          <h5>Creada</h5>
+          <p className="m-0">{data?.created_at?.split("T")[0]}</p>
+          <p className="m-0">{data?.userId?.email}</p>
         </div>
       </div>
       <Modal

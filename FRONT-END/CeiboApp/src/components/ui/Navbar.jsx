@@ -9,13 +9,8 @@ import { envs } from "../../config/env/env.config";
 
 const Navbar = () => {
   const [userE, setUsere] = useState(null);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-
-  const currentPath = location.pathname;
-
   const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {

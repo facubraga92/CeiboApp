@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
-import { message } from "antd";
+import { Input, message } from "antd";
 import Layout from "../components/layouts/Layout";
 import { getUserByToken, useCredentials } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { envs } from "../config/env/env.config";
+import TextArea from "antd/es/input/TextArea";
 
 const ProjectForm = () => {
   const [membersList, setMembersList] = useState([]);
@@ -109,34 +110,40 @@ const ProjectForm = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Nombre</label>
-            <input
+            <Input
               type="text"
-              className="form-control"
               required
               name="name"
               value={inputs.name || ""}
               onChange={handleChange}
+              minLength={1}
+              maxLength={20}
+              showCount
             />
           </div>
           <div className="mb-3">
             <label className="form-label">Descripción</label>
-            <textarea
-              className="form-control"
+            <TextArea
               rows="4"
               name="description"
               value={inputs.description || ""}
               onChange={handleChange}
-            ></textarea>
+              minLength={1}
+              maxLength={1000}
+              showCount
+            />
           </div>
           <div className="mb-3">
             <label className="form-label">Código</label>
-            <input
+            <Input
               type="text"
-              className="form-control"
               required
               name="code"
               value={inputs.code || ""}
               onChange={handleChange}
+              minLength={1}
+              maxLength={20}
+              showCount
             />
           </div>
           <div className="mb-3">
