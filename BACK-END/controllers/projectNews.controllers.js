@@ -113,21 +113,32 @@ exports.updateNews = async (req, res) => {
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (news.title) news.title = title;
-    if (news.description) news.description = description;
-    if (news.state) news.state = "modificada";
-    if (userId && message && date) {
-      const rDate = new Date(date);
+    if (news.title) {
+      news.title = title;
+      const log = { userId, description: "Se ha cambiado el titulo" };
+      news.logs.push(log);
+    }
+
+    if (news.description) {
+      news.description = description;
+      const log = { userId, description: "Se ha cambiado la descripcion" };
+      news.logs.push(log);
+    }
+
+    if (news.title || news.description) {
+      news.state = "modificada";
+    }
+
+    if (userId && message) {
       const newComment = {
         userId,
         message,
-        rDate,
       };
 
       news.reply.push(newComment);
     }
-    await news.save();
 
+    await news.save();
     res.status(200).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
