@@ -86,6 +86,7 @@ export function getCookieValue(cookieName) {
       return decodeURIComponent(value);
     }
   }
+  return;
 }
 
 export function getUserByToken() {

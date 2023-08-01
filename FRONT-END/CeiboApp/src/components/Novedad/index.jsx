@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Toast, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Input } from "antd";
+import { Modal, Button } from "react-bootstrap";
+import { Input, Spin } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
 import { envs } from "../../config/env/env.config";
-import { BsInfoCircle, BsSave } from "react-icons/bs";
+import { BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
 import { RiEditBoxLine } from "react-icons/ri";
-import Layout from "../layouts/Layout";
+
 const { TextArea } = Input;
 
 export default function Novedad({ news }) {
@@ -19,6 +19,7 @@ export default function Novedad({ news }) {
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [isSendingReply, setIsSendingReply] = useState(false);
 
   const [canModify, setCanModify] = useState({
     title: false,
@@ -70,36 +71,28 @@ export default function Novedad({ news }) {
   };
 
   const handleSubmit = async () => {
+    setIsSendingReply(true);
     const newReply = {
       user: user.id,
       message: inputs.message,
       date: new Date().toLocaleDateString("es-AR"),
     };
 
-    const updatedFakeData = {
-      ...data,
-      reply: [
-        ...data?.reply,
-        {
-          user: {
-            email: user.email,
-          },
-          message: newReply.message,
-          date: newReply.date,
-        },
-      ],
-    };
+    await axios
+      .put(`${VITE_BACKEND_URL}/news/${data._id}`, newReply, useCredentials)
+      .then((response) => {
+        setIsSendingReply(false);
+        setInputs({});
+        setData(response.data.data);
+      })
+      .catch((err) => {});
 
-    await axios.put(
-      `${VITE_BACKEND_URL}/news/${data._id}`,
-      newReply,
-      useCredentials
-    );
-
-    setInputs({});
-    setData(updatedFakeData);
     return handleScrollBottom();
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const toggleShowModal = () => {
     setShowModal(!showModal);
@@ -109,12 +102,12 @@ export default function Novedad({ news }) {
     setConfirmModal(!confirmModal);
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     toggleShowConfirmModal();
-    extendChat.current.classList.add("comprimed-chat");
-    descRef.current.classList.add("text-truncate");
+    extendChat?.current?.classList.add("comprimed-chat");
+    descRef?.current?.classList.add("text-truncate");
 
-    const call = axios.put(
+    const call = await axios.put(
       `${VITE_BACKEND_URL}/news/${data._id}/approve`,
       user,
       useCredentials
@@ -129,11 +122,7 @@ export default function Novedad({ news }) {
       draggable: true,
     });
 
-    return setData((values) => ({
-      ...values,
-      ["state"]: "aprobada",
-      approved_by: { email: `${user?.email}` },
-    }));
+    return setData(call.data.data);
   };
 
   const handleSubmitModify = async (e) => {
@@ -268,24 +257,26 @@ export default function Novedad({ news }) {
           }`}
         >
           <div className="">
-            <div className="d-flex justify-content-center pb-2">
-              <div>
+            <div className="pb-2 d-flex flex-column align-items-center">
+              <div className="">
                 {user?.role == "manager" && data.state != "aprobada" ? (
-                  <>
+                  <div>
                     <input
                       type="button"
                       value={`Estado: ${data?.state}`}
                       className="btn btn-outline-warning p-3 text-uppercase"
                       onClick={toggleShowConfirmModal}
                     />
-                  </>
+                  </div>
                 ) : (
-                  <p className="display-4 d-flex d-md-block d-lg-flex">
-                    <span className="d-none d-md-block">Estado:</span>{" "}
-                    <span className="bg-warning text-uppercase">
-                      {data?.state}
-                    </span>
-                  </p>
+                  <div>
+                    <p className="display-4 d-flex d-md-block d-lg-flex">
+                      <span className="d-none d-md-block">Estado:</span>{" "}
+                      <span className="bg-warning text-uppercase">
+                        {data?.state}
+                      </span>
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -357,47 +348,49 @@ export default function Novedad({ news }) {
 
             <hr className="" />
 
-            <div
-              className="comprimed-chat back-normal bg-secondary p-1"
-              ref={extendChat}
-            >
-              <ul className="list-unstyled">
-                {data?.reply?.length ? (
-                  data?.reply?.map((mess, index) => (
-                    <div className="" key={index}>
-                      <li
-                        key={index}
-                        style={{
-                          backgroundColor: "#d9d7c7",
-                          width: "fit-content",
-                          marginLeft:
-                            mess?.user?.email === user?.email ? "auto" : "0",
-                        }}
-                        className={`p-2 rounded mb-3 ${
-                          mess?.user?.email === user?.email
-                            ? "text-right pl-4"
-                            : "bg-light pr-4"
-                        }`}
-                      >
-                        <p className="m-0 text-break">{mess.message}</p>
-                        <p className={`small text-muted m-0 font-italic`}>
-                          {mess?.user?.email || mess?.userId} -{" "}
-                          {mess.date.split("T")[0]}
-                        </p>
-                      </li>
-                    </div>
-                  ))
-                ) : (
-                  <li>
-                    <p className="text-center display-4">
-                      No hay comentarios todavia
-                    </p>
-                  </li>
-                )}
-              </ul>
-            </div>
+            {user.role !== "socio" && (
+              <div
+                className="comprimed-chat back-normal bg-secondary p-1"
+                ref={extendChat}
+              >
+                <ul className="list-unstyled">
+                  {data?.reply?.length ? (
+                    data?.reply?.map((mess, index) => (
+                      <div className="" key={index}>
+                        <li
+                          key={index}
+                          style={{
+                            backgroundColor: "#d9d7c7",
+                            width: "fit-content",
+                            marginLeft:
+                              mess?.user?.email === user?.email ? "auto" : "0",
+                          }}
+                          className={`p-2 rounded mb-3 ${
+                            mess?.user?.email === user?.email
+                              ? "text-right pl-4"
+                              : "bg-light pr-4"
+                          }`}
+                        >
+                          <p className="m-0 text-break">{mess.message}</p>
+                          <p className={`small text-muted m-0 font-italic`}>
+                            {mess?.user?.email || mess?.userId} -{" "}
+                            {mess.date.split("T")[0]}
+                          </p>
+                        </li>
+                      </div>
+                    ))
+                  ) : (
+                    <li>
+                      <p className="text-center display-4">
+                        No hay comentarios
+                      </p>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
-          {data?.reply?.length > 4 && (
+          {data?.reply?.length > 4 && user.role !== "socio" && (
             <div className="text-center mt-2">
               <input
                 type="button"
@@ -411,23 +404,31 @@ export default function Novedad({ news }) {
             {data.state != "aprobada" ? (
               <>
                 <label htmlFor="">{user.email}</label>
-                <TextArea
-                  rows={2}
-                  allowClear
-                  value={inputs.message || ""}
-                  onChange={handleChange}
-                  name="message"
-                  onPressEnter={inputs.message ? handleSubmit : ""}
-                  maxLength={140}
-                  showCount
-                />
-                <Button
-                  variant="primary mt-2"
-                  onClick={handleSubmit}
-                  disabled={!inputs.message}
-                >
-                  Comentar
-                </Button>
+                {!isSendingReply ? (
+                  <>
+                    <TextArea
+                      rows={2}
+                      allowClear
+                      value={inputs.message || ""}
+                      onChange={handleChange}
+                      name="message"
+                      onPressEnter={inputs.message ? handleSubmit : ""}
+                      maxLength={140}
+                      showCount
+                    />
+                    <Button
+                      variant="primary mt-2"
+                      onClick={handleSubmit}
+                      disabled={!inputs.message}
+                    >
+                      Comentar
+                    </Button>
+                  </>
+                ) : (
+                  <div className="text-center">
+                    <Spin />
+                  </div>
+                )}
               </>
             ) : (
               <div className="bg-secondary text-white p-2">
@@ -486,7 +487,7 @@ export default function Novedad({ news }) {
         <Modal.Body>
           <div>
             <p>
-              Se pasara la novedad a aprobada y se notificara el socio
+              Se pasara la novedad a aprobada y se notificara al socio
               correspondiente
             </p>
           </div>

@@ -35,7 +35,7 @@ userRouter.get("/me", validateUser, (req, res) => {
 
 userRouter.post("/googleVerify", googleVerify);
 
-userRouter.get("/admin/members", isAdminOrManager, getAllMembers);
+userRouter.get("/admin/members", getAllMembers);
 
 userRouter.get("/admin/:rol", isAdminOrManager, getMembersByRole);
 

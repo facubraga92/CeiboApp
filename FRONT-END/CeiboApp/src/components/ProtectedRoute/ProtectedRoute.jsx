@@ -41,7 +41,7 @@ export const ProtectedRoute = ({
   } else if (role === "consultor" && location.pathname === "/") {
     return <Navigate to="/projects" replace />;
   } else if (role === "socio" && location.pathname === "/") {
-    return <Navigate to="/projects/partner" replace />;
+    return <Navigate to="/projects" replace />;
   }
   return children ? children : <Outlet />;
 };
