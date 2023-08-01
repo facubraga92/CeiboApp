@@ -17,6 +17,7 @@ export const ProtectedRoute = ({
   if (!token) return <Navigate to="/login" replace />;
 
   const user = jwtDecode(token);
+
   const { role, isValidated } = user;
   if (!isValidated) return <Navigate to="/InvalidAccount" replace />;
 
