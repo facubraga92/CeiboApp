@@ -15,6 +15,7 @@ import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
 import { getCookieValue, getUserByToken } from "./utils/api";
 import Projects from "./pages/Projects";
+import Customers from "./pages/Customers";
 
 function App() {
   return (
@@ -46,6 +47,8 @@ function App() {
               <Route path="/projects" exact element={<Projects />} />
               <Route path="/projects/add" exact element={<AddProject />} />
               <Route path="/partners" exact element={<Partners />} />
+              <Route path="/customers" exact element={<Customers />} />
+
               <Route
                 path="/project/addNews/:idProject"
                 exact
