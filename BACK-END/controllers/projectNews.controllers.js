@@ -185,8 +185,19 @@ exports.approveNews = async (req, res) => {
     news.approved_date = Date.now();
     news.approved_by = userDb;
     news.state = "aprobada";
+
+    const log = { user: userDb, description: "Se aprobo la novedad" };
+    news.logs.push(log);
+
     await news.save();
-    res.status(200).json({ success: true, data: news });
+
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: populatedNews });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -214,7 +225,17 @@ exports.addCommentToNews = async (req, res) => {
     news.reply.push(newComment);
     await news.save();
 
-    res.json({ success: true, message: "Comentario agregado correctamente" });
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.json({
+      success: true,
+      message: "Comentario agregado correctamente",
+      data: populatedNews,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

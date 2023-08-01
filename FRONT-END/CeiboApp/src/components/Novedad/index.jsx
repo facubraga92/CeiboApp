@@ -76,28 +76,14 @@ export default function Novedad({ news }) {
       date: new Date().toLocaleDateString("es-AR"),
     };
 
-    const updatedFakeData = {
-      ...data,
-      reply: [
-        ...data?.reply,
-        {
-          user: {
-            email: user.email,
-          },
-          message: newReply.message,
-          date: newReply.date,
-        },
-      ],
-    };
-
-    await axios.put(
+    const response = await axios.put(
       `${VITE_BACKEND_URL}/news/${data._id}`,
       newReply,
       useCredentials
     );
 
     setInputs({});
-    setData(updatedFakeData);
+    setData(response.data.data);
     return handleScrollBottom();
   };
 
@@ -109,12 +95,12 @@ export default function Novedad({ news }) {
     setConfirmModal(!confirmModal);
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     toggleShowConfirmModal();
-    extendChat.current.classList.add("comprimed-chat");
-    descRef.current.classList.add("text-truncate");
+    extendChat?.current?.classList.add("comprimed-chat");
+    descRef?.current?.classList.add("text-truncate");
 
-    const call = axios.put(
+    const call = await axios.put(
       `${VITE_BACKEND_URL}/news/${data._id}/approve`,
       user,
       useCredentials
@@ -129,12 +115,12 @@ export default function Novedad({ news }) {
       draggable: true,
     });
 
-    return setData((values) => ({
-      ...values,
-      ["state"]: "aprobada",
-      approved_by: { email: `${user?.email}` },
-    }));
+    return setData(call.data.data);
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const handleSubmitModify = async (e) => {
     e.preventDefault();
@@ -393,7 +379,7 @@ export default function Novedad({ news }) {
                   ) : (
                     <li>
                       <p className="text-center display-4">
-                        No hay comentarios todavia
+                        No hay comentarios
                       </p>
                     </li>
                   )}
@@ -490,7 +476,7 @@ export default function Novedad({ news }) {
         <Modal.Body>
           <div>
             <p>
-              Se pasara la novedad a aprobada y se notificara el socio
+              Se pasara la novedad a aprobada y se notificara al socio
               correspondiente
             </p>
           </div>
