@@ -83,10 +83,11 @@ const Login = () => {
           .then((loginResponse) => {
             const user = loginResponse.data;
             delete user?.status;
-            dispatch(setUser(user));
+            const loggedUser = dispatch(setUser(user));
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
+            if(loggedUser)
             navigate("/");
           });
       });
@@ -109,11 +110,7 @@ const Login = () => {
     e?.preventDefault();
 
     axios
-      .post(
-        `${VITE_BACKEND_URL}/users/login`,
-        { ...inputs },
-        useCredentials
-      )
+      .post(`${VITE_BACKEND_URL}/users/login`, { ...inputs }, useCredentials)
       .then((loginResponse) => {
         const user = loginResponse.data;
         delete user?.status;
@@ -136,9 +133,6 @@ const Login = () => {
     <Layout title="Login">
       <div className="container mt-5 col-12 col-lg-6">
         <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
-          <div id="signInDiv" className="col">
-            {handleCallbackResponse}
-          </div>
           <div className="col mt-5 mt-md-0 align-content-center">
             <h2>Iniciar sesión</h2>
             <form onSubmit={handleSubmit} className="">
@@ -173,11 +167,14 @@ const Login = () => {
               <div className="d-flex justify-content-center">
                 <input
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn btn-primary w-100"
                   value={"Iniciar sesión"}
                   disabled={!isFormOk}
                 />
               </div>
+                <div id="signInDiv" className="col w-100 d-flex justify-content-center mt-4">
+                  {handleCallbackResponse}
+                </div>
             </form>
           </div>
         </div>

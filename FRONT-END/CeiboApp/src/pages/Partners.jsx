@@ -143,6 +143,9 @@ const Partners = () => {
   return (
     <Layout>
       <div className="container col-12 col-md-10 d-flex flex-column align-items-center">
+        <div className="col">
+          <h2 className="text-center display-4">Socios</h2>
+        </div>
         <div className="mt-2 mb-2" style={{ maxWidth: "20rem" }}>
           <Input
             size="large"
@@ -154,13 +157,13 @@ const Partners = () => {
           />
         </div>
         <div className="">
-          <table className="table table-striped">
+          <table className="table table-striped vw-100 min-vw-100">
             <thead>
               <tr>
                 <th className="d-none d-md-table-cell">Nombre</th>
                 <th className="d-none d-md-table-cell">Apellido</th>
                 <th>Email</th>
-                <th>Editar lista de Clientes</th>
+                <th>Clientes asociados</th>
               </tr>
             </thead>
             {filteredPartners.length > 0 ? (

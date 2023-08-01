@@ -10,7 +10,7 @@ import { envs } from "../../config/env/env.config";
 import { BsInfoCircle, BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
 import { RiEditBoxLine } from "react-icons/ri";
-
+import Layout from "../layouts/Layout";
 const { TextArea } = Input;
 
 export default function Novedad({ news }) {

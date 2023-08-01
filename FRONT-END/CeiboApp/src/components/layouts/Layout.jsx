@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import Navbar from "../ui/Navbar";
+import NavBar from "../ui/Navbar";
 import Footer from "../ui/Footer";
 
 function Layout({ children, title }) {
@@ -9,7 +9,7 @@ function Layout({ children, title }) {
       <Helmet>
         <title>{title || "CEIBOAPP"}</title>
       </Helmet>
-      <Navbar />
+      <NavBar />
       <main>{children}</main>
       <Footer />
     </>

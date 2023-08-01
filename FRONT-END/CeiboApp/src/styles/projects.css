@@ -7,6 +7,10 @@
   background: #e1e4e8;
 }
 
+body {
+  font-family: "Titillium Web", sans-serif !important;
+}
+  
 .upperCase ::first-letter {
   text-transform: uppercase;
 }
