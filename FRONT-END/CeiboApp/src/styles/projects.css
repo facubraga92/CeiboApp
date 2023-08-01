@@ -14,3 +14,17 @@ body {
 .upperCase ::first-letter {
   text-transform: uppercase;
 }
+
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.not-found-content {
+  text-align: center;
+  padding: 30px;
+  border-radius: 8px;
+ 
+}

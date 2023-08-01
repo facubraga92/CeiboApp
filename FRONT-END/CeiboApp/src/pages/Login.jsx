@@ -9,6 +9,8 @@ import { setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
 import { envs } from "../config/env/env.config";
+import { Input } from "@nextui-org/react";
+
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
@@ -87,8 +89,7 @@ const Login = () => {
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
-            if(loggedUser)
-            navigate("/");
+            if (loggedUser) navigate("/");
           });
       });
   };
@@ -96,14 +97,12 @@ const Login = () => {
   const handleChange = (e) => {
     e?.preventDefault();
     const { name, value } = e?.target;
-    if (value === "") {
-      setInputs((current) => {
-        const { [name]: _, ...rest } = current;
-        return rest;
-      });
-    } else {
-      return setInputs((values) => ({ ...values, [name]: value }));
-    }
+    const newValue = value === "" ? null : value; // Cambia a null si el valor es una cadena vacía , para que el input siga teniendo funcionalidad completa.
+
+    setInputs((current) => {
+      const { [name]: _, ...rest } = current;
+      return { ...rest, [name]: newValue };
+    });
   };
 
   const handleSubmit = (e) => {
@@ -131,50 +130,56 @@ const Login = () => {
 
   return (
     <Layout title="Login">
-      <div className="container mt-5 col-12 col-lg-6">
+      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
         <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
-          <div className="col mt-5 mt-md-0 align-content-center">
-            <h2>Iniciar sesión</h2>
+          <div className="col mt-0 mt-md-0 align-content-center">
+            <h2 style={{ marginBottom: "15%" }} className="text-center">
+              Iniciar sesión
+            </h2>
             <form onSubmit={handleSubmit} className="">
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  Correo electrónico
-                </label>
-                <input
+              <div className="mb-5">
+                <Input
+                  underlined
+                  labelPlaceholder="Correo electrónico"
+                  color="error"
                   type="email"
-                  className="form-control"
                   id="email"
                   name="email"
+                  autoComplete={true}
+                  fullWidth={true}
                   value={inputs.email}
                   onChange={handleChange}
-                  required
+                  required={true}
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">
-                  Contraseña
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
+                <Input.Password
+                  underlined
+                  labelPlaceholder="Contraseña"
+                  color="error"
                   id="password"
                   name="password"
+                  autoComplete={true}
                   value={inputs.password}
+                  fullWidth={true}
                   onChange={handleChange}
-                  required
+                  required={true}
                 />
               </div>
               <div className="d-flex justify-content-center">
                 <input
                   type="submit"
-                  className="btn btn-primary w-100"
+                  className="btn btn-outline-danger w-100"
                   value={"Iniciar sesión"}
                   disabled={!isFormOk}
                 />
               </div>
-                <div id="signInDiv" className="col w-100 d-flex justify-content-center mt-4">
-                  {handleCallbackResponse}
-                </div>
+              <div
+                id="signInDiv"
+                className="col w-100 d-flex justify-content-center mt-4"
+              >
+                {handleCallbackResponse}
+              </div>
             </form>
           </div>
         </div>

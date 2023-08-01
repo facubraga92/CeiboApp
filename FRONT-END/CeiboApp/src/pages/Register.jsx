@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@nextui-org/react";
 
 import { toast } from "react-toastify";
 
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { envs } from "../config/env/env.config";
-
 
 const Register = () => {
   const [inputs, setInputs] = useState({});
@@ -102,82 +102,86 @@ const Register = () => {
   return (
     <Layout title="Register">
       <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
-        <h2>Registro</h2>
+        <h2 style={{ marginBottom: "10%" }} className="text-center">
+          Registro
+        </h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Nombre
-            </label>
-            <input
+          <div className="mb-5">
+            <Input
+              underlined
+              labelPlaceholder="Nombre"
+              color="error"
               type="text"
-              className="form-control"
               id="name"
               name="name"
+              autoComplete={true}
+              fullWidth={true}
               value={inputs.name || ""}
               onChange={handleChange}
-              required
+              required={true}
               disabled={bloqInputs}
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="lastName" className="form-label">
-              Apellido
-            </label>
-            <input
+          <div className="mb-5">
+            <Input
+              underlined
+              labelPlaceholder="Apellido"
+              color="error"
               type="text"
-              className="form-control"
               id="lastName"
               name="lastName"
+              autoComplete={true}
+              fullWidth={true}
               value={inputs.lastName || ""}
               onChange={handleChange}
-              required
+              required={true}
               disabled={bloqInputs}
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Correo electrónico
-            </label>
-            <input
+          <div className="mb-5">
+            <Input
+              underlined
+              labelPlaceholder="Correo electrónico"
+              color="error"
               type="email"
-              className="form-control"
               id="email"
               name="email"
+              autoComplete={true}
+              fullWidth={true}
               value={inputs.email || ""}
               onChange={handleChange}
-              required
+              required={true}
               disabled={bloqInputs}
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              className="form-control"
+          <div className="mb-5">
+            <Input.Password
+              underlined
+              labelPlaceholder="Contraseña"
+              color="error"
               id="password"
               name="password"
+              autoComplete={true}
+              fullWidth={true}
               value={inputs.password || ""}
               onChange={handleChange}
-              required
+              required={true}
               disabled={bloqInputs}
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirmar contraseña
-            </label>
+          <div className="mb-5">
             <br />
-
-            <input
-              type="password"
-              className="form-control"
+            <Input.Password
+              underlined
+              labelPlaceholder="Repetir Contraseña"
+              color="error"
               id="confirmPassword"
               name="confirmPassword"
+              autoComplete={true}
+              fullWidth={true}
               value={inputs.confirmPassword || ""}
               onChange={handleChange}
-              required
+              required={true}
               disabled={bloqInputs}
             />
             {inputs.password != inputs.confirmPassword && (
@@ -207,7 +211,7 @@ const Register = () => {
             )}
             <input
               type="submit"
-              className="btn btn-primary flex-fill w-50"
+              className="btn btn-outline-danger flex-fill w-50"
               value={"Registrarse"}
               disabled={!isChangesOk || bloqInputs}
               style={{ pointerEvents: "auto" }}
