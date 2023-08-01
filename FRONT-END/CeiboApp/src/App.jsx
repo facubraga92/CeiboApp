@@ -44,7 +44,7 @@ function App() {
               <Route path="/partners" exact element={<Partners />} />
             </Route>
 
-            {/* Contributes Routes */}
+            {/* Contributes and Manager Routes */}
             <Route path="/" element={<ProtectedRoute onlyManajerOrConsultor />}>
               <Route path="/projects" exact element={<Projects />} />
               <Route
