@@ -14,6 +14,7 @@ import Partners from "./pages/Partners";
 import NotFound from "./pages/NotFound";
 import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
+import Customers from "./pages/Customers";
 
 // Data user
 import { getCookieValue } from "./utils/api";
@@ -21,6 +22,7 @@ import { getCookieValue } from "./utils/api";
 //Protected Routes
 import { IsLogged } from "./components/ProtectedRoute/IsLogged";
 import { ProtectedRoute } from "./components";
+
 
 function App() {
   return (
@@ -62,6 +64,12 @@ function App() {
             <Route path="/" element={<ProtectedRoute onlyManager />}>
               <Route path="/projects/add" exact element={<AddProject />} />
               <Route path="/partners" exact element={<Partners />} />
+              <Route path="/customers" exact element={<Customers />} />
+              <Route
+                path="/project/addNews/:idProject"
+                exact
+                element={<FormNovedades />}
+              />
             </Route>
 
             {/* Contributes and Manager Routes */}
