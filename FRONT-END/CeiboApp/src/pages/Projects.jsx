@@ -38,13 +38,17 @@ const Projects = () => {
         `http://localhost:3000/api/projects/getProjectsUser/${user.id}`,
         useCredentials
       )
-      .then((project) => {
-        setProjects(groupProjectsByClient(project.data));
+      .then((projects) => {
+        setProjects(groupProjectsByClient(projects.data));
       })
       .catch((error) => {
         console.log(error);
       });
   }, [user]);
+
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
 
   const groupProjectsByClient = (projects) => {
     return Object.entries(
@@ -97,10 +101,6 @@ const Projects = () => {
   useEffect(() => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
-
-  useEffect(() => {
-    console.log(clientSearch);
-  }, [clientSearch]);
 
   return (
     <Layout title="Projects">
@@ -220,7 +220,7 @@ const Projects = () => {
                               </div>
                             </div>
                             <div>
-                              {user?.role === "manager" && (
+                              {user?.role !== "socio" && (
                                 <>
                                   <Link to={`/project/delete/${e._id}`}>
                                     <input
@@ -238,17 +238,17 @@ const Projects = () => {
                                       onClick={(e) => setSelectedProject(e._id)}
                                     />
                                   </Link>
+
+                                  <Link to={`/project/addNews/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Agregar novedad"
+                                      className="btn btn-primary"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
                                 </>
                               )}
-
-                              <Link to={`/project/addNews/${e._id}`}>
-                                <input
-                                  type="button"
-                                  value="Agregar novedad"
-                                  className="btn btn-primary"
-                                  onClick={(e) => setSelectedProject(e._id)}
-                                />
-                              </Link>
                             </div>
                           </div>
 

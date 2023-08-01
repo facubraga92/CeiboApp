@@ -268,24 +268,26 @@ export default function Novedad({ news }) {
           }`}
         >
           <div className="">
-            <div className="d-flex justify-content-center pb-2">
-              <div>
+            <div className="pb-2 d-flex flex-column align-items-center">
+              <div className="">
                 {user?.role == "manager" && data.state != "aprobada" ? (
-                  <>
+                  <div>
                     <input
                       type="button"
                       value={`Estado: ${data?.state}`}
                       className="btn btn-outline-warning p-3 text-uppercase"
                       onClick={toggleShowConfirmModal}
                     />
-                  </>
+                  </div>
                 ) : (
-                  <p className="display-4 d-flex d-md-block d-lg-flex">
-                    <span className="d-none d-md-block">Estado:</span>{" "}
-                    <span className="bg-warning text-uppercase">
-                      {data?.state}
-                    </span>
-                  </p>
+                  <div>
+                    <p className="display-4 d-flex d-md-block d-lg-flex">
+                      <span className="d-none d-md-block">Estado:</span>{" "}
+                      <span className="bg-warning text-uppercase">
+                        {data?.state}
+                      </span>
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -357,45 +359,47 @@ export default function Novedad({ news }) {
 
             <hr className="" />
 
-            <div
-              className="comprimed-chat back-normal bg-secondary p-1"
-              ref={extendChat}
-            >
-              <ul className="list-unstyled">
-                {data?.reply?.length ? (
-                  data?.reply?.map((mess, index) => (
-                    <div className="" key={index}>
-                      <li
-                        key={index}
-                        style={{
-                          backgroundColor: "#d9d7c7",
-                          width: "fit-content",
-                          marginLeft:
-                            mess?.user?.email === user?.email ? "auto" : "0",
-                        }}
-                        className={`p-2 rounded mb-3 ${
-                          mess?.user?.email === user?.email
-                            ? "text-right pl-4"
-                            : "bg-light pr-4"
-                        }`}
-                      >
-                        <p className="m-0 text-break">{mess.message}</p>
-                        <p className={`small text-muted m-0 font-italic`}>
-                          {mess?.user?.email || mess?.userId} -{" "}
-                          {mess.date.split("T")[0]}
-                        </p>
-                      </li>
-                    </div>
-                  ))
-                ) : (
-                  <li>
-                    <p className="text-center display-4">
-                      No hay comentarios todavia
-                    </p>
-                  </li>
-                )}
-              </ul>
-            </div>
+            {user.role !== "socio" && (
+              <div
+                className="comprimed-chat back-normal bg-secondary p-1"
+                ref={extendChat}
+              >
+                <ul className="list-unstyled">
+                  {data?.reply?.length ? (
+                    data?.reply?.map((mess, index) => (
+                      <div className="" key={index}>
+                        <li
+                          key={index}
+                          style={{
+                            backgroundColor: "#d9d7c7",
+                            width: "fit-content",
+                            marginLeft:
+                              mess?.user?.email === user?.email ? "auto" : "0",
+                          }}
+                          className={`p-2 rounded mb-3 ${
+                            mess?.user?.email === user?.email
+                              ? "text-right pl-4"
+                              : "bg-light pr-4"
+                          }`}
+                        >
+                          <p className="m-0 text-break">{mess.message}</p>
+                          <p className={`small text-muted m-0 font-italic`}>
+                            {mess?.user?.email || mess?.userId} -{" "}
+                            {mess.date.split("T")[0]}
+                          </p>
+                        </li>
+                      </div>
+                    ))
+                  ) : (
+                    <li>
+                      <p className="text-center display-4">
+                        No hay comentarios todavia
+                      </p>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
           {data?.reply?.length > 4 && (
             <div className="text-center mt-2">

@@ -52,6 +52,8 @@ function App() {
           element={<AccountValidationMessage />}
         />
 
+        <Route path="/projects" exact element={<Projects />} />
+
         <Route path="/" element={<ProtectedRoute />}>
           <>
             {/* Admin Routes */}

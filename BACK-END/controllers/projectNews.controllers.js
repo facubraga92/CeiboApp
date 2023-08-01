@@ -6,15 +6,6 @@ const User = require("../schemas/User");
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
-    const project = await Project.findById(idProject);
-
-    if (!project || !project.consultors.includes(req.user._id)) {
-      return res.status(403).json({
-        success: false,
-        error: "No autorizado para crear una novedad en este proyecto",
-      });
-    }
-
     const news = new ProjectNews({
       title,
       description,
@@ -23,7 +14,6 @@ exports.createNews = async (req, res) => {
       state: "pendiente",
     });
     await news.save();
-
     await getManagersRelevants(news);
     res.status(201).json({ success: true, data: news });
   } catch (error) {

@@ -19,7 +19,6 @@ const Partners = () => {
     axios
       .get(`${VITE_BACKEND_URL}/users/admin/socio`, useCredentials)
       .then((response) => {
-        console.log(response, "jol");
         const sortedUsers = response.data.sort((a, b) => {
           if (a.lastName && b.lastName) {
             return a.lastName.localeCompare(b.lastName);
