@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import NavBar from "../ui/Navbar";
 import Footer from "../ui/Footer";
 
-function Layout({ children, title }) {
+function Layout({hasNotFooter , children, title }) {
   return (
     <>
       <Helmet>
@@ -11,7 +11,7 @@ function Layout({ children, title }) {
       </Helmet>
       <NavBar />
       <main>{children}</main>
-      <Footer />
+ {hasNotFooter ? <></>:     <Footer  />}
     </>
   );
 }

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layouts/Layout";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Input, Grid } from "@nextui-org/react";
 
 import { toast } from "react-toastify";
 
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { envs } from "../config/env/env.config";
-
 
 const Register = () => {
   const [inputs, setInputs] = useState({});
@@ -100,120 +100,202 @@ const Register = () => {
   };
 
   return (
-    <Layout title="Register">
-      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
-        <h2>Registro</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Nombre
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="name"
-              name="name"
-              value={inputs.name || ""}
-              onChange={handleChange}
-              required
-              disabled={bloqInputs}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="lastName" className="form-label">
-              Apellido
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="lastName"
-              name="lastName"
-              value={inputs.lastName || ""}
-              onChange={handleChange}
-              required
-              disabled={bloqInputs}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              name="email"
-              value={inputs.email || ""}
-              onChange={handleChange}
-              required
-              disabled={bloqInputs}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              name="password"
-              value={inputs.password || ""}
-              onChange={handleChange}
-              required
-              disabled={bloqInputs}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirmar contraseña
-            </label>
-            <br />
+    <>
+      <Layout hasNotFooter={true} title="Register" />
 
-            <input
-              type="password"
-              className="form-control"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={inputs.confirmPassword || ""}
-              onChange={handleChange}
-              required
-              disabled={bloqInputs}
-            />
-            {inputs.password != inputs.confirmPassword && (
-              <span className="text-danger">Las contraseñas no coinciden</span>
-            )}
-          </div>
+      <div
+        style={{
+          height: "90vh",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <h2
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Registro
+          </h2>
+          <form onSubmit={handleSubmit} className="">
+            <Grid.Container
+              gap={4}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input
+                  style={{ width: "60rem" }}
+                  underlined
+                  labelPlaceholder="Nombre"
+                  color="error"
+                  id="name"
+                  name="name"
+                  value={inputs.name || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input
+                  style={{ width: "60rem" }}
+                  underlined
+                  labelPlaceholder="Apellido"
+                  color="error"
+                  id="lastName"
+                  name="lastName"
+                  value={inputs.lastName || ""}
+                  onChange={handleChange}
+                  required
+                  disabled={bloqInputs}
+                />
+              </Grid>
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input
+                  style={{ width: "60rem" }}
+                  underlined
+                  labelPlaceholder="Correo electrónico"
+                  color="error"
+                  id="email"
+                  name="email"
+                  value={inputs.email || ""}
+                  onChange={handleChange}
+                  required
+                  disabled={bloqInputs}
+                />
+              </Grid>
 
-          <div className="d-flex justify-content-center">
-            {!isChanges && (
-              <input
-                type="button"
-                value="Volver"
-                className="btn btn-outline-warning mr-2 flex-fill w-50"
-                disabled={isChanges || bloqInputs}
-                onClick={handleCancel}
-              />
-            )}
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input.Password
+                  style={{ width: "57.5rem" }}
+                  underlined
+                  labelPlaceholder="Contraseña"
+                  color="error"
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={inputs.password || ""}
+                  onChange={handleChange}
+                  required
+                  disabled={bloqInputs}
+                />
+              </Grid>
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input.Password
+                  style={{ width: "57.5rem" }}
+                  underlined
+                  labelPlaceholder=" Confirmar contraseña"
+                  color="error"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={inputs.confirmPassword || ""}
+                  onChange={handleChange}
+                  required
+                  disabled={bloqInputs}
+                />{" "}
+                {inputs.password != inputs.confirmPassword && (
+                  <div>
+                    <span className="text-danger">
+                      Las contraseñas no coinciden
+                    </span>
+                  </div>
+                )}
+              </Grid>
+            </Grid.Container>
 
-            {isChanges && (
-              <input
-                type="button"
-                value="Cancelar"
-                className="btn btn-danger mr-2 flex-fill w-50"
-                onClick={handleModalToggle}
-                disabled={bloqInputs}
-              />
-            )}
-            <input
-              type="submit"
-              className="btn btn-primary flex-fill w-50"
-              value={"Registrarse"}
-              disabled={!isChangesOk || bloqInputs}
-              style={{ pointerEvents: "auto" }}
-            />
-          </div>
-        </form>
+            <div  className="d-flex justify-content-around s">
+              {!isChanges && (
+                <Grid onClick={handleSubmit}>
+                  <button
+                    type="button"
+                    value="Volver"
+                    className="btn btn-outline-danger w-100 "
+                    disabled={isChanges || bloqInputs}
+                    onClick={handleCancel}
+                  >
+                    Volver
+                  </button>
+                </Grid>
+              )}
+
+              {isChanges && (
+                <Grid onClick={handleSubmit}>
+                  <button
+                    type="button"
+                    value="Cancelar"
+                    className="btn btn-outline-danger w-150 "
+                    onClick={handleModalToggle}
+                    disabled={bloqInputs}
+                  >
+                    Cancelar
+                  </button>
+                </Grid>
+              )}
+              <Grid onClick={handleSubmit}>
+                <button
+                  type="button"
+                  value={"Registrarse"}
+                  className="btn btn-outline-danger w-150"
+                  disabled={!isChangesOk || bloqInputs}
+                  style={{ pointerEvents: "auto" }}
+                >
+                  Registrarse
+                </button>
+              </Grid>
+            </div>
+          </form>
+        </div>
       </div>
       <Modal show={showModal} centered onHide={handleModalToggle}>
         <Modal.Header closeButton>
@@ -231,8 +313,7 @@ const Register = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Layout>
+    </>
   );
 };
-
 export default Register;

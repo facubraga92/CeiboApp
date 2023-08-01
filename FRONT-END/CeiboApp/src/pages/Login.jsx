@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Button } from "@nextui-org/react";
 
+import { Input, Grid } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
@@ -9,6 +11,7 @@ import { setUser } from "../state/user";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
 import { envs } from "../config/env/env.config";
+
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
@@ -89,11 +92,15 @@ const Login = () => {
             );
             navigate("/");
           });
+      })
+      .catch(() => {
+        console.log("hola");
       });
   };
-
+  console.log(inputs);
   const handleChange = (e) => {
     e?.preventDefault();
+
     const { name, value } = e?.target;
     if (value === "") {
       setInputs((current) => {
@@ -127,58 +134,105 @@ const Login = () => {
         }
       });
   };
-
   return (
-    <Layout title="Login">
-      <div className="container mt-5 col-12 col-lg-6">
-        <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
-          <div className="col mt-5 mt-md-0 align-content-center">
-            <h2>Iniciar sesión</h2>
-            <form onSubmit={handleSubmit} className="">
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  Correo electrónico
-                </label>
-                <input
-                  type="email"
-                  className="form-control"
+    <>
+      <Layout hasNotFooter={true} title="Login" />
+
+      <div
+        style={{
+          height: "90vh",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <h2
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Iniciar sesión
+          </h2>
+          <form onSubmit={handleSubmit} className="">
+            <Grid.Container
+              gap={4}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input
+                  style={{ width: "60rem" }}
+                  underlined
+                  labelPlaceholder="Correo electrónico"
+                  color="error"
                   id="email"
                   name="email"
                   value={inputs.email}
                   onChange={handleChange}
                   required
                 />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">
-                  Contraseña
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
+              </Grid>
+
+              <Grid
+                style={{
+                  display: "flex",
+                  width: "90%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50%",
+                }}
+              >
+                <Input.Password
+                  style={{ width: "57.5rem" }}
+                  underlined
+                  labelPlaceholder="Contraseña"
+                  color="error"
                   id="password"
                   name="password"
+                  type="password"
                   value={inputs.password}
                   onChange={handleChange}
                   required
                 />
-              </div>
-              <div className="d-flex justify-content-center">
-                <input
-                  type="submit"
-                  className="btn btn-primary w-100"
-                  value={"Iniciar sesión"}
+              </Grid>
+              <Grid onClick={handleSubmit}>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger w-100 "
                   disabled={!isFormOk}
-                />
+                >
+                  Iniciar sesión
+                </button>
+              </Grid>
+              <div
+                id="signInDiv"
+                className="col w-100 d-flex justify-content-center mt-4"
+              >
+                {handleCallbackResponse}
               </div>
-                <div id="signInDiv" className="col w-100 d-flex justify-content-center mt-4">
-                  {handleCallbackResponse}
-                </div>
-            </form>
-          </div>
+            </Grid.Container>
+          </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

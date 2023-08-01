@@ -55,6 +55,7 @@ const ProjectForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     axios
       .post(`${VITE_BACKEND_URL}/projects/create`, inputs, useCredentials)
       .then((response) => {
@@ -83,13 +84,24 @@ const ProjectForm = () => {
   const handleChange = (event) => {
     setInputs({ ...inputs, created_by: created_by.id });
     const { name, value } = event.target;
-    if (value === "" || !value || value.length == 0) {
+
+    // Convertir la primera letra a mayúscula si está en minúscula
+    const capitalizedValue =
+      value && typeof value === "string"
+        ? value.charAt(0).toUpperCase() + value.slice(1)
+        : value;
+
+    if (
+      capitalizedValue === "" ||
+      !capitalizedValue ||
+      capitalizedValue.length === 0
+    ) {
       setInputs((current) => {
         const { [name]: _, ...rest } = current;
         return rest;
       });
     } else {
-      return setInputs((values) => ({ ...values, [name]: value }));
+      return setInputs((values) => ({ ...values, [name]: capitalizedValue }));
     }
     return;
   };
