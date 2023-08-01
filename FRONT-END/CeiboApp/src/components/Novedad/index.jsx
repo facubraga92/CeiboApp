@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Toast, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { Input } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
 import { envs } from "../../config/env/env.config";
-import { BsInfoCircle, BsSave } from "react-icons/bs";
+import { BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
 import { RiEditBoxLine } from "react-icons/ri";
-import Layout from "../layouts/Layout";
+
 const { TextArea } = Input;
 
 export default function Novedad({ news }) {

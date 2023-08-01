@@ -86,10 +86,12 @@ export function getCookieValue(cookieName) {
       return decodeURIComponent(value);
     }
   }
+  return;
 }
 
 export function getUserByToken() {
   const token = getCookieValue("token");
+  if (!token) return token;
   return jwtDecode(token);
 }
 

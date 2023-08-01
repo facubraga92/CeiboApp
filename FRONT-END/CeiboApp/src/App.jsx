@@ -15,10 +15,9 @@ import NotFound from "./pages/NotFound";
 import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
 import Customers from "./pages/Customers";
-import ProjectsPartnersView from "./pages/ProjectsPartnersView";
 
 // Data user
-import { getCookieValue } from "./utils/api";
+import { getUserByToken } from "./utils/api";
 
 //Protected Routes
 import { IsLogged } from "./components/ProtectedRoute/IsLogged";
@@ -52,12 +51,19 @@ function App() {
           element={<AccountValidationMessage />}
         />
 
-        <Route path="/projects" exact element={<Projects />} />
-
-        <Route path="/" element={<ProtectedRoute />}>
+        <Route path="/" element={<ProtectedRoute IsLogged />}>
           <>
-            {/* Admin Routes */}
+            {/* RUTA PARA SOLO CON LOGEO */}
+            <Route
+              path="/projects"
+              element={
+                <ProtectedRoute>
+                  <Projects />
+                </ProtectedRoute>
+              }
+            ></Route>
 
+            {/* Admin Routes */}
             <Route
               path="/admin/members"
               element={
@@ -97,15 +103,6 @@ function App() {
 
             {/* Contributes and Manager Routes */}
             <Route
-              path="/projects"
-              element={
-                <ProtectedRoute onlyManajerOrConsultor>
-                  <Projects />
-                </ProtectedRoute>
-              }
-            ></Route>
-
-            <Route
               path="/project/addNews/:idProject"
               element={
                 <ProtectedRoute onlyManajerOrConsultor>
@@ -115,22 +112,10 @@ function App() {
             ></Route>
 
             {/* Partners Routes*/}
-
-            <Route
-              path="/projects/partner"
-              element={
-                <ProtectedRoute onlyPartner>
-                  <ProjectsPartnersView />
-                </ProtectedRoute>
-              }
-            ></Route>
           </>
         </Route>
         {/*Error 404 */}
-        <Route
-          path="*"
-          element={getCookieValue("token") ? <NotFound /> : <Login />}
-        />
+        <Route path="*" element={getUserByToken() ? <NotFound /> : <Login />} />
       </Routes>
       <ToastContainer />
     </>
