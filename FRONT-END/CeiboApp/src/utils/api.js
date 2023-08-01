@@ -91,7 +91,7 @@ export function getCookieValue(cookieName) {
 
 export function getUserByToken() {
   const token = getCookieValue("token");
-  if (!token) return null;
+  if (!token) return token;
   return jwtDecode(token);
 }
 
