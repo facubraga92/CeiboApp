@@ -1,21 +1,26 @@
+//libs
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+
+//Pages
 import Register from "./pages/Register";
 import Members from "./pages/Members";
-import { ProtectedRoute } from "./components";
 import AddProject from "./pages/AddProject";
 import FormNovedades from "./pages/FormNovedades";
-import Profile from "./pages/Profile";
+import Projects from "./pages/Projects";
 import Login from "./pages/Login";
 import Partners from "./pages/Partners";
 import NotFound from "./pages/NotFound";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
-import { getCookieValue, getUserByToken } from "./utils/api";
-import Projects from "./pages/Projects";
+
+// Data user
+import { getCookieValue } from "./utils/api";
+
+//Protected Routes
 import { IsLogged } from "./components/ProtectedRoute/IsLogged";
+import { ProtectedRoute } from "./components";
 
 function App() {
   return (
