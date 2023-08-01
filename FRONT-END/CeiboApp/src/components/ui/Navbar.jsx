@@ -76,7 +76,7 @@ export default function NavBar() {
             {path != "login" && (
               <Link to="/login">
                 <Navbar.Item color="inherit" className="d-none d-md-block">
-                  <button type="button" class="btn btn-outline-danger">
+                  <button type="button" className="btn btn-outline-danger">
                     Iniciar sesión
                   </button>
                 </Navbar.Item>
@@ -85,7 +85,7 @@ export default function NavBar() {
             {path != "register" && (
               <Link to="/register">
                 <Navbar.Item className="d-none d-md-block">
-                  <button type="button" class="btn btn-outline-danger">
+                  <button type="button" className="btn btn-outline-danger">
                     Registrarse
                   </button>
                 </Navbar.Item>

@@ -170,11 +170,12 @@ const Projects = () => {
               (proj) => proj[0] === clientSearch || clientSearch === undefined
             )
             .map(([customer, proj], i) => (
-              <div className="mt-1 mb-4">
+              <div className="mt-1 mb-4" >
+                {/* key={custumer}   */}
                 <h4>{customer}</h4>
                 <div className="shadow">
                   {proj.map((e, index) => (
-                    <>
+                    <div>
                       <div
                         key={e._id}
                         className={`onHoverRow ${
@@ -279,7 +280,7 @@ const Projects = () => {
                           </div>
                         </div>
                       </div>
-                    </>
+                    </div>
                   ))}
                 </div>
               </div>

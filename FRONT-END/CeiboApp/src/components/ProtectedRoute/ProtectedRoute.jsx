@@ -14,7 +14,10 @@ export const ProtectedRoute = ({
   const token = getCookieValue("token");
   const location = useLocation();
 
+  if (!token) return <Navigate to="/login" replace />;
+
   const user = jwtDecode(token);
+
   const { role, isValidated } = user;
   if (!isValidated) return <Navigate to="/InvalidAccount" replace />;
 
@@ -31,7 +34,6 @@ export const ProtectedRoute = ({
     return <Navigate to="/" replace />;
   if (onlyPartner && !isPartner) return <Navigate to="/" replace />;
 
-  console.log(role);
   if (isAdmin && location.pathname === "/") {
     return <Navigate to="/admin/members" replace />;
   } else if (role === "manager" && location.pathname === "/") {
