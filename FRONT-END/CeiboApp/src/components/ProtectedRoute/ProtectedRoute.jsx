@@ -9,6 +9,7 @@ export const ProtectedRoute = ({
   onlyManager = false,
   onlyConsultor = false,
   onlyManajerOrConsultor = false,
+  onlyPartner = false,
 }) => {
   const token = getCookieValue("token");
   const location = useLocation();
@@ -21,15 +22,24 @@ export const ProtectedRoute = ({
   const isManager = role === "manager";
   const isConsultor = role === "consultor";
   const isManagerOrConsultor = role === "consultor" || role === "manager";
+  const isPartner = role === "socio";
 
   if (onlyAdmin && !isAdmin) return <Navigate to="/projects" replace />;
   if (onlyManager && !isManager) return <Navigate to="/" replace />;
   if (onlyConsultor && !isConsultor) return <Navigate to="/" replace />;
   if (onlyManajerOrConsultor && !isManagerOrConsultor)
     return <Navigate to="/" replace />;
+  if (onlyPartner && !isPartner) return <Navigate to="/" replace />;
 
-  if (isAdmin && location.pathname === "/home") {
+  console.log(role);
+  if (isAdmin && location.pathname === "/") {
     return <Navigate to="/admin/members" replace />;
+  } else if (role === "manager" && location.pathname === "/") {
+    return <Navigate to="/projects" replace />;
+  } else if (role === "consultor" && location.pathname === "/") {
+    return <Navigate to="/projects" replace />;
+  } else if (role === "socio" && location.pathname === "/") {
+    return <Navigate to="/projects/partner" replace />;
   }
   return children ? children : <Outlet />;
 };
