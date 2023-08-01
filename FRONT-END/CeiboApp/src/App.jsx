@@ -65,11 +65,6 @@ function App() {
               <Route path="/projects/add" exact element={<AddProject />} />
               <Route path="/partners" exact element={<Partners />} />
               <Route path="/customers" exact element={<Customers />} />
-              <Route
-                path="/project/addNews/:idProject"
-                exact
-                element={<FormNovedades />}
-              />
             </Route>
 
             {/* Contributes and Manager Routes */}
