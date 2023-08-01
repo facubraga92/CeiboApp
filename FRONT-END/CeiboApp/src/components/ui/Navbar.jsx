@@ -9,11 +9,11 @@ import { getUserByToken, userMe } from "../../utils/api";
 import { envs } from "../../config/env/env.config";
 
 export default function NavBar() {
+  const path = useLocation().pathname.slice(1);
   const [userE, setUsere] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { VITE_BACKEND_URL } = envs;
-
   useEffect(() => {
     const handle = async () => {
       const user = getUserByToken();
@@ -43,7 +43,7 @@ export default function NavBar() {
     },
     { label: "Socios", path: "/partners", role: "manager" },
     { label: "Ver Novedades", path: "/projects", role: ["socio"] },
-    { label: "Clientes", path: "/customers", role:"manager" }
+    { label: "Clientes", path: "/customers", role: "manager" },
   ];
 
   return (
@@ -73,20 +73,24 @@ export default function NavBar() {
       <Navbar.Content className="mx-4">
         {!userE?.email && (
           <>
-            <Link to="/login">
-              <Navbar.Item color="inherit" className="d-none d-md-block">
-                <button type="button" class="btn btn-outline-danger">
-                  Iniciar sesión
-                </button>
-              </Navbar.Item>
-            </Link>
-            <Link to="/register">
-              <Navbar.Item className="d-none d-md-block">
-                <button type="button" class="btn btn-outline-danger">
-                  Registrarse
-                </button>
-              </Navbar.Item>
-            </Link>
+            {path != "login" && (
+              <Link to="/login">
+                <Navbar.Item color="inherit" className="d-none d-md-block">
+                  <button type="button" class="btn btn-outline-danger">
+                    Iniciar sesión
+                  </button>
+                </Navbar.Item>
+              </Link>
+            )}
+            {path != "register" && (
+              <Link to="/register">
+                <Navbar.Item className="d-none d-md-block">
+                  <button type="button" class="btn btn-outline-danger">
+                    Registrarse
+                  </button>
+                </Navbar.Item>
+              </Link>
+            )}
           </>
         )}
         {userE?.email && (
@@ -119,16 +123,20 @@ export default function NavBar() {
         )}
         {!userE?.email && (
           <>
-            <li className="nav-item">
-              <Link to="/register" className="nav-link">
-                Registrarse
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/login" className="nav-link">
-                Iniciar sesión
-              </Link>
-            </li>
+            {path != "register" && (
+              <li className="nav-item">
+                <Link to="/register" className="nav-link">
+                  Registrarse
+                </Link>
+              </li>
+            )}
+            {path != "login" && (
+              <li className="nav-item">
+                <Link to="/login" className="nav-link">
+                  Iniciar sesión
+                </Link>
+              </li>
+            )}
           </>
         )}
         {userE?.email && (
