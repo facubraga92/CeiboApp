@@ -118,10 +118,6 @@ export default function Novedad({ news }) {
     return setData(call.data.data);
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   const handleSubmitModify = async (e) => {
     e.preventDefault();
     const modifications = {

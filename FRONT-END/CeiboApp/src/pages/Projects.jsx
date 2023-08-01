@@ -11,6 +11,7 @@ import { envs } from "../config/env/env.config";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState("");
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
@@ -40,15 +41,12 @@ const Projects = () => {
       )
       .then((projects) => {
         setProjects(groupProjectsByClient(projects.data));
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
       });
   }, [user]);
-
-  useEffect(() => {
-    console.log(projects);
-  }, [projects]);
 
   const groupProjectsByClient = (projects) => {
     return Object.entries(
@@ -102,6 +100,10 @@ const Projects = () => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
 
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
+
   return (
     <Layout title="Projects">
       <div className="container">
@@ -130,39 +132,41 @@ const Projects = () => {
           </div>
         </div>
         <div className="row mt-2 mb-2">
-          <div className="col d-flex">
-            <div className="mr-1">
-              <Select
-                allowClear
-                showSearch
-                placeholder="Seleccione un cliente"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={clientOption}
-                onChange={handleSearchByClient}
-              />
+          {projects.length > 0 && (
+            <div className="col d-flex">
+              <div className="mr-1">
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder="Seleccione un cliente"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={clientOption}
+                  onChange={handleSearchByClient}
+                />
+              </div>
+              <div className="">
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder="Seleccione un usuario"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={users}
+                  name="userSelect"
+                  onChange={handleSearchByUser}
+                />
+              </div>
             </div>
-            <div className="">
-              <Select
-                allowClear
-                showSearch
-                placeholder="Seleccione un usuario"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={users}
-                name="userSelect"
-                onChange={handleSearchByUser}
-              />
-            </div>
-          </div>
+          )}
         </div>
         {projects.length > 0 ? (
           projects
@@ -284,8 +288,16 @@ const Projects = () => {
                 </div>
               </div>
             ))
-        ) : (
+        ) : isLoading ? (
           <Spin />
+        ) : (
+          <div>
+            <h3 className="display-4">
+              {user.role === "socio"
+                ? "No hay novedades para aprobar"
+                : "No tiene proyecto asignados"}
+            </h3>
+          </div>
         )}
       </div>
     </Layout>
