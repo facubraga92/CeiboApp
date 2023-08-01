@@ -38,10 +38,9 @@ export default function NavBar() {
   const navbarOptions = [
     {
       label: "Proyectos",
-      path: "/Projects",
+      path: "/projects",
       role: ["manager", "consultor"],
     },
-    { label: "Administrar Miembros", path: "/admin/members", role: "admin" },
     { label: "Socios", path: "/partners", role: "manager" },
     { label: "Ver Novedades", path: "/home", role: ["socio"] },
     { label: "Clientes", path: "/customers", role:"manager" }

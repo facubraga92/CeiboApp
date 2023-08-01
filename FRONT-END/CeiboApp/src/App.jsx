@@ -57,7 +57,6 @@ function App() {
             {/* Admin Routes */}
             <Route path="/" element={<ProtectedRoute onlyAdmin />}>
               <Route path="/" exact element={<Members />} />
-              <Route path="/admin/members" exact element={<Members />} />
             </Route>
 
             {/* Manager Routes */}
