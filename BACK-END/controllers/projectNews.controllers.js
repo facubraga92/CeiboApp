@@ -6,15 +6,6 @@ const User = require("../schemas/User");
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
-    const project = await Project.findById(idProject);
-
-    if (!project || !project.consultors.includes(req.user._id)) {
-      return res.status(403).json({
-        success: false,
-        error: "No autorizado para crear una novedad en este proyecto",
-      });
-    }
-
     const news = new ProjectNews({
       title,
       description,
@@ -23,7 +14,6 @@ exports.createNews = async (req, res) => {
       state: "pendiente",
     });
     await news.save();
-
     await getManagersRelevants(news);
     res.status(201).json({ success: true, data: news });
   } catch (error) {
@@ -141,9 +131,15 @@ exports.updateNews = async (req, res) => {
 
       news.reply.push(newComment);
     }
-
     await news.save();
-    res.status(200).json({ success: true, data: news });
+
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: populatedNews });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -195,8 +191,19 @@ exports.approveNews = async (req, res) => {
     news.approved_date = Date.now();
     news.approved_by = userDb;
     news.state = "aprobada";
+
+    const log = { user: userDb, description: "Se aprobo la novedad" };
+    news.logs.push(log);
+
     await news.save();
-    res.status(200).json({ success: true, data: news });
+
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: populatedNews });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -224,7 +231,17 @@ exports.addCommentToNews = async (req, res) => {
     news.reply.push(newComment);
     await news.save();
 
-    res.json({ success: true, message: "Comentario agregado correctamente" });
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.json({
+      success: true,
+      message: "Comentario agregado correctamente",
+      data: populatedNews,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -258,7 +275,13 @@ exports.updateNewsManager = async (req, res) => {
     }
     await news.save();
 
-    res.status(200).json({ success: true, data: news });
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: "populatedNews" });
   } catch (error) {
     res.status(404).json({ success: false, error: error.message });
   }

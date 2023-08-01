@@ -18,7 +18,7 @@ const getAllProjects = async (req, res) => {
 const getProjectsByUserId = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findById(id);
+    const user = await userModel.findById(id).populate("associatedCustomers");
 
     const projects = await projectModel
       .find({
@@ -27,6 +27,7 @@ const getProjectsByUserId = async (req, res) => {
           { consultors: user._id },
           { customer: user._id },
           { created_by: user._id },
+          { customer: { $in: user.associatedCustomers } },
         ],
       })
       .populate("customer")
@@ -53,8 +54,21 @@ const getProjectsByUserId = async (req, res) => {
         path: "news",
         populate: { path: "approved_by" },
       })
+      .populate({
+        path: "news",
+        populate: { path: "logs.user" },
+      })
+
       .populate("created_by")
       .exec();
+
+    // esto es porque si es socio, que filtre y solo devuelva los projectos y novedades en donde las novedades esten aprobadas
+    if (user.role === "socio") {
+      projects.forEach((project) => {
+        project.news = project.news.filter((news) => news.state === "aprobada");
+      });
+      return res.json(projects.filter((proj) => proj.news.length > 0));
+    }
 
     res.json(projects);
   } catch (error) {
@@ -162,6 +176,8 @@ const addNewsToProjectById = async (req, res) => {
     const { idProject } = req.params;
     const newsToCreate = req.body;
     const news = await projectNews.create(newsToCreate);
+    const user = await userModel.findById(news.userId);
+
     const newNewsId = news._id;
     const project = await projectModel.findByIdAndUpdate(
       idProject,
@@ -171,6 +187,10 @@ const addNewsToProjectById = async (req, res) => {
       },
       { new: true }
     );
+
+    const log = { user: user, description: "Creada la novedad" };
+    news.logs.push(log);
+    await news.save();
 
     return res.send(project);
   } catch (error) {

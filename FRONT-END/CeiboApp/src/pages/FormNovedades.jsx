@@ -175,7 +175,7 @@ export default function FormNovedades() {
 
   const customWeek = (value) => {
     const weekOfYear = moment(value).isoWeek();
-    return `S:${weekOfYear} ${moment(value).format("MM/YYYY")}`;
+    return `S: ${weekOfYear} ${moment(value).format("MM/YYYY")}`;
   };
 
   return (
@@ -199,9 +199,8 @@ export default function FormNovedades() {
               <div>
                 <DatePicker
                   placeholder="Semana . . ."
-                  format="S:Wo MM/YYYY"
+                  format="S: Wo MM/YYYY"
                   picker="week"
-                  valueRender={customWeek}
                   size="large"
                   onChange={(e) => {
                     handleChange({
@@ -211,6 +210,7 @@ export default function FormNovedades() {
                       },
                     });
                   }}
+                  valueRender={customWeek}
                 />
               </div>
             </div>
