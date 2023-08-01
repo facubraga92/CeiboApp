@@ -7,11 +7,11 @@ import { toast } from "react-toastify";
 import { Select, DatePicker, Spin } from "antd";
 import moment from "moment";
 import axios from "axios";
-import { useCredentials, userMe } from "../utils/api";
+import { getUserByToken, useCredentials, userMe } from "../utils/api";
 import { envs } from "../config/env/env.config";
 import Input from "antd/es/input/Input";
 import TextArea from "antd/es/input/TextArea";
-
+import "../styles/projects.css";
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -29,16 +29,14 @@ export default function FormNovedades() {
   const [showModal, setShowModal] = useState(false);
   const [isChangesOk, setIsChangesOk] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
-
   const [project, setProject] = useState({});
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
     const handle = async () => {
-      const user = await userMe();
+      const user = await getUserByToken();
       return setUser(user);
     };
     handle();
@@ -186,11 +184,13 @@ export default function FormNovedades() {
         <div className="row">
           <div className="container col-sm-12 col-md-8 col-lg-6">
             <div className="d-flex flex-wrap flex-md-nowrap justify-content-between mb-0 mb-md-4">
-              <div>
+              <div className="upperCase">
                 {project.name ? (
                   <>
-                    <h5>{project.name}</h5>
-                    <h2>{project.description || project.name}</h2>
+                    <h2 className="display-4 text-sm-center text-lg-start ">
+                      {project.name}
+                    </h2>
+                    <h4>{project.description || project.name}</h4>
                   </>
                 ) : (
                   <Spin />
@@ -216,7 +216,7 @@ export default function FormNovedades() {
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
-              <div className="form-group">
+              <div className="form-group upperCase">
                 <label htmlFor="title">Titulo</label>
                 <Input
                   type="text"
@@ -247,47 +247,6 @@ export default function FormNovedades() {
                   maxLength={1000}
                 />
               </div>
-
-              {/* <div className="form-group">
-                <label htmlFor="tipoNovedad">Tipo de Novedad</label>
-                <div>
-                  <Select
-                    style={{ width: "100%" }}
-                    onChange={(e) => {
-                      const res = {
-                        target: {
-                          name: "type",
-                          value: e,
-                        },
-                      };
-
-                      handleChange(res);
-                    }}
-                    className=""
-                    defaultValue="Seleccione un tipo de novedad"
-                    value={inputs.type || ""}
-                    options={[
-                      {
-                        value: "Seleccione un tipo de novedad",
-                        label: "Seleccione un tipo de novedad",
-                        disabled: true,
-                      },
-                      {
-                        value: "Tipo 1",
-                        label: "Tipo 1",
-                      },
-                      {
-                        value: "Tipo 2",
-                        label: "Tipo 2",
-                      },
-                      {
-                        value: "Tipo 3",
-                        label: "Tipo 3",
-                      },
-                    ]}
-                  />
-                </div>
-              </div> */}
 
               <label>Prioridad</label>
               <div className="d-flex justify-content-center">

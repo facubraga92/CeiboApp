@@ -7,13 +7,18 @@ import { getAllClients, getUserByToken, useCredentials } from "../utils/api";
 import { Select, Spin } from "antd";
 import "../styles/projects.css";
 import { BiRefresh } from "react-icons/bi";
+import { envs } from "../config/env/env.config";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("-1");
+  const [selectedProject, setSelectedProject] = useState("");
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
   const [clientSearch, setClientSearch] = useState(undefined);
+  const [userSearch, setUserSearch] = useState(undefined);
+  const [users, setUsers] = useState([]);
+
+  const { VITE_BACKEND_URL } = envs;
 
   useEffect(() => {
     const handle = async () => {
@@ -22,6 +27,7 @@ const Projects = () => {
       setClients(clients);
       return setUser(user);
     };
+    userOption();
     handle();
   }, []);
 
@@ -55,6 +61,10 @@ const Projects = () => {
   };
 
   const handleShowDetails = (index) => {
+    localStorage.setItem(
+      "selectedProject",
+      selectedProject === index ? -1 : index
+    );
     setSelectedProject((prevIndex) => (prevIndex === index ? -1 : index));
   };
 
@@ -63,13 +73,34 @@ const Projects = () => {
     label: client.name,
   }));
 
-  const handleSearch = (name) => {
-    setClientSearch(name);
+  const userOption = async () => {
+    const { data } = await axios.get(
+      `${VITE_BACKEND_URL}/users/admin/members`,
+      useCredentials
+    );
+
+    const aux = await data.map((u) => ({
+      value: u.email,
+      label: u.email,
+    }));
+    return setUsers(aux);
+  };
+
+  const handleSearchByClient = (name) => {
+    return setClientSearch(name);
+  };
+
+  const handleSearchByUser = (email) => {
+    return setUserSearch(email);
   };
 
   useEffect(() => {
-    console.log(projects);
-  }, [projects]);
+    localStorage.setItem("selectedProject", selectedProject);
+  }, [selectedProject]);
+
+  useEffect(() => {
+    console.log(clientSearch);
+  }, [clientSearch]);
 
   return (
     <Layout title="Projects">
@@ -98,22 +129,39 @@ const Projects = () => {
             </div>
           </div>
         </div>
-        <div className="row mt-1">
-          <div className="col col-sm-12 col-md-4">
-            <Select
-              allowClear
-              showSearch
-              placeholder="Seleccione un cliente . . ."
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={clientOption}
-              style={{ width: "100%" }}
-              onChange={handleSearch}
-            />
+        <div className="row mt-2 mb-2">
+          <div className="col d-flex">
+            <div className="mr-1">
+              <Select
+                allowClear
+                showSearch
+                placeholder="Seleccione un cliente"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={clientOption}
+                onChange={handleSearchByClient}
+              />
+            </div>
+            <div className="">
+              <Select
+                allowClear
+                showSearch
+                placeholder="Seleccione un usuario"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={users}
+                name="userSelect"
+                onChange={handleSearchByUser}
+              />
+            </div>
           </div>
         </div>
         {projects.length > 0 ? (
@@ -121,16 +169,19 @@ const Projects = () => {
             .filter(
               (proj) => proj[0] === clientSearch || clientSearch === undefined
             )
-            .map(([customer, e], i) => (
+            .map(([customer, proj], i) => (
               <div className="mt-1 mb-4">
                 <h4>{customer}</h4>
                 <div className="shadow">
-                  {e.map((e, index) => (
+                  {proj.map((e, index) => (
                     <>
                       <div
                         key={e._id}
                         className={`onHoverRow ${
-                          selectedProject === e._id ? "onClickedRow" : ""
+                          selectedProject === e._id ||
+                          localStorage.getItem("selectedProject") === e._id
+                            ? "onClickedRow"
+                            : ""
                         } border ${
                           index === 0
                             ? "rounded-top"
@@ -142,15 +193,15 @@ const Projects = () => {
                         <div style={{}} className={"p-1 pb-1"} title={e.name}>
                           <div
                             key={e._id}
-                            className={`d-flex justify-content-between align-items-center`}
+                            className={`d-flex justify-content-between align-items-center flex-column flex-lg-row`}
                             style={{
                               cursor: "pointer",
                             }}
                             onClick={() => handleShowDetails(e._id)}
                           >
-                            <div className="justify-content-between">
+                            <div className="justify-content-between mb-2 mb-lg-0">
                               <div className="d-flex">
-                                <p className="">
+                                <p className="m-0 p-0">
                                   <span className="lead">{e.name}</span>
                                   {" - "}
                                   <span className="font-italic">
@@ -162,25 +213,47 @@ const Projects = () => {
                                 className="d-flex p-0 m-0"
                                 style={{ fontSize: "0.7em" }}
                               >
-                                <p className="text-lowercase ">
+                                <p className="text-lowercase m-0 p-0">
                                   {e?.created_by?.email} -{" "}
                                   {e?.created_at?.split("T")[0]}
                                 </p>
                               </div>
                             </div>
                             <div>
+                              {user?.role === "manager" && (
+                                <>
+                                  <Link to={`/project/delete/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Borrar proyecto"
+                                      className="btn btn-danger"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+                                  <Link to={`/project/edit/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Editar proyecto"
+                                      className="btn btn-warning"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+                                </>
+                              )}
+
                               <Link to={`/project/addNews/${e._id}`}>
                                 <input
                                   type="button"
-                                  value="+"
-                                  className="btn btn-info"
+                                  value="Agregar novedad"
+                                  className="btn btn-primary"
+                                  onClick={(e) => setSelectedProject(e._id)}
                                 />
                               </Link>
                             </div>
                           </div>
 
                           <div
-                            className={`${
+                            className={`mt-2 ${
                               selectedProject === e._id ? "" : "d-none"
                             }`}
                           >

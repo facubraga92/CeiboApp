@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Toast } from "react-bootstrap";
+import { Modal, Button, Toast, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Input } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
 import { envs } from "../../config/env/env.config";
-import { BsSave } from "react-icons/bs";
+import { BsInfoCircle, BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
 import { RiEditBoxLine } from "react-icons/ri";
 import Layout from "../layouts/Layout";
@@ -138,10 +138,14 @@ export default function Novedad({ news }) {
 
   const handleSubmitModify = async (e) => {
     e.preventDefault();
+    const modifications = {
+      ...inputsModify,
+      userId: user.id,
+    };
     try {
       const response = await axios.put(
         `http://localhost:3000/api/news/${data._id}/modify`,
-        inputsModify,
+        modifications,
         useCredentials
       );
       setData(response.data.data);
@@ -265,23 +269,36 @@ export default function Novedad({ news }) {
         >
           <div className="">
             <div className="d-flex justify-content-center pb-2">
-              {user?.role == "manager" && data.state != "aprobada" ? (
-                <>
-                  <input
-                    type="button"
-                    value={`Estado: ${data?.state}`}
-                    className="btn btn-outline-warning p-3 text-uppercase"
-                    onClick={toggleShowConfirmModal}
-                  />
-                </>
-              ) : (
-                <p className="display-4 d-flex d-md-block d-lg-flex">
-                  <span className="d-none d-md-block">Estado:</span>{" "}
-                  <span className="bg-warning text-uppercase">
-                    {data?.state}
-                  </span>
-                </p>
-              )}
+              <div>
+                {user?.role == "manager" && data.state != "aprobada" ? (
+                  <>
+                    <input
+                      type="button"
+                      value={`Estado: ${data?.state}`}
+                      className="btn btn-outline-warning p-3 text-uppercase"
+                      onClick={toggleShowConfirmModal}
+                    />
+                  </>
+                ) : (
+                  <p className="display-4 d-flex d-md-block d-lg-flex">
+                    <span className="d-none d-md-block">Estado:</span>{" "}
+                    <span className="bg-warning text-uppercase">
+                      {data?.state}
+                    </span>
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <ul>
+                  {data?.logs?.map((log, index) => (
+                    <li className="m-0 p-0 list-group" key={index}>
+                      {log.user.email} - {log?.description} -{" "}
+                      {log?.date?.split("T")[0]}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
             <div className="pb-2">
               {!canModify.description ? (

@@ -28,6 +28,13 @@ const projectNewsSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
     },
   ],
+  logs: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      date: { type: Date, default: Date.now },
+      description: String,
+    },
+  ],
 });
 
 const projectNewsModel = mongoose.model("ProjectNews", projectNewsSchema);

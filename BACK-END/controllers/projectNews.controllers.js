@@ -104,30 +104,45 @@ exports.getNewsById = async (req, res) => {
 exports.updateNews = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, userId, message, date } = req.body;
+    const { title, description, userId, message } = await req.body;
 
     const news = await ProjectNews.findById(id);
+    const user = await User.findById(userId);
     if (!news) {
       return res
         .status(404)
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (news.title) news.title = title;
-    if (news.description) news.description = description;
-    if (news.state) news.state = "modificada";
-    if (userId && message && date) {
-      const rDate = new Date(date);
+    if (news.title && news.title !== title) {
+      news.title = title;
+      const log = { user: user, description: "Se ha cambiado el titulo" };
+      news.logs.push(log);
+    }
+
+    if (news.description && news.description !== description) {
+      news.description = description;
+      const log = {
+        user: user,
+        description: "Se ha cambiado la descripcion",
+      };
+      news.logs.push(log);
+    }
+
+    if (news.title || news.description) {
+      news.state = "modificada";
+    }
+
+    if (userId && message) {
       const newComment = {
-        userId,
+        user,
         message,
-        rDate,
       };
 
       news.reply.push(newComment);
     }
-    await news.save();
 
+    await news.save();
     res.status(200).json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
