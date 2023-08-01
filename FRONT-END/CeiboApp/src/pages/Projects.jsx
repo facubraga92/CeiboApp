@@ -193,15 +193,15 @@ const Projects = () => {
                         <div style={{}} className={"p-1 pb-1"} title={e.name}>
                           <div
                             key={e._id}
-                            className={`d-flex justify-content-between align-items-center`}
+                            className={`d-flex justify-content-between align-items-center flex-column flex-lg-row`}
                             style={{
                               cursor: "pointer",
                             }}
                             onClick={() => handleShowDetails(e._id)}
                           >
-                            <div className="justify-content-between">
+                            <div className="justify-content-between mb-2 mb-lg-0">
                               <div className="d-flex">
-                                <p className="">
+                                <p className="m-0 p-0">
                                   <span className="lead">{e.name}</span>
                                   {" - "}
                                   <span className="font-italic">
@@ -213,18 +213,39 @@ const Projects = () => {
                                 className="d-flex p-0 m-0"
                                 style={{ fontSize: "0.7em" }}
                               >
-                                <p className="text-lowercase ">
+                                <p className="text-lowercase m-0 p-0">
                                   {e?.created_by?.email} -{" "}
                                   {e?.created_at?.split("T")[0]}
                                 </p>
                               </div>
                             </div>
                             <div>
+                              {user?.role === "manager" && (
+                                <>
+                                  <Link to={`/project/delete/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Borrar proyecto"
+                                      className="btn btn-danger"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+                                  <Link to={`/project/edit/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Editar proyecto"
+                                      className="btn btn-warning"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+                                </>
+                              )}
+
                               <Link to={`/project/addNews/${e._id}`}>
                                 <input
                                   type="button"
-                                  value="+"
-                                  className="btn btn-info"
+                                  value="Agregar novedad"
+                                  className="btn btn-primary"
                                   onClick={(e) => setSelectedProject(e._id)}
                                 />
                               </Link>
@@ -232,7 +253,7 @@ const Projects = () => {
                           </div>
 
                           <div
-                            className={`${
+                            className={`mt-2 ${
                               selectedProject === e._id ? "" : "d-none"
                             }`}
                           >
