@@ -211,7 +211,7 @@ const Register = () => {
             )}
             <input
               type="submit"
-              className="btn btn-primary flex-fill w-50"
+              className="btn btn-outline-danger flex-fill w-50"
               value={"Registrarse"}
               disabled={!isChangesOk || bloqInputs}
               style={{ pointerEvents: "auto" }}
