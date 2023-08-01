@@ -15,14 +15,29 @@ import VerificationPage from "./pages/VerificationPage";
 import AccountValidationMessage from "./pages/AccountValidationMessage";
 import { getCookieValue, getUserByToken } from "./utils/api";
 import Projects from "./pages/Projects";
+import { IsLogged } from "./components/ProtectedRoute/IsLogged";
 
 function App() {
   return (
     <>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            <IsLogged>
+              <Login />
+            </IsLogged>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <IsLogged>
+              <Register />
+            </IsLogged>
+          }
+        />
         <Route path="/verification/:token" element={<VerificationPage />} />
         <Route
           path="/InvalidAccount"

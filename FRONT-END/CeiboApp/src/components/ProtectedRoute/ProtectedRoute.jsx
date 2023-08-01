@@ -9,12 +9,9 @@ export const ProtectedRoute = ({
   onlyManager = false,
   onlyConsultor = false,
   onlyManajerOrConsultor = false,
-  onlyLogged = false,
 }) => {
   const token = getCookieValue("token");
   const location = useLocation();
-
-  if (!token) return <Navigate to="/login" />;
 
   const user = jwtDecode(token);
   const { role, isValidated } = user;
@@ -33,6 +30,6 @@ export const ProtectedRoute = ({
 
   if (isAdmin && location.pathname === "/home") {
     return <Navigate to="/admin/members" replace />;
-  } 
+  }
   return children ? children : <Outlet />;
 };
