@@ -49,9 +49,6 @@ const ProjectForm = () => {
 
     handle();
   }, []);
-  useEffect(() => {
-    console.log(inputs);
-  }, [inputs]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

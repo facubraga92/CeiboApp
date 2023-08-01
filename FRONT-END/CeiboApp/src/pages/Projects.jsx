@@ -15,6 +15,7 @@ const Projects = () => {
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
   const [clientSearch, setClientSearch] = useState(undefined);
+  const [userSearch, setUserSearch] = useState(undefined);
   const [users, setUsers] = useState([]);
 
   const { VITE_BACKEND_URL } = envs;
@@ -79,19 +80,27 @@ const Projects = () => {
     );
 
     const aux = await data.map((u) => ({
-      value: u.name,
+      value: u.email,
       label: u.email,
     }));
     return setUsers(aux);
   };
 
-  const handleSearch = (name) => {
-    setClientSearch(name);
+  const handleSearchByClient = (name) => {
+    return setClientSearch(name);
+  };
+
+  const handleSearchByUser = (email) => {
+    return setUserSearch(email);
   };
 
   useEffect(() => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
+
+  useEffect(() => {
+    console.log(clientSearch);
+  }, [clientSearch]);
 
   return (
     <Layout title="Projects">
@@ -120,13 +129,13 @@ const Projects = () => {
             </div>
           </div>
         </div>
-        <div className="row mt-1">
-          <div className="">
-            <div className="col">
+        <div className="row mt-2 mb-2">
+          <div className="col d-flex">
+            <div className="mr-1">
               <Select
                 allowClear
                 showSearch
-                placeholder="Seleccione un cliente . . ."
+                placeholder="Seleccione un cliente"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   (option?.label ?? "")
@@ -134,14 +143,14 @@ const Projects = () => {
                     .includes(input.toLowerCase())
                 }
                 options={clientOption}
-                onChange={handleSearch}
+                onChange={handleSearchByClient}
               />
             </div>
-            <div className="col">
+            <div className="">
               <Select
                 allowClear
                 showSearch
-                placeholder="Seleccione un usuario . . ."
+                placeholder="Seleccione un usuario"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   (option?.label ?? "")
@@ -149,6 +158,8 @@ const Projects = () => {
                     .includes(input.toLowerCase())
                 }
                 options={users}
+                name="userSelect"
+                onChange={handleSearchByUser}
               />
             </div>
           </div>
@@ -158,11 +169,11 @@ const Projects = () => {
             .filter(
               (proj) => proj[0] === clientSearch || clientSearch === undefined
             )
-            .map(([customer, e], i) => (
+            .map(([customer, proj], i) => (
               <div className="mt-1 mb-4">
                 <h4>{customer}</h4>
                 <div className="shadow">
-                  {e.map((e, index) => (
+                  {proj.map((e, index) => (
                     <>
                       <div
                         key={e._id}
