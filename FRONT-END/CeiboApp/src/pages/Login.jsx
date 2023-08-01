@@ -83,10 +83,11 @@ const Login = () => {
           .then((loginResponse) => {
             const user = loginResponse.data;
             delete user?.status;
-            dispatch(setUser(user));
+            const loggedUser = dispatch(setUser(user));
             message.success(
               `Inicio de sesión exitoso: Bienvenido de regreso ${loginResponse.data.name} `
             );
+            if(loggedUser)
             navigate("/");
           });
       });
