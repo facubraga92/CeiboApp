@@ -42,7 +42,7 @@ export default function NavBar() {
       role: ["manager", "consultor"],
     },
     { label: "Socios", path: "/partners", role: "manager" },
-    { label: "Ver Novedades", path: "/home", role: ["socio"] },
+    { label: "Ver Novedades", path: "/projects", role: ["socio"] },
     { label: "Clientes", path: "/customers", role:"manager" }
   ];
 
