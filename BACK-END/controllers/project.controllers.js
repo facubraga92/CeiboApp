@@ -54,6 +54,11 @@ const getProjectsByUserId = async (req, res) => {
         path: "news",
         populate: { path: "approved_by" },
       })
+      .populate({
+        path: "news",
+        populate: { path: "logs.user" },
+      })
+
       .populate("created_by")
       .exec();
 

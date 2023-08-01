@@ -131,9 +131,15 @@ exports.updateNews = async (req, res) => {
 
       news.reply.push(newComment);
     }
-
     await news.save();
-    res.status(200).json({ success: true, data: news });
+
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: populatedNews });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -269,7 +275,13 @@ exports.updateNewsManager = async (req, res) => {
     }
     await news.save();
 
-    res.status(200).json({ success: true, data: news });
+    const populatedNews = await ProjectNews.findById(id)
+      .populate("reply.user")
+      .populate("approved_by")
+      .populate("logs.user")
+      .populate("userId");
+
+    res.status(200).json({ success: true, data: "populatedNews" });
   } catch (error) {
     res.status(404).json({ success: false, error: error.message });
   }

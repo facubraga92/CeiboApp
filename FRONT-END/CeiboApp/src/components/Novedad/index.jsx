@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { Input } from "antd";
+import { Input, Spin } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -19,6 +19,7 @@ export default function Novedad({ news }) {
   const [inputs, setInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [isSendingReply, setIsSendingReply] = useState(false);
 
   const [canModify, setCanModify] = useState({
     title: false,
@@ -70,22 +71,28 @@ export default function Novedad({ news }) {
   };
 
   const handleSubmit = async () => {
+    setIsSendingReply(true);
     const newReply = {
       user: user.id,
       message: inputs.message,
       date: new Date().toLocaleDateString("es-AR"),
     };
 
-    const response = await axios.put(
-      `${VITE_BACKEND_URL}/news/${data._id}`,
-      newReply,
-      useCredentials
-    );
+    await axios
+      .put(`${VITE_BACKEND_URL}/news/${data._id}`, newReply, useCredentials)
+      .then((response) => {
+        setIsSendingReply(false);
+        setInputs({});
+        setData(response.data.data);
+      })
+      .catch((err) => {});
 
-    setInputs({});
-    setData(response.data.data);
     return handleScrollBottom();
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const toggleShowModal = () => {
     setShowModal(!showModal);
@@ -383,7 +390,7 @@ export default function Novedad({ news }) {
               </div>
             )}
           </div>
-          {data?.reply?.length > 4 && (
+          {data?.reply?.length > 4 && user.role !== "socio" && (
             <div className="text-center mt-2">
               <input
                 type="button"
@@ -397,23 +404,31 @@ export default function Novedad({ news }) {
             {data.state != "aprobada" ? (
               <>
                 <label htmlFor="">{user.email}</label>
-                <TextArea
-                  rows={2}
-                  allowClear
-                  value={inputs.message || ""}
-                  onChange={handleChange}
-                  name="message"
-                  onPressEnter={inputs.message ? handleSubmit : ""}
-                  maxLength={140}
-                  showCount
-                />
-                <Button
-                  variant="primary mt-2"
-                  onClick={handleSubmit}
-                  disabled={!inputs.message}
-                >
-                  Comentar
-                </Button>
+                {!isSendingReply ? (
+                  <>
+                    <TextArea
+                      rows={2}
+                      allowClear
+                      value={inputs.message || ""}
+                      onChange={handleChange}
+                      name="message"
+                      onPressEnter={inputs.message ? handleSubmit : ""}
+                      maxLength={140}
+                      showCount
+                    />
+                    <Button
+                      variant="primary mt-2"
+                      onClick={handleSubmit}
+                      disabled={!inputs.message}
+                    >
+                      Comentar
+                    </Button>
+                  </>
+                ) : (
+                  <div className="text-center">
+                    <Spin />
+                  </div>
+                )}
               </>
             ) : (
               <div className="bg-secondary text-white p-2">
