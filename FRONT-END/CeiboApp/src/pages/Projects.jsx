@@ -4,10 +4,11 @@ import axios from "axios";
 import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
 import { getAllClients, getUserByToken, useCredentials } from "../utils/api";
-import { Select, Spin } from "antd";
+import { Input, Select, Spin } from "antd";
 import "../styles/projects.css";
 import { BiRefresh } from "react-icons/bi";
 import { envs } from "../config/env/env.config";
+import { RiAddBoxLine, RiDeleteBin2Line, RiEditBoxLine } from "react-icons/ri";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -16,7 +17,7 @@ const Projects = () => {
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
   const [clientSearch, setClientSearch] = useState(undefined);
-  const [userSearch, setUserSearch] = useState(undefined);
+  const [codeSearch, setCodeSearch] = useState(undefined);
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -34,7 +35,7 @@ const Projects = () => {
     if (!user) return;
     axios
       .get(
-        `http://localhost:3000/api/projects/getProjectsUser/${user.id}`,
+        `${VITE_BACKEND_URL}/projects/getProjectsUser/${user.id}`,
         useCredentials
       )
       .then((projects) => {
@@ -77,13 +78,22 @@ const Projects = () => {
     return setClientSearch(name);
   };
 
-  const handleSearchByUser = (email) => {
-    return setUserSearch(email);
+  const handleSearchByCode = (e) => {
+    const { value } = e.target;
+    return setCodeSearch(value);
   };
 
   useEffect(() => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
+
+  useEffect(() => {
+    console.log(clients);
+  }, [clients]);
+
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
 
   return (
     <Layout title="Projects">
@@ -114,7 +124,18 @@ const Projects = () => {
         </div>
         <div className="row mt-2 mb-2">
           {projects.length > 0 && (
-            <div className="col d-flex">
+            <div className="col-12 col-md-4">
+              {user.role !== "socio" && (
+                <div className="mb-1">
+                  <Input
+                    allowClear
+                    value={codeSearch}
+                    onChange={handleSearchByCode}
+                    addonBefore="Codigo"
+                    placeholder="Busqueda por codigo"
+                  />
+                </div>
+              )}
               <div className="mr-1">
                 <Select
                   allowClear
@@ -151,27 +172,25 @@ const Projects = () => {
                           localStorage.getItem("selectedProject") === e._id
                             ? "onClickedRow"
                             : ""
-                        } border ${
-                          index === 0
-                            ? "rounded-top"
-                            : index === projects.length - 1
-                            ? "rounded-bottom"
-                            : ""
-                        } `}
+                        } border ${index === 0 ? "rounded-top" : ""} ${
+                          index === proj.length - 1 ? "rounded-bottom" : ""
+                        }`}
                       >
                         <div style={{}} className={"p-1 pb-1"} title={e.name}>
                           <div
                             key={e._id}
-                            className={`d-flex justify-content-between align-items-center flex-column flex-lg-row`}
+                            className={`d-flex justify-content-between align-items-center flex-column flex-lg-row container`}
                             style={{
                               cursor: "pointer",
                             }}
                             onClick={() => handleShowDetails(e._id)}
                           >
-                            <div className="justify-content-between mb-2 mb-lg-0">
+                            <div className="justify-content-between">
                               <div className="d-flex">
                                 <p className="m-0 p-0">
-                                  <span className="lead">{e.name}</span>
+                                  <span className="lead font-weight-bold">
+                                    {e.name}
+                                  </span>
                                   {" - "}
                                   <span className="font-italic">
                                     {e.description}
@@ -182,43 +201,91 @@ const Projects = () => {
                                 className="d-flex p-0 m-0"
                                 style={{ fontSize: "0.7em" }}
                               >
-                                <p className="text-lowercase m-0 p-0">
+                                <p className="text-lowercase m-0 p-0 font-italic font-weight-light">
                                   {e?.created_by?.email} -{" "}
                                   {e?.created_at?.split("T")[0]}
                                 </p>
                               </div>
                             </div>
+                            {user.role !== "socio"}
                             <div>
-                              {user?.role !== "socio" && (
-                                <>
-                                  <Link to={`/project/delete/${e._id}`}>
-                                    <input
-                                      type="button"
-                                      value="Borrar proyecto"
-                                      className="btn btn-danger"
-                                      onClick={(e) => setSelectedProject(e._id)}
-                                    />
-                                  </Link>
-                                  <Link to={`/project/edit/${e._id}`}>
-                                    <input
-                                      type="button"
-                                      value="Editar proyecto"
-                                      className="btn btn-warning"
-                                      onClick={(e) => setSelectedProject(e._id)}
-                                    />
-                                  </Link>
-
-                                  <Link to={`/project/addNews/${e._id}`}>
-                                    <input
-                                      type="button"
-                                      value="Agregar novedad"
-                                      className="btn btn-primary"
-                                      onClick={(e) => setSelectedProject(e._id)}
-                                    />
-                                  </Link>
-                                </>
-                              )}
+                              <div>
+                                <p
+                                  className="font-weight-bold font-italic p-0 m-0 text-uppercase"
+                                  style={{ fontSize: "2rem" }}
+                                >
+                                  #{e.code}
+                                </p>
+                              </div>
+                              <div></div>
                             </div>
+                            {user?.role === "manager" && (
+                              <>
+                                <div className="d-none d-lg-flex flex-column ">
+                                  <div className="">
+                                    <Link to={`/project/delete/${e._id}`}>
+                                      <input
+                                        type="button"
+                                        value="Borrar proyecto"
+                                        className="btn btn-danger w-100"
+                                        onClick={(e) =>
+                                          setSelectedProject(e._id)
+                                        }
+                                      />
+                                    </Link>
+                                  </div>
+                                  <div>
+                                    <Link to={`/project/edit/${e._id}`}>
+                                      <input
+                                        type="button"
+                                        value="Editar proyecto"
+                                        className="btn btn-warning  w-100"
+                                        onClick={(e) =>
+                                          setSelectedProject(e._id)
+                                        }
+                                      />
+                                    </Link>
+                                  </div>
+                                  <div>
+                                    <Link to={`/project/addNews/${e._id}`}>
+                                      <input
+                                        type="button"
+                                        value="Agregar novedad"
+                                        className="btn btn-primary w-100"
+                                        onClick={(e) =>
+                                          setSelectedProject(e._id)
+                                        }
+                                      />
+                                    </Link>
+                                  </div>
+                                </div>
+                                <div className="d-flex d-lg-none">
+                                  <>
+                                    <div className="">
+                                      <Link to={`/project/delete/${e._id}`}>
+                                        <RiDeleteBin2Line
+                                          size={30}
+                                          className="mr-2"
+                                        />
+                                      </Link>
+                                    </div>
+                                    <div>
+                                      <Link to={`/project/edit/${e._id}`}>
+                                        <RiEditBoxLine
+                                          size={30}
+                                          className="mr-2"
+                                        />
+                                      </Link>
+                                    </div>
+                                    <div>
+                                      <Link to={`/project/addNews/${e._id}`}>
+                                        <RiAddBoxLine size={30} />
+                                      </Link>
+                                    </div>
+                                  </>
+                                </div>
+                              </>
+                            )}
                           </div>
 
                           <div
