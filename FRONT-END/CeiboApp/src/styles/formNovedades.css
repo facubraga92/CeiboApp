@@ -24,25 +24,3 @@
   }
 }
 
-@media (min-width: 768px) {
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .col-sm-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
-  .btn {
-    width: auto;
-  }
-  .btn-crear-hover:hover {
-    /* Add your desired hover styles here */
-    /* Example hover styles: */
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-  }
-}

@@ -218,9 +218,12 @@ export default function FormNovedades() {
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
-              <div className="row">
+              <div className="flex-column">
                 <div className="col-sm-12 col-md-6">
-                  <div className="form-group upperCase">
+                  <div
+                    style={{ width: "300px" }}
+                    className="form-group upperCase"
+                  >
                     <label htmlFor="title">Titulo</label>
                     <Input
                       underlined
@@ -239,7 +242,7 @@ export default function FormNovedades() {
                   </div>
                 </div>
                 <div className="col-sm-12 col-md-6">
-                  <div className="form-group">
+                  <div style={{ width: "300px" }} className="form-group">
                     <label htmlFor="detalles">Detalles</label>
                     <Textarea
                       underlined
@@ -261,7 +264,7 @@ export default function FormNovedades() {
                 </div>
               </div>
 
-              <label>Prioridad</label>
+              <label className="ml-3">Prioridad</label>
               <div className="d-flex justify-content-center">
                 {[1, 2, 3, 4, 5].map((option) => (
                   <label key={option} className="form-check">
