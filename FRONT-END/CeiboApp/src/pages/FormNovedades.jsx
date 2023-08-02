@@ -180,39 +180,41 @@ export default function FormNovedades() {
 
   return (
     <Layout title={"Crear Novedad"}>
-      <div className="mt-0 p-4 mt-md-4">
-        <div className="row">
-          <div className="container col-sm-12 col-md-8 col-lg-6">
-            <div className="d-flex flex-wrap flex-md-nowrap justify-content-between mb-0 mb-md-4">
-              <div className="upperCase">
-                {project.name ? (
-                  <>
-                    <h2 className="display-4 text-sm-center text-lg-start ">
-                      {project.name}
-                    </h2>
-                    <h4>{project.description || project.name}</h4>
-                  </>
-                ) : (
-                  <Spin />
-                )}
-              </div>
-              <div>
-                <DatePicker
-                  placeholder="Semana . . ."
-                  format="S: Wo MM/YYYY"
-                  picker="week"
-                  size="large"
-                  onChange={(e) => {
-                    handleChange({
-                      target: {
-                        name: "week",
-                        value: e?.week() ? e?.week() : "",
-                      },
-                    });
-                  }}
-                  valueRender={customWeek}
-                />
-              </div>
+      <div className="p-4">
+        <div
+          className="card"
+          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
+        >
+          <div className="card-body d-flex flex-column align-items-center">
+            <div className="text-center mb-4">
+              {project.name ? (
+                <>
+                  <h2 className="display-4">{project.name}</h2>
+                  <div className="mb-4" style={{ color: "#666666" }}>
+                    {project.description || ""}
+                  </div>
+                </>
+              ) : (
+                <Spin />
+              )}
+            </div>
+            <div className="mb-4">
+              <DatePicker
+                placeholder="Semana . . ."
+                format="S: Wo MM/YYYY"
+                picker="week"
+                size="large"
+                onChange={(e) => {
+                  handleChange({
+                    target: {
+                      name: "week",
+                      value: e?.week() ? e?.week() : "",
+                    },
+                  });
+                }}
+                valueRender={customWeek}
+                style={{ boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}
+              />
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
@@ -278,10 +280,10 @@ export default function FormNovedades() {
                 ))}
               </div>
 
-              <div className="d-flex justify-content-center">
+              <div className="d-flex flex-column align-items-center mt-4">
                 {Object.keys(inputs).length === 1 ? (
                   <input
-                    className="btn btn-outline-warning col-sm-3 col-md-2 mx-2 "
+                    className="btn btn-outline-warning col-10 col-md-4 mx-2"
                     value={"Volver"}
                     type="button"
                     onClick={handleCancel}
@@ -289,7 +291,7 @@ export default function FormNovedades() {
                   />
                 ) : (
                   <input
-                    className="btn btn-danger col-sm-3 col-md-2 mx-2"
+                    className="btn btn-danger col-10 col-md-4 mx-2"
                     value={"Cancelar"}
                     type="button"
                     onClick={toggleModal}
@@ -299,7 +301,7 @@ export default function FormNovedades() {
                 {isEditable ? (
                   <input
                     type="button"
-                    className="btn btn-primary col-sm-3 col-md-2"
+                    className="btn btn-primary col-10 col-md-4 mt-2 mx-2"
                     value={"Crear"}
                     disabled={!isChangesOk}
                     onClick={toggleModalSave}
@@ -307,7 +309,7 @@ export default function FormNovedades() {
                 ) : (
                   <input
                     type="button"
-                    className="btn btn-primary col-sm-3 col-md-2"
+                    className="btn btn-primary col-10 col-md-4 mt-2 mx-2"
                     value={"Editar"}
                     onClick={toggleDisable}
                     disabled={formSubmitted}
