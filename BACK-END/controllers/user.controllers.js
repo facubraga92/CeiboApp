@@ -98,6 +98,7 @@ const loginUser = async (req, res) => {
         lastName: user.lastName,
         role: user.role,
         isValidated: user.isValidated,
+        picture: user.picture,
       };
       const token = generateToken(payload);
       return res.cookie("token", token).send(payload);
