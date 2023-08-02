@@ -13,7 +13,7 @@ export default function Footer() {
             alignItems: "center",
             color: "white",
             padding: "0 16px",
-            position: "absolute", // Cambiamos la posición a absolute
+            position: "absolute", 
             left: 0,
             bottom: 0,
             width: "100%",
