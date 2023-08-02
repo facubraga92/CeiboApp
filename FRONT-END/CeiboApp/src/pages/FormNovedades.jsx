@@ -9,9 +9,9 @@ import moment from "moment";
 import axios from "axios";
 import { getUserByToken, useCredentials, userMe } from "../utils/api";
 import { envs } from "../config/env/env.config";
-import Input from "antd/es/input/Input";
-import TextArea from "antd/es/input/TextArea";
 import "../styles/projects.css";
+import { Input, Textarea } from "@nextui-org/react";
+
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -219,11 +219,13 @@ export default function FormNovedades() {
               <div className="form-group upperCase">
                 <label htmlFor="title">Titulo</label>
                 <Input
+                  underlined
+                  color="error"
+                  fullWidth={true}
                   type="text"
                   id="title"
                   name="title"
-                  maxLength={20}
-                  placeholder="Titulo de la novedad"
+                  placeholder="Título de la novedad"
                   value={inputs.title || ""}
                   onChange={handleChange}
                   required
@@ -233,7 +235,10 @@ export default function FormNovedades() {
               </div>
               <div className="form-group">
                 <label htmlFor="detalles">Detalles</label>
-                <TextArea
+                <Textarea
+                  underlined
+                  color="error"
+                  fullWidth={true}
                   type="text"
                   id="detalles"
                   name="description"
