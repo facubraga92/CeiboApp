@@ -10,7 +10,7 @@
 body {
   font-family: "Titillium Web", sans-serif !important;
 }
-  
+
 .upperCase ::first-letter {
   text-transform: uppercase;
 }
@@ -26,5 +26,56 @@ body {
   text-align: center;
   padding: 30px;
   border-radius: 8px;
- 
+}
+
+/* Estilos para la tabla */
+.table {
+  border-radius: 8px;
+}
+
+/* Estilos para las celdas del encabezado (thead) */
+.table thead th {
+  background-color: #b72837;
+  border: none;
+  border-radius: 8px;
+  font-size: large;
+  color: #e1e4e8;
+  text-align: center;
+}
+
+/* Estilos para las celdas del cuerpo (tbody) */
+.table tbody td {
+  border: none;
+  border-radius: 8px;
+}
+
+/* Estilos para el botón de eliminar */
+.btn.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 10px;
+  font-size: 18px;
+}
+
+/* Estilos para el botón de eliminar al pasar el cursor por encima */
+.btn.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Estilos para el Select de ANTD */
+.ant-select {
+  border-radius: 8px;
+}
+
+/* Estilos para el mensaje de warning del Select */
+.ant-select-selection-item,
+.ant-select-selection-placeholder {
+  color: #d9534f;
+}
+
+/* Estilos para el mensaje de warning al pasar el cursor por encima del Select */
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: #d9534f !important;
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(217, 83, 79, 0.2);
 }

@@ -140,12 +140,15 @@ const Partners = () => {
   };
 
   return (
-    <Layout>
+    <Layout title="Socios">
       <div className="container col-12 col-md-10 d-flex flex-column align-items-center">
         <div className="col">
           <h2 className="text-center display-4">Socios</h2>
         </div>
-        <div className="mt-2 mb-2" style={{ maxWidth: "20rem" }}>
+        <div
+          className="mt-2 mb-2 col-11 col-md-6"
+          style={{ maxWidth: "20rem" }}
+        >
           <Input
             size="large"
             type="text"
@@ -155,8 +158,8 @@ const Partners = () => {
             allowClear
           />
         </div>
-        <div className="">
-          <table className="table table-striped vw-100 min-vw-100">
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
             <thead>
               <tr>
                 <th className="d-none d-md-table-cell">Nombre</th>
@@ -165,10 +168,10 @@ const Partners = () => {
                 <th>Clientes asociados</th>
               </tr>
             </thead>
-            {filteredPartners.length > 0 ? (
-              filteredPartners.map((partner) => (
-                <tbody key={partner._id}>
-                  <tr>
+            <tbody>
+              {filteredPartners.length > 0 ? (
+                filteredPartners.map((partner) => (
+                  <tr key={partner._id}>
                     <td className="d-none d-md-table-cell">{partner.name}</td>
                     <td className="d-none d-md-table-cell">
                       {partner.lastName}
@@ -176,6 +179,12 @@ const Partners = () => {
                     <td>{partner.email}</td>
                     <td>
                       <Select
+                      styles={{
+                        control: (baseStyles, state) => ({
+                          ...baseStyles,
+                          borderColor: state.isFocused ? 'grey' : 'red'
+                        }),
+                      }}
                         options={customerOptions}
                         value={selectedCustomer[partner._id] || null}
                         onChange={(selectedOption) => {
@@ -198,17 +207,15 @@ const Partners = () => {
                       />
                     </td>
                   </tr>
-                </tbody>
-              ))
-            ) : (
-              <tbody>
+                ))
+              ) : (
                 <tr>
                   <td colSpan="4" className="text-center">
                     <Spin size="large" />
                   </td>
                 </tr>
-              </tbody>
-            )}
+              )}
+            </tbody>
           </table>
         </div>
       </div>
