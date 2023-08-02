@@ -57,13 +57,7 @@ export default function NavBar() {
             userE?.email &&
             option.role.includes(userE.role) && (
               <Navbar.Item key={option.label}>
-                <Link
-                  color="inherit"
-                  css={{
-                    minWidth: "100%",
-                  }}
-                  to={`${option.path}`}
-                >
+                <Link style={{ color: "red" }} to={`${option.path}`}>
                   {option.label}
                 </Link>
               </Navbar.Item>
@@ -109,13 +103,7 @@ export default function NavBar() {
             userE?.email &&
             option.role.includes(userE.role) && (
               <Navbar.CollapseItem key={option.label}>
-                <Link
-                  color="inherit"
-                  css={{
-                    minWidth: "100%",
-                  }}
-                  to={`${option.path}`}
-                >
+                <Link style={{ color: "red" }} to={`${option.path}`}>
                   {option.label}
                 </Link>
               </Navbar.CollapseItem>
