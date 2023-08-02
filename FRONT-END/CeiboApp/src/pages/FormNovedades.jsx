@@ -11,7 +11,7 @@ import { getUserByToken, useCredentials, userMe } from "../utils/api";
 import { envs } from "../config/env/env.config";
 import "../styles/projects.css";
 import { Input, Textarea } from "@nextui-org/react";
-
+import "../styles/formNovedades.css";
 /**
  * Componente FormNovedades
  * Formulario para crear novedades.
@@ -218,41 +218,47 @@ export default function FormNovedades() {
             </div>
 
             <form method="post" onSubmit={handleSubmit}>
-              <div className="form-group upperCase">
-                <label htmlFor="title">Titulo</label>
-                <Input
-                  underlined
-                  color="error"
-                  fullWidth={true}
-                  type="text"
-                  id="title"
-                  name="title"
-                  placeholder="Título de la novedad"
-                  value={inputs.title || ""}
-                  onChange={handleChange}
-                  required
-                  showCount
-                  disabled={!isEditable || formSubmitted}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="detalles">Detalles</label>
-                <Textarea
-                  underlined
-                  color="error"
-                  fullWidth={true}
-                  type="text"
-                  id="detalles"
-                  name="description"
-                  rows={4}
-                  placeholder="Detalles acerca de la novedad"
-                  value={inputs.description || ""}
-                  onChange={handleChange}
-                  required
-                  disabled={!isEditable || formSubmitted}
-                  showCount
-                  maxLength={1000}
-                />
+              <div className="row">
+                <div className="col-sm-12 col-md-6">
+                  <div className="form-group upperCase">
+                    <label htmlFor="title">Titulo</label>
+                    <Input
+                      underlined
+                      color="error"
+                      fullWidth={true}
+                      type="text"
+                      id="title"
+                      name="title"
+                      placeholder="Título de la novedad"
+                      value={inputs.title || ""}
+                      onChange={handleChange}
+                      required
+                      showCount
+                      disabled={!isEditable || formSubmitted}
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-12 col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="detalles">Detalles</label>
+                    <Textarea
+                      underlined
+                      color="error"
+                      fullWidth={true}
+                      type="text"
+                      id="detalles"
+                      name="description"
+                      rows={4}
+                      placeholder="Detalles acerca de la novedad"
+                      value={inputs.description || ""}
+                      onChange={handleChange}
+                      required
+                      disabled={!isEditable || formSubmitted}
+                      showCount
+                      maxLength={1000}
+                    />
+                  </div>
+                </div>
               </div>
 
               <label>Prioridad</label>
@@ -271,49 +277,58 @@ export default function FormNovedades() {
                     />
                     <div className="checkbox-icon pb-4 display-4">
                       {selectedOption >= option ? (
-                        <TiStarFullOutline />
+                        <TiStarFullOutline
+                          className={`star-icon star-icon--size-${option}`}
+                        />
                       ) : (
-                        <TiStarOutline />
+                        <TiStarOutline
+                          className={`star-icon star-icon--size-${option}`}
+                        />
                       )}
                     </div>
                   </label>
                 ))}
               </div>
 
-              <div className="d-flex flex-column align-items-center mt-4">
+              <div className="d-flex justify-content-center mt-4">
                 {Object.keys(inputs).length === 1 ? (
-                  <input
-                    className="btn btn-outline-warning col-10 col-md-4 mx-2"
-                    value={"Volver"}
+                  <button
                     type="button"
+                    className="btn btn-outline-danger mx-2"
                     onClick={handleCancel}
                     disabled={formSubmitted}
-                  />
+                  >
+                    Volver
+                  </button>
                 ) : (
-                  <input
-                    className="btn btn-danger col-10 col-md-4 mx-2"
-                    value={"Cancelar"}
+                  <button
                     type="button"
+                    className="btn btn-outline-danger mx-2"
                     onClick={toggleModal}
                     disabled={formSubmitted}
-                  />
+                  >
+                    Cancelar
+                  </button>
                 )}
                 {isEditable ? (
-                  <input
+                  <button
                     type="button"
-                    className="btn btn-primary col-10 col-md-4 mt-2 mx-2"
+                    className="btn btn-outline-primary mx-2 "
                     value={"Crear"}
                     disabled={!isChangesOk}
                     onClick={toggleModalSave}
-                  />
+                  >
+                    Crear
+                  </button>
                 ) : (
-                  <input
+                  <button
                     type="button"
-                    className="btn btn-primary col-10 col-md-4 mt-2 mx-2"
-                    value={"Editar"}
+                    className="btn btn-primary mx-2"
                     onClick={toggleDisable}
                     disabled={formSubmitted}
-                  />
+                  >
+                    Editar
+                  </button>
                 )}
               </div>
             </form>
