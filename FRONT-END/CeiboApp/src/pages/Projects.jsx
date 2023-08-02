@@ -17,7 +17,6 @@ const Projects = () => {
   const [clients, setClients] = useState([]);
   const [clientSearch, setClientSearch] = useState(undefined);
   const [userSearch, setUserSearch] = useState(undefined);
-  const [users, setUsers] = useState([]);
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -28,7 +27,6 @@ const Projects = () => {
       setClients(clients);
       return setUser(user);
     };
-    userOption();
     handle();
   }, []);
 
@@ -75,19 +73,6 @@ const Projects = () => {
     label: client.name,
   }));
 
-  const userOption = async () => {
-    const { data } = await axios.get(
-      `${VITE_BACKEND_URL}/users/admin/members`,
-      useCredentials
-    );
-
-    const aux = await data.map((u) => ({
-      value: u.email,
-      label: u.email,
-    }));
-    return setUsers(aux);
-  };
-
   const handleSearchByClient = (name) => {
     return setClientSearch(name);
   };
@@ -99,10 +84,6 @@ const Projects = () => {
   useEffect(() => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
-
-  useEffect(() => {
-    console.log(projects);
-  }, [projects]);
 
   return (
     <Layout title="Projects">
@@ -147,22 +128,6 @@ const Projects = () => {
                   }
                   options={clientOption}
                   onChange={handleSearchByClient}
-                />
-              </div>
-              <div className="">
-                <Select
-                  allowClear
-                  showSearch
-                  placeholder="Seleccione un usuario"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={users}
-                  name="userSelect"
-                  onChange={handleSearchByUser}
                 />
               </div>
             </div>
