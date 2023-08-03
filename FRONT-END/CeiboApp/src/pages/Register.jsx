@@ -78,7 +78,7 @@ const Register = () => {
       handleToast();
       setIsSubmitOk(true);
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data);
     }
   };
 

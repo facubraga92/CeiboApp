@@ -129,58 +129,16 @@ const Projects = () => {
   return (
     <Layout title="Projects">
       <div className="container">
-        <div className="row">
-          <div className="col">
-            <h2 className="text-center display-4">Proyectos</h2>
-          </div>
-        </div>
-        <div className="row">
-          {user?.role === "manager" && (
-            <div className="col">
-              <Link to="/projects/add">
-                <input
-                  type="button"
-                  value="Crear proyecto"
-                  className="btn btn-warning mt-2"
-                />
-              </Link>
-            </div>
-          )}
-          <div className="col">
-            <div className="d-flex justify-content-end">
-              <span className="font-italic"></span>
-              <BiRefresh size={30} />
-            </div>
-          </div>
-        </div>
-        <div className="row mt-2 mb-2">
-          {projects.length > 0 && (
-            <div className="col-12 col-md-4">
-              {user.role !== "socio" && (
-                <div className="mb-1">
-                  <Input
-                    allowClear
-                    value={codeSearch}
-                    onChange={handleSearchByCode}
-                    addonBefore="Codigo"
-                    placeholder="Busqueda por codigo"
-                  />
+        <div className="p-4">
+          <div
+            className="card"
+            style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+          >
+            <div className="card-body">
+              <div className="row">
+                <div className="col">
+                  <h2 className="text-center display-4">Proyectos</h2>
                 </div>
-              )}
-              <div className="mr-1">
-                <Select
-                  allowClear
-                  showSearch
-                  placeholder="Seleccione un cliente"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={clientOption}
-                  onChange={handleSearchByClient}
-                />
               </div>
             </div>
           )}
@@ -307,7 +265,9 @@ const Projects = () => {
                                       />
                                     </Link>
                                   </div>
+                                  {user.role !== "socio"}
                                   <div>
+
                                     <Link to={`/project/addNews/${e._id}`}>
                                       <RiAddBoxLine size={30} />
                                     </Link>
@@ -317,7 +277,6 @@ const Projects = () => {
                             </>
                           )}
                         </div>
-
                         <div
                           className={`mt-2 ${
                             selectedProject === e._id ? "" : "d-none"
@@ -347,19 +306,10 @@ const Projects = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            ))
-        ) : isLoading ? (
-          <Spin />
-        ) : (
-          <div>
-            <h3 className="display-4">
-              {user.role === "socio"
-                ? "No hay novedades para aprobar"
-                : "No tiene proyecto asignados"}
-            </h3>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
       <Modal show={showDeleteModal} centered>
         {!isDeleting ? (

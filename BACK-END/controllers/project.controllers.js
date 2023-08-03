@@ -5,6 +5,7 @@ const projectModel = require("../schemas/Project");
 const customerModel = require("../schemas/Customer");
 const userModel = require("../schemas/User");
 const projectNews = require("../schemas/ProjectNews");
+const getManagersRelevants = require("../utils/utils");
 
 const getAllProjects = async (req, res) => {
   try {
@@ -194,6 +195,7 @@ const addNewsToProjectById = async (req, res) => {
     const log = { user: user, description: "Creada la novedad" };
     news.logs.push(log);
     await news.save();
+    await getManagersRelevants(news);
 
     return res.send(project);
   } catch (error) {
