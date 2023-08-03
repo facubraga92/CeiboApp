@@ -5,7 +5,7 @@ const userModel = require("../schemas/User");
 
 const getAllCustomers = async (req, res) => {
   try {
-    const customers = await customerModel.find();
+    const customers = await customerModel.find().populate("associatedProjects");
     res.send(customers);
   } catch (error) {
     console.log(error);

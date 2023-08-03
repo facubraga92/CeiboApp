@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
       default: null,
     },
   ],
+  picture: { type: String },
 });
 
 // Antes de guardar, realiza el hash de la contraseña con salt y valida la contraseña
