@@ -2,7 +2,6 @@ const ProjectNews = require("../schemas/ProjectNews");
 const Project = require("../schemas/Project");
 const getManagersRelevants = require("../utils/utils");
 const User = require("../schemas/User");
-const getPartnersAssociate = require("../utils/utilsPartners");
 
 exports.createNews = async (req, res) => {
   try {
@@ -197,13 +196,13 @@ exports.approveNews = async (req, res) => {
     news.logs.push(log);
 
     await news.save();
+
     const populatedNews = await ProjectNews.findById(id)
       .populate("reply.user")
       .populate("approved_by")
       .populate("logs.user")
       .populate("userId");
 
-    await getPartnersAssociate(news.associatedProject);
     res.status(200).json({ success: true, data: populatedNews });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
