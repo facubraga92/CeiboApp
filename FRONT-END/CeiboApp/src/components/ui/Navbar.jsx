@@ -97,16 +97,14 @@ export default function NavBar() {
         )}
         {userE?.email && (
           <div className="d-flex">
-            <Link to="/profile">
-              <Avatar
-                style={{ cursor: "pointer" }}
-                className="d-none d-md-block"
-                title="Perfil"
-                text={userInitials}
-                color="error"
-                textColor="white"
-              />
-            </Link>
+            <Avatar
+              className="d-none d-md-block"
+              title="Perfil"
+              text={userInitials}
+              color="error"
+              textColor="white"
+            />
+
             <button
               className="mx-2 btn btn-outline-danger d-none d-md-block"
               onClick={handleLogout}
