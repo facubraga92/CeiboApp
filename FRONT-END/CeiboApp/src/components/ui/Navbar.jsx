@@ -1,4 +1,4 @@
-import { Navbar } from "@nextui-org/react";
+import { Navbar, Avatar } from "@nextui-org/react";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,8 @@ export default function NavBar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { VITE_BACKEND_URL } = envs;
+  const userInitials = `${userE?.name?.slice(0,1)}${userE?.lastName?.slice(0,1)}`;
+
   useEffect(() => {
     const handle = async () => {
       const user = getUserByToken();
@@ -89,13 +91,25 @@ export default function NavBar() {
           </>
         )}
         {userE?.email && (
-          <button
-            className="btn btn-outline-danger d-none d-md-block"
-            onClick={handleLogout}
-            title="Logout"
-          >
-            <FiLogOut /> Log out
-          </button>
+          <div className="d-flex">
+            <Link to="/profile">
+              <Avatar
+                style={{ cursor: "pointer" }}
+                className="d-none d-md-block"
+                title="Perfil"
+                text={userInitials}
+                color="error"
+                textColor="white"
+              />
+            </Link>
+            <button
+              className="mx-2 btn btn-outline-danger d-none d-md-block"
+              onClick={handleLogout}
+              title="Cerrar sesión"
+            >
+              <FiLogOut /> Log out
+            </button>
+          </div>
         )}
         <Navbar.Toggle showIn="sm" aria-label="toggle navigation" />
       </Navbar.Content>
@@ -130,13 +144,22 @@ export default function NavBar() {
           </>
         )}
         {userE?.email && (
-          <button
-            className="btn btn-outline-danger d-md-block"
-            onClick={handleLogout}
-            title="Logout"
-          >
-            <FiLogOut /> Log out
-          </button>
+          <div>
+            <hr className="mb-2" />
+
+            <Navbar.CollapseItem>
+              <Link style={{ color: "red" }} to="/perfil">
+                Perfil
+              </Link>
+            </Navbar.CollapseItem>
+            <button
+              className="btn btn-outline-danger d-md-block"
+              onClick={handleLogout}
+              title="Logout"
+            >
+              <FiLogOut /> Log out
+            </button>
+          </div>
         )}
       </Navbar.Collapse>
     </Navbar>
