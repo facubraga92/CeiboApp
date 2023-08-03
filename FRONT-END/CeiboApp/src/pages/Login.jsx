@@ -130,7 +130,7 @@ const Login = () => {
 
   return (
     <Layout title="Login">
-      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
+      <div style={{minHeight:"100%"}} className="container mt-5 col-sm-12 col-md-6 col-lg-4">
         <div className="d-flex flex-column justify-content-center align-items-center flex-md-row">
           <div className="col mt-0 mt-md-0 align-content-center">
             <h2 style={{ marginBottom: "15%" }} className="text-center">

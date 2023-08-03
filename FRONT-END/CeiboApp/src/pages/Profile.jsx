@@ -25,7 +25,7 @@ export default function Profile() {
   useEffect(() => {
     const handle = async function () {
       let call = await axios
-        .get(`${VITE_BACKEND_URL}/users/admin/members/${user.id}`, {
+        .get(`${VITE_BACKEND_URL}/users/members/${user.id}`, {
           withCredentials: true,
           credentials: "include",
         })
@@ -103,10 +103,10 @@ export default function Profile() {
     if (isChanges) {
       setFormOk(true);
       return setTimeout(() => {
-        navigate("/home"); // redirige al home por ahora
+        navigate("/"); // redirige al home por ahora
       }, 1000);
     } else {
-      navigate("/home"); // redirige al home por ahora
+      navigate("/"); // redirige al home por ahora
     }
     return;
   };

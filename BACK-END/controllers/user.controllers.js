@@ -7,7 +7,7 @@ const generateMailOptions = require("../utils/mail/registrationMail");
 const userRegister = async (req, res) => {
   try {
     let emailDomain = req.body.email.split("@")[1];
-    let role = "socio"; // Por defecto el role es "socio"
+    let role = "socio";
     if (emailDomain.toLowerCase() === "ceibo.digital") {
       role = "consultor";
       if (req.body.email.toLowerCase() === "admin@ceibo.digital") {
@@ -15,34 +15,27 @@ const userRegister = async (req, res) => {
         role = "admin";
       }
     }
-    // Código aleatorio de verificación
     const code = uuidv4();
 
     const user = new userModel({ ...req.body, role, code });
     await user.save();
 
-    // Implementaciones para validación de email
-
     const email = req.body.email;
 
     const token = generateToken({ email, code });
-    //reemplace los puntos por @ porque osino la url en el front al tener puntos el token me daba error..
-    //una vez que llega la url con arrobas en el front le cambio nuevamente los arrobas por puntos para hacer el pedido al endpoint.
+
     const replacedDotsToken = token.replaceAll(".", "@");
     const mailOptions = generateMailOptions(user, replacedDotsToken);
     sendMail(mailOptions);
 
-    // Respuesta exitosa
     res.send(`Usuario creado exitosamente! ${user.email}`);
   } catch (error) {
     if (error.errors) {
-      // Si hay errores de validación en el modelo
       const errorMessage = Object.values(error.errors)
         .map((err) => err.message)
         .join(", ");
       res.status(400).send(errorMessage);
     } else {
-      // Otro tipo de error
       res.status(500).send(error.message || "Error al crear el usuario");
     }
   }
@@ -98,6 +91,7 @@ const loginUser = async (req, res) => {
         lastName: user.lastName,
         role: user.role,
         isValidated: user.isValidated,
+        picture: user.picture,
       };
       const token = generateToken(payload);
       return res.cookie("token", token).send(payload);
@@ -131,31 +125,27 @@ const getAllMembers = async (req, res) => {
 };
 
 const updateUserCustomer = async (req, res, next) => {
-  const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
-  const { name, lastName, email, role, associatedCustomers } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
+  const id = req.params.id;
+  const { name, lastName, email, role, associatedCustomers } = req.body;
 
   try {
-    // Buscar el usuario por ID
+    console.log("entre al try");
     const user = await userModel.findById(id);
 
-    // Si no se encuentra el usuario, devolver un error
     if (!user) {
       const error = new Error("El usuario no existe");
       error.statusCode = 404;
       throw error;
     }
 
-    // Actualizar los campos del usuario con los nuevos datos
     user.name = name || user.name;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
     user.role = role || user.role;
     user.associatedCustomers = associatedCustomers || user.associatedCustomers;
 
-    // Guardar los cambios en la base de datos
     const result = await user.save();
 
-    // Devolver el resultado actualizado
     res.status(200).json({
       message: "Usuario actualizado exitosamente.",
     });

@@ -13,9 +13,7 @@ const {
 } = require("../controllers/user.controllers");
 const isLogged = require("../middlewares/isLogged");
 const validateUser = require("../middlewares/validateUser");
-const isAdmin = require("../middlewares/isAdmin");
 const isAdminOrManager = require("../middlewares/isAdminOrManager");
-const isManager = require("../middlewares/isManager");
 
 const userRouter = express.Router();
 
@@ -40,6 +38,9 @@ userRouter.get("/admin/members", getAllMembers);
 userRouter.get("/admin/:rol", isAdminOrManager, getMembersByRole);
 
 userRouter.get("/admin/members/:id", isAdminOrManager, getMemberById);
+
+//para la vista /profile
+userRouter.get("/members/:id", getMemberById);
 
 userRouter.delete("/admin/members/:id", isAdminOrManager, deleteUser);
 

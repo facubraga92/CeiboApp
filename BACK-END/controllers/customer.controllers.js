@@ -5,7 +5,7 @@ const userModel = require("../schemas/User");
 
 const getAllCustomers = async (req, res) => {
   try {
-    const customers = await customerModel.find();
+    const customers = await customerModel.find().populate("associatedProjects");
     res.send(customers);
   } catch (error) {
     console.log(error);
@@ -19,7 +19,6 @@ const createCustomer = async (req, res) => {
     const newCustomer = await customer.save();
     res.status(201).send("Cliente creado con Éxito.");
   } catch (error) {
-    // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
       res.status(400).send({ message: error.message });
     } else {
@@ -32,18 +31,14 @@ const deleteCustomer = async (req, res) => {
   const customerId = req.params.id;
 
   try {
-    // Obtener los proyectos asociados al customer
     const projects = await projectModel
       .find({ customer: customerId })
       .select("_id");
 
-    // Eliminar las noticias de proyecto asociadas a los proyectos
     await projectNewsModel.deleteMany({ associatedProject: { $in: projects } });
 
-    // Eliminar los proyectos asociados al customer
     await projectModel.deleteMany({ customer: customerId });
 
-    // Actualizar los usuarios asociados al customer eliminado
     await userModel.updateMany(
       { associatedCustomers: customerId },
       {
@@ -51,7 +46,6 @@ const deleteCustomer = async (req, res) => {
       }
     );
 
-    // Eliminar el customer
     const deletedCustomer = await customerModel.findByIdAndDelete(customerId);
     res.status(200).send({
       message: "Customer eliminado exitosamente",
@@ -71,7 +65,7 @@ const updateCustomer = async (req, res) => {
       customerId,
       updates,
       {
-        new: true, // Devolver el documento actualizado
+        new: true,
       }
     );
 
@@ -86,7 +80,6 @@ const updateCustomer = async (req, res) => {
       customer: updatedCustomer,
     });
   } catch (error) {
-    // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
       res.status(400).send({ message: error.message });
     } else {
