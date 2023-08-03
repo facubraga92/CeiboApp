@@ -15,7 +15,10 @@ export default function NavBar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { VITE_BACKEND_URL } = envs;
-  const userInitials = `${userE?.name?.slice(0,1)}${userE?.lastName?.slice(0,1)}`;
+  const userInitials = `${userE?.name?.slice(0, 1)}${userE?.lastName?.slice(
+    0,
+    1
+  )}`;
 
   useEffect(() => {
     const handle = async () => {
@@ -51,9 +54,11 @@ export default function NavBar() {
 
   return (
     <Navbar isBordered variant="sticky">
-      <Navbar.Brand>
-        <img src="/ceibo-red.png" style={{ height: "45px" }} alt="" />
-      </Navbar.Brand>
+      <Link to="/">
+        <Navbar.Brand>
+          <img src="/ceibo-red.png" style={{ height: "45px" }} alt="" />
+        </Navbar.Brand>
+      </Link>
       <Navbar.Content enableCursorHighlight hideIn="xs" variant="underline">
         {navbarOptions.map(
           (option, index) =>
@@ -143,12 +148,17 @@ export default function NavBar() {
             )}
           </>
         )}
+        <Navbar.CollapseItem>
+          <Link style={{ color: "red" }} to="/">
+            Inicio
+          </Link>
+        </Navbar.CollapseItem>
         {userE?.email && (
           <div>
             <hr className="mb-2" />
 
             <Navbar.CollapseItem>
-              <Link style={{ color: "red" }} to="/perfil">
+              <Link style={{ color: "red" }} to="/profile">
                 Perfil
               </Link>
             </Navbar.CollapseItem>
