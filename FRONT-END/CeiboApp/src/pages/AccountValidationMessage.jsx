@@ -10,8 +10,8 @@ const AccountValidationMessage = () => {
   });
 
   return (
-    <Layout>
-      <div style={{height:"50vh"}} className="container">
+  <Layout>
+      <div style={{ height: "50vh" }} className="container">
         <animated.div style={animations} className="not-found-content">
           <h1>Valida tu cuenta</h1>
           <p className="mt-4 fs-1 fw-bold">

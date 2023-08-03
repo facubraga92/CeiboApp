@@ -183,7 +183,7 @@ export default function FormNovedades() {
       <div className="p-4">
         <div
           className="card"
-          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
+          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
         >
           <div className="card-body d-flex flex-column align-items-center">
             <div className="text-center mb-4">
