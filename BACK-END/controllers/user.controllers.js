@@ -205,6 +205,50 @@ const getMemberById = async (req, res) => {
   }
 };
 
+const getMemberNameAndLastName = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await userModel.findById(id);
+    const { name, lastName, email } = user;
+    return res.send({ name, lastName, email });
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const updateMemberNameAndLastName = async (req, res, next) => {
+  const id = req.params.id; // Obtener el ID del usuario desde los parámetros de la solicitud
+  const { name, lastName, email } = req.body; // Obtener los datos actualizados del usuario desde el cuerpo de la solicitud
+
+  try {
+    // Buscar el usuario por ID
+    const user = await userModel.findById(id);
+
+    // Si no se encuentra el usuario, devolver un error
+    if (!user) {
+      const error = new Error("El usuario no existe");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Actualizar los campos del usuario con los nuevos datos
+    user.name = name || user.name;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+
+    // Guardar los cambios en la base de datos
+    const result = await user.save();
+
+    // Devolver el resultado actualizado
+    res.status(200).json({
+      message: "Usuario actualizado exitosamente.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getMembersByRole = async (req, res) => {
   const { rol } = req.params;
 
@@ -227,4 +271,6 @@ module.exports = {
   verifyAccount,
   getMemberById,
   getMembersByRole,
+  getMemberNameAndLastName,
+  updateMemberNameAndLastName
 };
