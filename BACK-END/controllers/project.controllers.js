@@ -63,7 +63,6 @@ const getProjectsByUserId = async (req, res) => {
       .populate("created_by")
       .exec();
 
-    // esto es porque si es socio, que filtre y solo devuelva los projectos y novedades en donde las novedades esten aprobadas
     if (user.role === "socio") {
       projects.forEach((project) => {
         project.news = project.news.filter((news) => news.state === "aprobada");
@@ -83,8 +82,6 @@ const createOneProject = async (req, res) => {
     const newProject = await project.save();
     const projectId = newProject._id;
 
-    // si da problemas comentar todo el customerModel
-    // Asociar el proyecto al cliente correspondiente
     await customerModel.updateOne(
       { _id: req.body.customer },
       { $push: { associatedProjects: projectId } }
@@ -92,7 +89,6 @@ const createOneProject = async (req, res) => {
 
     res.status(201).send(projectId);
   } catch (error) {
-    // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
       res.status(400).json({ message: error.message });
     } else {
@@ -105,20 +101,16 @@ const deleteOneProject = async (req, res) => {
   const projectId = req.params.id;
 
   try {
-    // Obtener el proyecto a eliminar
     const project = await projectModel.findById(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Proyecto no encontrado." });
     }
 
-    // Obtener el ID del cliente asociado al proyecto
     const customerId = project.customer;
 
-    // Eliminar el proyecto
     await projectModel.deleteOne({ _id: projectId });
 
-    // Eliminar el ID del proyecto del campo associatedProjects del cliente correspondiente
     await customerModel.updateOne(
       { _id: customerId },
       { $pull: { associatedProjects: projectId } }
@@ -134,14 +126,12 @@ const updateOneProject = async (req, res) => {
   const projectId = req.params.id;
 
   try {
-    // Obtener el proyecto existente
     const project = await projectModel.findById(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Proyecto no encontrado." });
     }
 
-    // Actualizar el proyecto
     const updatedProject = await projectModel.findByIdAndUpdate(
       projectId,
       req.body,
@@ -150,7 +140,6 @@ const updateOneProject = async (req, res) => {
 
     res.status(200).json({ message: "Proyecto actualizado con éxito." });
   } catch (error) {
-    // Capturar error de validación de Mongoose
     if (error.name === "ValidationError") {
       res.status(400).json({ message: error.message });
     } else {

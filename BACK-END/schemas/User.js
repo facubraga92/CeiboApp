@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema({
   picture: { type: String },
 });
 
-// Antes de guardar, realiza el hash de la contraseña con salt y valida la contraseña
 userSchema.pre("save", function (next) {
   const user = this;
 
@@ -43,8 +42,8 @@ userSchema.pre("save", function (next) {
     return next();
   }
 
-  const uppercaseRegex = /^(?=.*[A-Z])/; // Expresión regular para validar al menos una letra mayúscula
-  const lengthRegex = /^.{8,}$/; // Expresión regular para validar al menos 8 caracteres
+  const uppercaseRegex = /^(?=.*[A-Z])/;
+  const lengthRegex = /^.{8,}$/;
 
   if (!uppercaseRegex.test(user.password)) {
     const error = new Error(
@@ -75,7 +74,6 @@ userSchema.pre("save", function (next) {
   });
 });
 
-// Método para verificar la contraseña
 userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
