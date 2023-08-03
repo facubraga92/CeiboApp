@@ -243,7 +243,6 @@ const Projects = () => {
                               </p>
                             </div>
                           </div>
-                          {user.role !== "socio"}
                           <div>
                             <div>
                               <p
