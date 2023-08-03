@@ -15,7 +15,8 @@ import "../styles/projects.css";
 import { BiRefresh } from "react-icons/bi";
 import { envs } from "../config/env/env.config";
 import { RiAddBoxLine, RiDeleteBin2Line, RiEditBoxLine } from "react-icons/ri";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Collapse, Modal } from "react-bootstrap";
+import { AiOutlineUser } from "react-icons/ai";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -28,6 +29,7 @@ const Projects = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showConsultors, setShowConsultors] = useState(false);
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -253,7 +255,7 @@ const Projects = () => {
                             </div>
                             <div></div>
                           </div>
-                          {user?.role === "manager" && (
+                          {user?.role === "manager" ? (
                             <>
                               <div className="d-none d-lg-flex flex-column ">
                                 <div className="">
@@ -267,16 +269,6 @@ const Projects = () => {
                                       setShowDeleteModal(true);
                                     }}
                                   />
-                                </div>
-                                <div>
-                                  <Link to={`/project/edit/${e._id}`}>
-                                    <input
-                                      type="button"
-                                      value="Editar proyecto"
-                                      className="btn btn-warning  w-100"
-                                      onClick={(e) => setSelectedProject(e._id)}
-                                    />
-                                  </Link>
                                 </div>
                                 <div>
                                   <Link to={`/project/addNews/${e._id}`}>
@@ -304,14 +296,6 @@ const Projects = () => {
                                     />
                                   </div>
                                   <div>
-                                    <Link to={`/project/edit/${e._id}`}>
-                                      <RiEditBoxLine
-                                        size={30}
-                                        className="mr-2"
-                                      />
-                                    </Link>
-                                  </div>
-                                  <div>
                                     <Link to={`/project/addNews/${e._id}`}>
                                       <RiAddBoxLine size={30} />
                                     </Link>
@@ -319,34 +303,86 @@ const Projects = () => {
                                 </>
                               </div>
                             </>
+                          ) : (
+                            user.role === "consultor" && (
+                              <>
+                                <div className="d-none d-lg-flex">
+                                  <Link to={`/project/addNews/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Agregar novedad"
+                                      className="btn btn-primary w-100"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+                                </div>
+                                <div className="d-flex d-lg-none">
+                                  <Link to={`/project/addNews/${e._id}`}>
+                                    <RiAddBoxLine size={30} />
+                                  </Link>
+                                </div>
+                              </>
+                            )
                           )}
                         </div>
 
-                        <div
-                          className={`mt-2 ${
-                            selectedProject === e._id ? "" : "d-none"
-                          }`}
-                        >
-                          {e?.news?.length > 0 ? (
-                            <div className="d-flex flex-wrap">
-                              {e.news.map((news, index) => (
-                                <div className="col col-sm-12 col-md-6 col-lg-4 mb-2">
-                                  <Novedad
-                                    key={index}
-                                    news={news}
-                                    project={e}
-                                  />
+                        <Collapse in={selectedProject === e._id}>
+                          <div className={`mt-2 `}>
+                            <div
+                              className=""
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                setShowConsultors(!showConsultors);
+                              }}
+                            >
+                              {user.role !== "socio" && e.consultors && (
+                                <div className="w-auto mb-2">
+                                  <h5
+                                    onClick={() =>
+                                      setShowConsultors(!showConsultors)
+                                    }
+                                    className="m-0 p-0"
+                                  >
+                                    Ver consultores
+                                  </h5>
+                                  <Collapse in={showConsultors}>
+                                    <div className="">
+                                      <ul
+                                        className="list mb-0"
+                                        style={{ lineHeight: "1.5" }}
+                                      >
+                                        {e.consultors.map((cons, index) => (
+                                          <li key={index} className="m-0 p-0">
+                                            <AiOutlineUser /> {cons.email}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </Collapse>
                                 </div>
-                              ))}
+                              )}
                             </div>
-                          ) : (
-                            <div>
-                              <p className="m-0 p-0">
-                                No hay novedades para este proyecto.
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                            {e?.news?.length > 0 ? (
+                              <div className="d-flex flex-wrap">
+                                {e.news.map((news, index) => (
+                                  <div className="col col-sm-12 col-md-6 col-lg-4 mb-2">
+                                    <Novedad
+                                      key={index}
+                                      news={news}
+                                      project={e}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div>
+                                <p className="m-0 p-0">
+                                  No hay novedades para este proyecto.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </Collapse>
                       </div>
                     </div>
                   ))}
