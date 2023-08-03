@@ -8,6 +8,7 @@ const {
   createOneProject,
   getProjectsByUserId,
   addNewsToProjectById,
+  deleteOneProject,
 } = require("../controllers/project.controllers");
 const isLogged = require("../middlewares/isLogged");
 const isManager = require("../middlewares/isManager");
@@ -19,6 +20,8 @@ projectRouter.get("/getProjectsUser/:id", isLogged, getProjectsByUserId);
 projectRouter.post("/create", isManager, createOneProject);
 
 projectRouter.get("/project/:id", isLogged, getOneProject);
+
+projectRouter.delete("/project/:id", isManager, deleteOneProject);
 
 projectRouter.post(
   "/project/addNews/:idProject",

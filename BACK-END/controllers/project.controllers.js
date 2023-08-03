@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwtDecode = require("jwt-decode");
 
 const projectModel = require("../schemas/Project");
 const customerModel = require("../schemas/Customer");
@@ -18,7 +19,9 @@ const getAllProjects = async (req, res) => {
 
 const getProjectsByUserId = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { token } = req.cookies;
+    const decoded = jwtDecode(token);
+    const { id } = decoded;
     const user = await userModel.findById(id).populate("associatedCustomers");
 
     const projects = await projectModel
@@ -124,9 +127,9 @@ const deleteOneProject = async (req, res) => {
       { $pull: { associatedProjects: projectId } }
     );
 
-    res.status(200).json({ message: "Proyecto eliminado con éxito." });
+    return await getProjectsByUserId(req, res);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -206,4 +209,5 @@ module.exports = {
   createOneProject,
   getProjectsByUserId,
   addNewsToProjectById,
+  deleteOneProject,
 };

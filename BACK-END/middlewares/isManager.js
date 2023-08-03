@@ -1,18 +1,17 @@
 const userModel = require("../schemas/User");
+const jwtDecode = require("jwt-decode");
 
 async function isManager(req, res, next) {
   const managerId = req.body.managers;
+  const { token } = req.cookies;
   try {
-    const isManager = await userModel.exists({
-      _id: managerId,
-      role: "manager",
-    });
+    if (!token)
+      return res.status(403).json({ message: "Acceso solo para managers" });
 
-    if (!isManager) {
-      return res
-        .status(403)
-        .json({ message: "Solo los managers pueden crear proyectos." });
-    }
+    const decoded = jwtDecode(token);
+    if (decoded.role !== "manager")
+      return res.status(403).json({ message: "Acceso solo para managers" });
+
     next();
   } catch (error) {
     res.status(404).json({ message: error.message });
