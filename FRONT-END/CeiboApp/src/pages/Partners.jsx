@@ -140,76 +140,99 @@ const Partners = () => {
   };
 
   return (
-    <Layout>
-      <div className="container col-12 col-md-10 d-flex flex-column align-items-center">
-        <div className="col">
-          <h2 className="text-center display-4">Socios</h2>
-        </div>
-        <div className="mt-2 mb-2" style={{ maxWidth: "20rem" }}>
-          <Input
-            size="large"
-            type="text"
-            placeholder="Buscar miembro..."
-            value={searchText}
-            onChange={handleSearch}
-            allowClear
-          />
-        </div>
-        <div className="">
-          <table className="table table-striped vw-100 min-vw-100">
-            <thead>
-              <tr>
-                <th className="d-none d-md-table-cell">Nombre</th>
-                <th className="d-none d-md-table-cell">Apellido</th>
-                <th>Email</th>
-                <th>Clientes asociados</th>
-              </tr>
-            </thead>
-            {filteredPartners.length > 0 ? (
-              filteredPartners.map((partner) => (
-                <tbody key={partner._id}>
-                  <tr>
-                    <td className="d-none d-md-table-cell">{partner.name}</td>
-                    <td className="d-none d-md-table-cell">
-                      {partner.lastName}
-                    </td>
-                    <td>{partner.email}</td>
-                    <td>
-                      <Select
-                        options={customerOptions}
-                        value={selectedCustomer[partner._id] || null}
-                        onChange={(selectedOption) => {
-                          setSelectedCustomer((prevSelectedCustomer) => ({
-                            ...prevSelectedCustomer,
-                            [partner._id]: selectedOption,
-                          }));
+    <Layout title="Socios">
+      <div className="p-4">
+        <div
+          className="card"
+          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+        >
+          <div className="card-body d-flex flex-column align-items-center">
+            <div className="container col-12 col-md-10 d-flex flex-column align-items-center">
+              <div className="col">
+                <h2 className="text-center display-4">Socios</h2>
+              </div>
+              <div
+                className="mt-2 mb-2 col-11 col-md-6"
+                style={{ maxWidth: "20rem" }}
+              >
+                <Input
+                  size="large"
+                  type="text"
+                  placeholder="Buscar miembro..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  allowClear
+                />
+              </div>
+              <div className="table-responsive">
+                <table className="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th className="d-none d-md-table-cell">Nombre</th>
+                      <th className="d-none d-md-table-cell">Apellido</th>
+                      <th>Email</th>
+                      <th>Clientes asociados</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPartners.length > 0 ? (
+                      filteredPartners.map((partner) => (
+                        <tr key={partner._id}>
+                          <td className="d-none d-md-table-cell">
+                            {partner.name}
+                          </td>
+                          <td className="d-none d-md-table-cell">
+                            {partner.lastName}
+                          </td>
+                          <td>{partner.email}</td>
+                          <td>
+                            <Select
+                              styles={{
+                                control: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  borderColor: state.isFocused ? "grey" : "red",
+                                }),
+                              }}
+                              options={customerOptions}
+                              value={selectedCustomer[partner._id] || null}
+                              onChange={(selectedOption) => {
+                                setSelectedCustomer((prevSelectedCustomer) => ({
+                                  ...prevSelectedCustomer,
+                                  [partner._id]: selectedOption,
+                                }));
 
-                          const updatedPartner = {
-                            associatedCustomers: selectedOption
-                              ? selectedOption.map((customer) => customer.value)
-                              : null,
-                          };
+                                const updatedPartner = {
+                                  associatedCustomers: selectedOption
+                                    ? selectedOption.map(
+                                        (customer) => customer.value
+                                      )
+                                    : null,
+                                };
 
-                          handleUpdatePartner(partner._id, updatedPartner);
-                        }}
-                        isClearable={true}
-                        isMulti={true}
-                        placeholder="Selecciona un Cliente"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              ))
-            ) : (
-              <tbody>
-                <tr>
-                  <td colSpan="4" className="text-center">
-                    <Spin size="large" />
-                  </td>
-                </tr>
-              </tbody>
-            )}
-          </table>
+                                handleUpdatePartner(
+                                  partner._id,
+                                  updatedPartner
+                                );
+                              }}
+                              isClearable={true}
+                              isMulti={true}
+                              placeholder="Selecciona un Cliente"
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="text-center">
+                          <Spin size="large" />
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

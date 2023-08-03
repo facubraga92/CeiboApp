@@ -287,50 +287,25 @@ const Projects = () => {
                               </>
                             )}
                           </div>
-
-                          <div
-                            className={`mt-2 ${
-                              selectedProject === e._id ? "" : "d-none"
-                            }`}
-                          >
-                            {e?.news?.length > 0 ? (
-                              <div className="d-flex flex-wrap">
-                                {e.news.map((news, index) => (
-                                  <div className="col col-sm-12 col-md-6 col-lg-4 mb-2">
-                                    <Novedad
-                                      key={index}
-                                      news={news}
-                                      project={e}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div>
-                                <p className="m-0 p-0">
-                                  No hay novedades para este proyecto.
-                                </p>
-                              </div>
-                            )}
-                          </div>
                         </div>
-                      </div>
-                    </>
-                  ))}
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : isLoading ? (
+                <Spin />
+              ) : (
+                <div>
+                  <h3 className="display-4">
+                    {user.role === "socio"
+                      ? "No hay novedades para aprobar"
+                      : "No tiene proyecto asignados"}
+                  </h3>
                 </div>
-              </div>
-            ))
-        ) : isLoading ? (
-          <Spin />
-        ) : (
-          <div>
-            <h3 className="display-4">
-              {user.role === "socio"
-                ? "No hay novedades para aprobar"
-                : "No tiene proyecto asignados"}
-            </h3>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   );

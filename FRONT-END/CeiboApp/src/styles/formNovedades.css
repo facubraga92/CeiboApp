@@ -1,0 +1,26 @@
+.star-icon {
+  font-size: 24px;
+}
+
+@media (max-width: 767px) {
+  .star-icon--size-1 {
+    font-size: 16px;
+  }
+
+  .star-icon--size-2 {
+    font-size: 18px;
+  }
+
+  .star-icon--size-3 {
+    font-size: 20px;
+  }
+
+  .star-icon--size-4 {
+    font-size: 22px;
+  }
+
+  .star-icon--size-5 {
+    font-size: 24px;
+  }
+}
+

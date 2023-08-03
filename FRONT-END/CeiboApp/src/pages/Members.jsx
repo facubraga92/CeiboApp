@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { message, Select, Input } from "antd";
+import { message, Select } from "antd";
 import Layout from "../components/layouts/Layout";
 import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 const { Option } = Select;
 import { envs } from "../config/env/env.config";
 import { toastSuccess } from "../utils/api";
+import { Input, Table } from "@nextui-org/react";
+import { FiUserX } from "react-icons/fi";
+import { Button as ButtonNextUI } from "@nextui-org/react";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -158,16 +161,19 @@ const Members = () => {
   };
 
   return (
-    <Layout title={"Miembros"}>
+    <Layout title={"Usuarios"}>
       <div className="container col-sm-12 col-md-11">
         <div className="text-center mt-1">
           <h2 className="display-4">Administrador de usuarios</h2>
         </div>
-        <div className="row mt-3 justify-content-center">
+        <div className="row mt-4 justify-content-center">
           <div className="input-group mb-3  col-11 col-md-6">
             <Input
-              className=""
-              placeholder="Buscar usuario . . . "
+              underlined
+              labelPlaceholder="Buscar usuario"
+              clearable={true}
+              color="error"
+              fullWidth={true}
               value={searchText || ""}
               onChange={handleFilterByAny}
             />
@@ -177,7 +183,7 @@ const Members = () => {
           <div className="col-6 col-md-2">
             <input
               type="button"
-              className="btn btn-primary btn-block"
+              className="btn btn-outline-danger btn-block"
               value="Consultor"
               name="consultor"
               onClick={handleFilterByAny}
@@ -186,7 +192,7 @@ const Members = () => {
           <div className="col-6 col-md-2">
             <input
               type="button"
-              className="btn btn-primary btn-block"
+              className="btn btn-outline-danger btn-block"
               value="Socio"
               name="socio"
               onClick={handleFilterByAny}
@@ -195,7 +201,7 @@ const Members = () => {
           <div className="col-6 col-md-2">
             <input
               type="button"
-              className="btn btn-primary btn-block"
+              className="btn btn-outline-danger btn-block"
               value="Manager"
               name="manager"
               onClick={handleFilterByAny}
@@ -203,11 +209,11 @@ const Members = () => {
           </div>
         </div>
         <div className="row justify-content-center mb-3 d-md-none ">
-          <div className="">
+          <div>
             <Select
-              style={{ width: 120 }}
+              style={{ width: 130 }}
               onChange={handleSelectSearch}
-              value={roleSearch || ""}
+              value={roleSearch || "Filtrar por Rol"}
             >
               <Option value="Consultor">Consultor</Option>
               <Option value="Socio">Socio</Option>
@@ -257,12 +263,13 @@ const Members = () => {
                         <Option value="consultor">Consultor</Option>
                       </Select>
                     </td>
-                    <td>
+                    <td style={{ display: "flex", justifyContent: "center" }}>
                       <button
-                        className="btn btn-danger"
+                        className="btn btn-outline-danger"
                         onClick={() => handleModal(member._id)}
+                        title="Eliminar usuario"
                       >
-                        🗑️
+                        <FiUserX size={30} fill="currentColor" />
                       </button>
                     </td>
                   </tr>
