@@ -160,7 +160,7 @@ const Partners = () => {
                   type="text"
                   placeholder="Buscar miembro..."
                   value={searchText}
-                  onChange={handleSearch}
+                  onChange={(e) => setSearchText(e.target.value)}
                   allowClear
                 />
               </div>
