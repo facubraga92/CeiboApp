@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { message, Modal, Button, Input } from "antd";
+import { message, Modal, Button } from "antd";
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
 
@@ -199,227 +199,215 @@ const Customers = () => {
 
   return (
     <Layout title="Clientes">
-      <div className="p-4">
-        <div
-          className="card"
-          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
-        >
-          <div className="card-body d-flex flex-column align-items-center">
-            <div className="col">
-              <h2 className="text-center display-4">Clientes</h2>
-            </div>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <div className="container">
-                <div className="d-inline-flex" id="navbarSupportedContent">
-                  <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li className="nav-item">
-                      <Button type="primary" onClick={openCreateModal}>
-                        Crear Cliente
-                      </Button>
-                    </li>
-                  </ul>
-                  <form className="d-flex align-items-center">
-                    <Input
-                      size="large"
-                      type="search"
-                      placeholder="Buscar Cliente..."
-                      aria-label="Search"
-                      value={searchText}
-                      onChange={handleSearch}
-                    />
-                  </form>
-                </div>
-              </div>
-            </nav>
-
-            <div className="table-responsive">
-              <table
-                style={{ maxWidth: "100%" }}
-                className="table table-striped"
-              >
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th className="d-none d-sm-table-cell">
-                      Información de contacto
-                    </th>
-                    <th className="text-center">Proyectos asociados</th>
-                    <th>Editar</th>
-                    <th>Borrar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCustomers.map((customer) => (
-                    <tr key={customer._id}>
-                      <td>
-                        {editingCustomer &&
-                        editingCustomer._id === customer._id ? (
-                          <Input
-                            size="large"
-                            type="text"
-                            value={editingCustomer.name}
-                            onChange={(e) =>
-                              setEditingCustomer((prevCustomer) => ({
-                                ...prevCustomer,
-                                name: e.target.value,
-                              }))
-                            }
-                          />
-                        ) : (
-                          customer.name
-                        )}
-                      </td>
-                      <td>
-                        {editingCustomer &&
-                        editingCustomer._id === customer._id ? (
-                          <Input
-                            size="large"
-                            type="text"
-                            value={editingCustomer.address}
-                            onChange={(e) =>
-                              setEditingCustomer((prevCustomer) => ({
-                                ...prevCustomer,
-                                address: e.target.value,
-                              }))
-                            }
-                          />
-                        ) : (
-                          customer.address
-                        )}
-                      </td>
-                      <td className="d-none d-sm-table-cell">
-                        {editingCustomer &&
-                        editingCustomer._id === customer._id ? (
-                          <Input
-                            size="large"
-                            type="text"
-                            value={editingCustomer.contactInfo}
-                            onChange={(e) =>
-                              setEditingCustomer((prevCustomer) => ({
-                                ...prevCustomer,
-                                contactInfo: e.target.value,
-                              }))
-                            }
-                          />
-                        ) : (
-                          customer.contactInfo
-                        )}
-                      </td>
-                      <td className="text-center">
-                        {getAssociatedProjects(customer)}
-                      </td>
-                      <td>
-                        {editingCustomer &&
-                        editingCustomer._id === customer._id ? (
-                          <>
-                            <button
-                              className="btn btn-primary"
-                              onClick={() => saveChanges(customer._id)}
-                            >
-                              Guardar
-                            </button>
-                            <button
-                              className="btn btn-secondary"
-                              onClick={cancelEditing}
-                            >
-                              Cancelar
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => startEditing(customer._id)}
-                          >
-                            Editar
-                          </button>
-                        )}
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeleteClick(customer._id)}
-                        >
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <Modal
-              title="Crear Cliente"
-              open={createModalVisible}
-              onCancel={() => setCreateModalVisible(false)}
-              footer={[
-                <Button
-                  key="cancel"
-                  onClick={() => setCreateModalVisible(false)}
-                >
-                  Cancelar
-                </Button>,
-                <Button
-                  key="create"
-                  type="primary"
-                  onClick={handleCreateCustomer}
-                >
-                  Crear
-                </Button>,
-              ]}
-            >
-              <div>
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="name"
-                    value={newCustomer.name}
-                    onChange={handleNewCustomerChange}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Dirección</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="address"
-                    value={newCustomer.address}
-                    onChange={handleNewCustomerChange}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Información de contacto</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="contactInfo"
-                    value={newCustomer.contactInfo}
-                    onChange={handleNewCustomerChange}
-                  />
-                </div>
-              </div>
-            </Modal>
-
-            <Modal
-              title="Proyectos asociados al cliente:"
-              open={projectModalVisible}
-              onCancel={() => setProjectModalVisible(false)}
-              footer={null}
-            >
-              {selectedProject && (
-                <ul>
-                  {selectedProject.map((projectId) => {
-                    const project = projects.find((p) => p._id === projectId);
-                    return <li key={projectId}>{project && project.name}</li>;
-                  })}
-                </ul>
-              )}
-            </Modal>
-          </div>
+      <div>
+        <div className="col">
+          <h2 className="text-center display-4">Clientes</h2>
         </div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <div className="container">
+            {/* <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button> */}
+
+            <div className="d-inline-flex" id="navbarSupportedContent">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <Button type="primary" onClick={openCreateModal}>
+                    Crear Cliente
+                  </Button>
+                </li>
+              </ul>
+              <form className="d-flex align-items-center">
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Buscar Cliente..."
+                  aria-label="Search"
+                  value={searchText}
+                  onChange={handleSearch}
+                />
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div className="table-responsive">
+          <table style={{ maxWidth: "100%" }} className="table table-striped">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th className="d-none d-sm-table-cell">
+                  Información de contacto
+                </th>
+                <th className="text-center">Proyectos asociados</th>
+                <th>Editar</th>
+                <th>Borrar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCustomers.map((customer) => (
+                <tr key={customer._id}>
+                  <td>
+                    {editingCustomer && editingCustomer._id === customer._id ? (
+                      <input
+                        type="text"
+                        value={editingCustomer.name}
+                        onChange={(e) =>
+                          setEditingCustomer((prevCustomer) => ({
+                            ...prevCustomer,
+                            name: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      customer.name
+                    )}
+                  </td>
+                  <td>
+                    {editingCustomer && editingCustomer._id === customer._id ? (
+                      <input
+                        type="text"
+                        value={editingCustomer.address}
+                        onChange={(e) =>
+                          setEditingCustomer((prevCustomer) => ({
+                            ...prevCustomer,
+                            address: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      customer.address
+                    )}
+                  </td>
+                  <td className="d-none d-sm-table-cell">
+                    {editingCustomer && editingCustomer._id === customer._id ? (
+                      <input
+                        type="text"
+                        value={editingCustomer.contactInfo}
+                        onChange={(e) =>
+                          setEditingCustomer((prevCustomer) => ({
+                            ...prevCustomer,
+                            contactInfo: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      customer.contactInfo
+                    )}
+                  </td>
+                  <td className="text-center">
+                    {getAssociatedProjects(customer)}
+                  </td>
+                  <td>
+                    {editingCustomer && editingCustomer._id === customer._id ? (
+                      <>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => saveChanges(customer._id)}
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={cancelEditing}
+                        >
+                          Cancelar
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => startEditing(customer._id)}
+                      >
+                        Editar
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteClick(customer._id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <Modal
+          title="Crear Cliente"
+          open={createModalVisible}
+          onCancel={() => setCreateModalVisible(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setCreateModalVisible(false)}>
+              Cancelar
+            </Button>,
+            <Button key="create" type="primary" onClick={handleCreateCustomer}>
+              Crear
+            </Button>,
+          ]}
+        >
+          <div>
+            <div className="mb-3">
+              <label className="form-label">Nombre</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={newCustomer.name}
+                onChange={handleNewCustomerChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Dirección</label>
+              <input
+                type="text"
+                className="form-control"
+                name="address"
+                value={newCustomer.address}
+                onChange={handleNewCustomerChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Información de contacto</label>
+              <input
+                type="text"
+                className="form-control"
+                name="contactInfo"
+                value={newCustomer.contactInfo}
+                onChange={handleNewCustomerChange}
+              />
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          title="Proyectos asociados al cliente:"
+          open={projectModalVisible}
+          onCancel={() => setProjectModalVisible(false)}
+          footer={null}
+        >
+          {selectedProject && (
+            <ul>
+              {selectedProject.map((projectId) => {
+                const project = projects.find((p) => p._id === projectId);
+                return <li key={projectId}>{project && project.name}</li>;
+              })}
+            </ul>
+          )}
+        </Modal>
       </div>
     </Layout>
   );

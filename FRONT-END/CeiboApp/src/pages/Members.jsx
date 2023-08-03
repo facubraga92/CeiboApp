@@ -9,8 +9,6 @@ const { Option } = Select;
 import { envs } from "../config/env/env.config";
 import { toastSuccess } from "../utils/api";
 import { Input, Table } from "@nextui-org/react";
-import { FiUserX } from "react-icons/fi";
-import { Button as ButtonNextUI } from "@nextui-org/react";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -162,135 +160,122 @@ const Members = () => {
 
   return (
     <Layout title={"Usuarios"}>
-      <div className="p-4">
-        <div
-          className="card"
-          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
-        >
-          <div className="container col-sm-12 col-md-11">
-            <div className="text-center mt-1">
-              <h2 className="display-4">Administrador de usuarios</h2>
-            </div>
-            <div className="row mt-4 justify-content-center">
-              <div className="input-group mb-3  col-11 col-md-6">
-                <Input
-                  underlined
-                  labelPlaceholder="Buscar usuario"
-                  clearable={true}
-                  color="error"
-                  fullWidth={true}
-                  value={searchText || ""}
-                  onChange={handleFilterByAny}
-                />
-              </div>
-            </div>
-            <div className="row justify-content-sm-center mb-3 d-none d-md-flex">
-              <div className="col-6 col-md-2">
-                <input
-                  type="button"
-                  className="btn btn-outline-danger btn-block"
-                  value="Consultor"
-                  name="consultor"
-                  onClick={handleFilterByAny}
-                />
-              </div>
-              <div className="col-6 col-md-2">
-                <input
-                  type="button"
-                  className="btn btn-outline-danger btn-block"
-                  value="Socio"
-                  name="socio"
-                  onClick={handleFilterByAny}
-                />
-              </div>
-              <div className="col-6 col-md-2">
-                <input
-                  type="button"
-                  className="btn btn-outline-danger btn-block"
-                  value="Manager"
-                  name="manager"
-                  onClick={handleFilterByAny}
-                />
-              </div>
-            </div>
-            <div className="row justify-content-center mb-3 d-md-none ">
-              <div>
-                <Select
-                  style={{ width: 130 }}
-                  onChange={handleSelectSearch}
-                  value={roleSearch || "Filtrar por Rol"}
-                >
-                  <Option value="Consultor">Consultor</Option>
-                  <Option value="Socio">Socio</Option>
-                  <Option value="Manager">Manager</Option>
-                </Select>
-              </div>
-            </div>
-            <div className="row">
-              <div className="table-responsive">
-                <table className="table table-striped table-hover">
-                  <thead>
-                    <tr>
-                      <th className="d-none d-md-table-cell">Nombre</th>
-                      <th className="d-none d-md-table-cell">Apellido</th>
-                      <th>Email</th>
-                      <th>Rol</th>
-                      <th>Eliminar</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredMembers.map((member) => (
-                      <tr key={member._id}>
-                        <td className="d-none d-md-table-cell">
-                          {member.name}
-                        </td>
-                        <td className="d-none d-md-table-cell">
-                          {member.lastName}
-                        </td>
-                        <td>{member.email}</td>
-                        <td>
-                          <Select
-                            onClick={() =>
-                              user.id == member._id
-                                ? message.warning(
-                                    "No puedes quitarte el rol de Admin a ti mismo."
-                                  )
-                                : ""
-                            }
-                            defaultValue={member.role}
-                            style={{ width: 120 }}
-                            disabled={user.id == member._id}
-                            onChange={(value) =>
-                              handleRoleChange(member._id, value)
-                            }
-                          >
-                            <Option value="admin">Admin</Option>
-                            <Option value="manager">Manager</Option>
-                            <Option value="socio">Socio</Option>
-                            <Option value="consultor">Consultor</Option>
-                          </Select>
-                        </td>
-                        <td
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          <button
-                            className="btn btn-outline-danger"
-                            onClick={() => handleModal(member._id)}
-                            title="Eliminar usuario"
-                          >
-                            <FiUserX size={30} fill="currentColor" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+      <div className="container col-sm-12 col-md-11">
+        <div className="text-center mt-1">
+          <h2 className="display-4">Administrador de usuarios</h2>
+        </div>
+        <div className="row mt-4 justify-content-center">
+          <div className="input-group mb-3  col-11 col-md-6">
+            <Input
+              underlined
+              labelPlaceholder="Buscar usuario"
+              clearable={true}
+              color="error"
+              fullWidth= {true}
+              value={searchText || ""}
+              onChange={handleFilterByAny}
+            />
+          </div>
+        </div>
+        <div className="row justify-content-sm-center mb-3 d-none d-md-flex">
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-outline-danger btn-block"
+              value="Consultor"
+              name="consultor"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-outline-danger btn-block"
+              value="Socio"
+              name="socio"
+              onClick={handleFilterByAny}
+            />
+          </div>
+          <div className="col-6 col-md-2">
+            <input
+              type="button"
+              className="btn btn-outline-danger btn-block"
+              value="Manager"
+              name="manager"
+              onClick={handleFilterByAny}
+            />
+          </div>
+        </div>
+        <div className="row justify-content-center mb-3 d-md-none ">
+          <div>
+            <Select
+              style={{ width: 130 }}
+              onChange={handleSelectSearch}
+              value={roleSearch || "Filtrar por Rol"}
+            >
+              <Option value="Consultor">Consultor</Option>
+              <Option value="Socio">Socio</Option>
+              <Option value="Manager">Manager</Option>
+            </Select>
+          </div>
+        </div>
+        <div className="row">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th className="d-none d-md-table-cell">Nombre</th>
+                  <th className="d-none d-md-table-cell">Apellido</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMembers.map((member) => (
+                  <tr key={member._id}>
+                    <td className="d-none d-md-table-cell">{member.name}</td>
+                    <td className="d-none d-md-table-cell">
+                      {member.lastName}
+                    </td>
+                    <td>{member.email}</td>
+                    <td>
+                      <Select
+                        onClick={() =>
+                          user.id == member._id
+                            ? message.warning(
+                                "No puedes quitarte el rol de Admin a ti mismo."
+                              )
+                            : ""
+                        }
+                        defaultValue={member.role}
+                        style={{ width: 120 }}
+                        disabled={user.id == member._id}
+                        onChange={(value) =>
+                          handleRoleChange(member._id, value)
+                        }
+                      >
+                        <Option value="admin">Admin</Option>
+                        <Option value="manager">Manager</Option>
+                        <Option value="socio">Socio</Option>
+                        <Option value="consultor">Consultor</Option>
+                      </Select>
+                    </td>
+                    <td style={{ display: "flex", justifyContent: "center" }}>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleModal(member._id)}
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-
       <Modal show={showModal} centered onHide={handleModalToggle}>
         <Modal.Header closeButton>
           <Modal.Title>¿Estas seguro de eliminar?</Modal.Title>

@@ -1,4 +1,4 @@
-import { Navbar, Avatar } from "@nextui-org/react";
+import { Navbar } from "@nextui-org/react";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,6 @@ import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getUserByToken, userMe } from "../../utils/api";
 import { envs } from "../../config/env/env.config";
-import { FiLogOut } from "react-icons/fi";
 
 export default function NavBar() {
   const path = useLocation().pathname.slice(1);
@@ -15,11 +14,6 @@ export default function NavBar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { VITE_BACKEND_URL } = envs;
-  const userInitials = `${userE?.name?.slice(0, 1)}${userE?.lastName?.slice(
-    0,
-    1
-  )}`;
-
   useEffect(() => {
     const handle = async () => {
       const user = getUserByToken();
@@ -54,18 +48,22 @@ export default function NavBar() {
 
   return (
     <Navbar isBordered variant="sticky">
-      <Link to="/">
-        <Navbar.Brand>
-          <img src="/ceibo-red.png" style={{ height: "45px" }} alt="" />
-        </Navbar.Brand>
-      </Link>
+      <Navbar.Brand>
+        <img src="/ceibo-red.png" style={{ height: "45px" }} alt="" />
+      </Navbar.Brand>
       <Navbar.Content enableCursorHighlight hideIn="xs" variant="underline">
         {navbarOptions.map(
           (option, index) =>
             userE?.email &&
             option.role.includes(userE.role) && (
               <Navbar.Item key={option.label}>
-                <Link style={{ color: "red" }} to={`${option.path}`}>
+                <Link
+                  color="inherit"
+                  css={{
+                    minWidth: "100%",
+                  }}
+                  to={`${option.path}`}
+                >
                   {option.label}
                 </Link>
               </Navbar.Item>
@@ -96,23 +94,12 @@ export default function NavBar() {
           </>
         )}
         {userE?.email && (
-          <div className="d-flex">
-            <Avatar
-              className="d-none d-md-block"
-              title="Perfil"
-              text={userInitials}
-              color="error"
-              textColor="white"
-            />
-
-            <button
-              className="mx-2 btn btn-outline-danger d-none d-md-block"
-              onClick={handleLogout}
-              title="Cerrar sesión"
-            >
-              <FiLogOut /> Log out
-            </button>
-          </div>
+          <button
+            className="btn btn-danger d-none d-md-block"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         )}
         <Navbar.Toggle showIn="sm" aria-label="toggle navigation" />
       </Navbar.Content>
@@ -122,7 +109,13 @@ export default function NavBar() {
             userE?.email &&
             option.role.includes(userE.role) && (
               <Navbar.CollapseItem key={option.label}>
-                <Link style={{ color: "red" }} to={`${option.path}`}>
+                <Link
+                  color="inherit"
+                  css={{
+                    minWidth: "100%",
+                  }}
+                  to={`${option.path}`}
+                >
                   {option.label}
                 </Link>
               </Navbar.CollapseItem>
@@ -146,28 +139,10 @@ export default function NavBar() {
             )}
           </>
         )}
-        <Navbar.CollapseItem>
-          <Link style={{ color: "red" }} to="/">
-            Inicio
-          </Link>
-        </Navbar.CollapseItem>
         {userE?.email && (
-          <div>
-            <hr className="mb-2" />
-
-            <Navbar.CollapseItem>
-              <Link style={{ color: "red" }} to="/profile">
-                Perfil
-              </Link>
-            </Navbar.CollapseItem>
-            <button
-              className="btn btn-outline-danger d-md-block"
-              onClick={handleLogout}
-              title="Logout"
-            >
-              <FiLogOut /> Log out
-            </button>
-          </div>
+          <button className="btn btn-danger" onClick={handleLogout}>
+            Logout
+          </button>
         )}
       </Navbar.Collapse>
     </Navbar>
