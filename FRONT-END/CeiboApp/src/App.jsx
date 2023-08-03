@@ -22,7 +22,6 @@ import { getUserByToken } from "./utils/api";
 //Protected Routes
 import { IsLogged } from "./components/ProtectedRoute/IsLogged";
 import { ProtectedRoute } from "./components";
-import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -60,14 +59,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Projects />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
                 </ProtectedRoute>
               }
             ></Route>
