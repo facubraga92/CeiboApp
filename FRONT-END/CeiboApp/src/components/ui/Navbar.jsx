@@ -7,6 +7,7 @@ import { setUser, userInitialState } from "../../state/user";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getUserByToken, userMe } from "../../utils/api";
 import { envs } from "../../config/env/env.config";
+import { FiLogOut } from "react-icons/fi";
 
 export default function NavBar() {
   const path = useLocation().pathname.slice(1);
@@ -89,10 +90,11 @@ export default function NavBar() {
         )}
         {userE?.email && (
           <button
-            className="btn btn-danger d-none d-md-block"
+            className="btn btn-outline-danger d-none d-md-block"
             onClick={handleLogout}
+            title="Logout"
           >
-            Logout
+            <FiLogOut /> Log out
           </button>
         )}
         <Navbar.Toggle showIn="sm" aria-label="toggle navigation" />
@@ -128,8 +130,12 @@ export default function NavBar() {
           </>
         )}
         {userE?.email && (
-          <button className="btn btn-danger" onClick={handleLogout}>
-            Logout
+          <button
+            className="btn btn-outline-danger d-md-block"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <FiLogOut /> Log out
           </button>
         )}
       </Navbar.Collapse>

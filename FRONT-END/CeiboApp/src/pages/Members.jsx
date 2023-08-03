@@ -9,6 +9,8 @@ const { Option } = Select;
 import { envs } from "../config/env/env.config";
 import { toastSuccess } from "../utils/api";
 import { Input, Table } from "@nextui-org/react";
+import { FiUserX } from "react-icons/fi";
+import { Button as ButtonNextUI } from "@nextui-org/react";
 
 const Members = () => {
   const user = useSelector((state) => state.user);
@@ -171,7 +173,7 @@ const Members = () => {
               labelPlaceholder="Buscar usuario"
               clearable={true}
               color="error"
-              fullWidth= {true}
+              fullWidth={true}
               value={searchText || ""}
               onChange={handleFilterByAny}
             />
@@ -263,10 +265,11 @@ const Members = () => {
                     </td>
                     <td style={{ display: "flex", justifyContent: "center" }}>
                       <button
-                        className="btn btn-danger"
+                        className="btn btn-outline-danger"
                         onClick={() => handleModal(member._id)}
+                        title="Eliminar usuario"
                       >
-                        🗑️
+                        <FiUserX size={30} fill="currentColor" />
                       </button>
                     </td>
                   </tr>
