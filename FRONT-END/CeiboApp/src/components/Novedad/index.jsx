@@ -90,6 +90,10 @@ export default function Novedad({ news }) {
     return handleScrollBottom();
   };
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   const toggleShowModal = () => {
     setShowModal(!showModal);
   };

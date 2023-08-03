@@ -3,20 +3,11 @@ import Layout from "../components/layouts/Layout";
 import axios from "axios";
 import Novedad from "../components/Novedad";
 import { Link } from "react-router-dom";
-import {
-  getAllClients,
-  getUserByToken,
-  toastError,
-  toastSuccess,
-  useCredentials,
-} from "../utils/api";
-import { Input, Select, Spin } from "antd";
+import { getAllClients, getUserByToken, useCredentials } from "../utils/api";
+import { Select, Spin } from "antd";
 import "../styles/projects.css";
 import { BiRefresh } from "react-icons/bi";
 import { envs } from "../config/env/env.config";
-import { RiAddBoxLine, RiDeleteBin2Line, RiEditBoxLine } from "react-icons/ri";
-import { Button, Collapse, Modal } from "react-bootstrap";
-import { AiOutlineUser } from "react-icons/ai";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -25,11 +16,8 @@ const Projects = () => {
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
   const [clientSearch, setClientSearch] = useState(undefined);
-  const [codeSearch, setCodeSearch] = useState(undefined);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idToDelete, setIdToDelete] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showConsultors, setShowConsultors] = useState(false);
+  const [userSearch, setUserSearch] = useState(undefined);
+  const [users, setUsers] = useState([]);
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -40,6 +28,7 @@ const Projects = () => {
       setClients(clients);
       return setUser(user);
     };
+    userOption();
     handle();
   }, []);
 
@@ -47,7 +36,7 @@ const Projects = () => {
     if (!user) return;
     axios
       .get(
-        `${VITE_BACKEND_URL}/projects/getProjectsUser/${user.id}`,
+        `http://localhost:3000/api/projects/getProjectsUser/${user.id}`,
         useCredentials
       )
       .then((projects) => {
@@ -86,51 +75,34 @@ const Projects = () => {
     label: client.name,
   }));
 
+  const userOption = async () => {
+    const { data } = await axios.get(
+      `${VITE_BACKEND_URL}/users/admin/members`,
+      useCredentials
+    );
+
+    const aux = await data.map((u) => ({
+      value: u.email,
+      label: u.email,
+    }));
+    return setUsers(aux);
+  };
+
   const handleSearchByClient = (name) => {
     return setClientSearch(name);
   };
 
-  const handleSearchByCode = (e) => {
-    const { value } = e.target;
-    return setCodeSearch(value);
+  const handleSearchByUser = (email) => {
+    return setUserSearch(email);
   };
 
   useEffect(() => {
     localStorage.setItem("selectedProject", selectedProject);
   }, [selectedProject]);
 
-  const handleDeleteProject = async () => {
-    setIsDeleting(true);
-    try {
-      await axios
-        .delete(
-          `${VITE_BACKEND_URL}/projects/project/${idToDelete}`,
-          useCredentials
-        )
-        .then((res) => {
-          setShowDeleteModal(false);
-          setIsDeleting(false);
-          toastSuccess("Proyecto eliminado correctamente");
-          setProjects(groupProjectsByClient(res.data));
-        });
-    } catch (error) {
-      setShowDeleteModal(false);
-      setIsDeleting(false);
-      toastError("Proyecto no se pudo eliminar");
-    }
-  };
-
-  // useEffect(() => {
-  //   console.log(clients);
-  // }, [clients]);
-
   useEffect(() => {
     console.log(projects);
   }, [projects]);
-
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
 
   return (
     <Layout title="Projects">
@@ -161,18 +133,7 @@ const Projects = () => {
         </div>
         <div className="row mt-2 mb-2">
           {projects.length > 0 && (
-            <div className="col-12 col-md-4">
-              {user.role !== "socio" && (
-                <div className="mb-1">
-                  <Input
-                    allowClear
-                    value={codeSearch}
-                    onChange={handleSearchByCode}
-                    addonBefore="Codigo"
-                    placeholder="Busqueda por codigo"
-                  />
-                </div>
-              )}
+            <div className="col d-flex">
               <div className="mr-1">
                 <Select
                   allowClear
@@ -188,6 +149,22 @@ const Projects = () => {
                   onChange={handleSearchByClient}
                 />
               </div>
+              <div className="">
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder="Seleccione un usuario"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={users}
+                  name="userSelect"
+                  onChange={handleSearchByUser}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -197,171 +174,94 @@ const Projects = () => {
               (proj) => proj[0] === clientSearch || clientSearch === undefined
             )
             .map(([customer, proj], i) => (
-              <div className="mt-1 mb-4">
+              <div className="mt-1 mb-4" >
+                {/* key={custumer}   */}
                 <h4>{customer}</h4>
                 <div className="shadow">
                   {proj.map((e, index) => (
-                    <div
-                      key={e._id}
-                      className={`onHoverRow ${
-                        selectedProject === e._id ||
-                        localStorage.getItem("selectedProject") === e._id
-                          ? "onClickedRow"
-                          : ""
-                      } border ${index === 0 ? "rounded-top" : ""} ${
-                        index === proj.length - 1 ? "rounded-bottom" : ""
-                      }`}
-                    >
-                      <div style={{}} className={"p-1 pb-1"} title={e.name}>
-                        <div
-                          key={e._id}
-                          className={`d-flex justify-content-between align-items-center flex-column flex-lg-row container`}
-                          style={{
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleShowDetails(e._id)}
-                        >
-                          <div className="justify-content-between">
-                            <div className="d-flex">
-                              <p className="m-0 p-0">
-                                <span className="lead font-weight-bold">
-                                  {e.name}
-                                </span>
-                                {" - "}
-                                <span className="font-italic">
-                                  {e.description}
-                                </span>
-                              </p>
-                            </div>
-                            <div
-                              className="d-flex p-0 m-0"
-                              style={{ fontSize: "0.7em" }}
-                            >
-                              <p className="text-lowercase m-0 p-0 font-italic font-weight-light">
-                                {e?.created_by?.email} -{" "}
-                                {e?.created_at?.split("T")[0]}
-                              </p>
-                            </div>
-                          </div>
-                          {user.role !== "socio"}
-                          <div>
-                            <div>
-                              <p
-                                className="font-weight-bold font-italic p-0 m-0 text-uppercase"
-                                style={{ fontSize: "2rem" }}
+                    <div>
+                      <div
+                        key={e._id}
+                        className={`onHoverRow ${
+                          selectedProject === e._id ||
+                          localStorage.getItem("selectedProject") === e._id
+                            ? "onClickedRow"
+                            : ""
+                        } border ${
+                          index === 0
+                            ? "rounded-top"
+                            : index === projects.length - 1
+                            ? "rounded-bottom"
+                            : ""
+                        } `}
+                      >
+                        <div style={{}} className={"p-1 pb-1"} title={e.name}>
+                          <div
+                            key={e._id}
+                            className={`d-flex justify-content-between align-items-center flex-column flex-lg-row`}
+                            style={{
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleShowDetails(e._id)}
+                          >
+                            <div className="justify-content-between mb-2 mb-lg-0">
+                              <div className="d-flex">
+                                <p className="m-0 p-0">
+                                  <span className="lead">{e.name}</span>
+                                  {" - "}
+                                  <span className="font-italic">
+                                    {e.description}
+                                  </span>
+                                </p>
+                              </div>
+                              <div
+                                className="d-flex p-0 m-0"
+                                style={{ fontSize: "0.7em" }}
                               >
-                                #{e.code}
-                              </p>
+                                <p className="text-lowercase m-0 p-0">
+                                  {e?.created_by?.email} -{" "}
+                                  {e?.created_at?.split("T")[0]}
+                                </p>
+                              </div>
                             </div>
-                            <div></div>
-                          </div>
-                          {user?.role === "manager" ? (
-                            <>
-                              <div className="d-none d-lg-flex flex-column ">
-                                <div className="">
-                                  <input
-                                    type="button"
-                                    value="Borrar proyecto"
-                                    name={e._id}
-                                    className="btn btn-danger w-100"
-                                    onClick={() => {
-                                      setIdToDelete(e._id);
-                                      setShowDeleteModal(true);
-                                    }}
-                                  />
-                                </div>
-                                <div>
-                                  <Link to={`/project/addNews/${e._id}`}>
-                                    <input
-                                      type="button"
-                                      value="Agregar novedad"
-                                      className="btn btn-primary w-100"
-                                      onClick={(e) => setSelectedProject(e._id)}
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                              <div className="d-flex d-lg-none">
+                            <div>
+                              {user?.role !== "socio" && (
                                 <>
-                                  <div
-                                    className=""
-                                    onClick={() => {
-                                      setIdToDelete(e._id);
-                                      setShowDeleteModal(true);
-                                    }}
-                                  >
-                                    <RiDeleteBin2Line
-                                      size={30}
-                                      className="mr-2"
+                                  <Link to={`/project/delete/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Borrar proyecto"
+                                      className="btn btn-danger"
+                                      onClick={(e) => setSelectedProject(e._id)}
                                     />
-                                  </div>
-                                  <div>
-                                    <Link to={`/project/addNews/${e._id}`}>
-                                      <RiAddBoxLine size={30} />
-                                    </Link>
-                                  </div>
-                                </>
-                              </div>
-                            </>
-                          ) : (
-                            user.role === "consultor" && (
-                              <>
-                                <div className="d-none d-lg-flex">
+                                  </Link>
+                                  <Link to={`/project/edit/${e._id}`}>
+                                    <input
+                                      type="button"
+                                      value="Editar proyecto"
+                                      className="btn btn-warning"
+                                      onClick={(e) => setSelectedProject(e._id)}
+                                    />
+                                  </Link>
+
                                   <Link to={`/project/addNews/${e._id}`}>
                                     <input
                                       type="button"
                                       value="Agregar novedad"
-                                      className="btn btn-primary w-100"
+                                      className="btn btn-primary"
                                       onClick={(e) => setSelectedProject(e._id)}
                                     />
                                   </Link>
-                                </div>
-                                <div className="d-flex d-lg-none">
-                                  <Link to={`/project/addNews/${e._id}`}>
-                                    <RiAddBoxLine size={30} />
-                                  </Link>
-                                </div>
-                              </>
-                            )
-                          )}
-                        </div>
-
-                        <Collapse in={selectedProject === e._id}>
-                          <div className={`mt-2 `}>
-                            <div
-                              className=""
-                              style={{ cursor: "pointer" }}
-                              onClick={() => {
-                                setShowConsultors(!showConsultors);
-                              }}
-                            >
-                              {user.role !== "socio" && e.consultors && (
-                                <div className="w-auto mb-2">
-                                  <h5
-                                    onClick={() =>
-                                      setShowConsultors(!showConsultors)
-                                    }
-                                    className="m-0 p-0"
-                                  >
-                                    Ver consultores
-                                  </h5>
-                                  <Collapse in={showConsultors}>
-                                    <div className="">
-                                      <ul
-                                        className="list mb-0"
-                                        style={{ lineHeight: "1.5" }}
-                                      >
-                                        {e.consultors.map((cons, index) => (
-                                          <li key={index} className="m-0 p-0">
-                                            <AiOutlineUser /> {cons.email}
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    </div>
-                                  </Collapse>
-                                </div>
+                                </>
                               )}
                             </div>
+                          </div>
+
+                          <div
+                            className={`mt-2 ${
+                              selectedProject === e._id ? "" : "d-none"
+                            }`}
+                          >
                             {e?.news?.length > 0 ? (
                               <div className="d-flex flex-wrap">
                                 {e.news.map((news, index) => (
@@ -382,7 +282,7 @@ const Projects = () => {
                               </div>
                             )}
                           </div>
-                        </Collapse>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -401,39 +301,6 @@ const Projects = () => {
           </div>
         )}
       </div>
-      <Modal show={showDeleteModal} centered>
-        {!isDeleting ? (
-          <>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirmar Eliminación</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <p>¿Estás seguro de que deseas eliminar este Proyecto?</p>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancelar
-              </Button>
-              <Button variant="danger" onClick={handleDeleteProject}>
-                Eliminar
-              </Button>
-            </Modal.Footer>
-          </>
-        ) : (
-          <>
-            <Modal.Header closeButton>
-              <Modal.Title>Eliminando . . .</Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="text-center">
-              <Spin size={40} />
-            </Modal.Body>
-            <Modal.Footer></Modal.Footer>
-          </>
-        )}
-      </Modal>
     </Layout>
   );
 };

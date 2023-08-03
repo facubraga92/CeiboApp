@@ -101,7 +101,7 @@ const Register = () => {
 
   return (
     <Layout title="Register">
-      <div className="container mt-5 col-sm-12 col-md-6 col-lg-4">
+      <div className="container mt-2 col-sm-12 col-md-6 col-lg-4">
         <h2 style={{ marginBottom: "10%" }} className="text-center">
           Registro
         </h2>
