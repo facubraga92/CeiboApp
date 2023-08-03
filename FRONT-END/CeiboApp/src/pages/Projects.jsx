@@ -107,24 +107,28 @@ const Projects = () => {
         )
         .then((res) => {
           setShowDeleteModal(false);
-          setIsLoading(false);
+          setIsDeleting(false);
           toastSuccess("Proyecto eliminado correctamente");
           setProjects(groupProjectsByClient(res.data));
         });
     } catch (error) {
       setShowDeleteModal(false);
-      setIsLoading(false);
+      setIsDeleting(false);
       toastError("Proyecto no se pudo eliminar");
     }
   };
 
-  useEffect(() => {
-    console.log(clients);
-  }, [clients]);
+  // useEffect(() => {
+  //   console.log(clients);
+  // }, [clients]);
 
   useEffect(() => {
     console.log(projects);
   }, [projects]);
+
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   return (
     <Layout title="Projects">
@@ -258,9 +262,9 @@ const Projects = () => {
                                     value="Borrar proyecto"
                                     name={e._id}
                                     className="btn btn-danger w-100"
-                                    onClick={(e) => {
-                                      setShowDeleteModal(true);
+                                    onClick={() => {
                                       setIdToDelete(e._id);
+                                      setShowDeleteModal(true);
                                     }}
                                   />
                                 </div>
@@ -290,8 +294,8 @@ const Projects = () => {
                                   <div
                                     className=""
                                     onClick={() => {
-                                      setShowDeleteModal(true);
                                       setIdToDelete(e._id);
+                                      setShowDeleteModal(true);
                                     }}
                                   >
                                     <RiDeleteBin2Line
