@@ -25,7 +25,7 @@ export default function Profile() {
   useEffect(() => {
     const handle = async function () {
       let call = await axios
-        .get(`${VITE_BACKEND_URL}/users/admin/members/${user.id}`, {
+        .get(`${VITE_BACKEND_URL}/users/members/${user.id}`, {
           withCredentials: true,
           credentials: "include",
         })
