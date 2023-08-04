@@ -154,12 +154,6 @@ export default function NavBar() {
         {userE?.email && (
           <div>
             <hr className="mb-2" />
-
-            <Navbar.CollapseItem>
-              <Link style={{ color: "red" }} to="/profile">
-                Perfil
-              </Link>
-            </Navbar.CollapseItem>
             <button
               className="btn btn-outline-danger d-md-block"
               onClick={handleLogout}
