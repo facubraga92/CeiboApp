@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+
+import axios from "axios";
+import { Button } from "@nextui-org/react";
 import { Input, message } from "antd";
+import TextArea from "antd/es/input/TextArea";
+
 import Layout from "../components/layouts/Layout";
 import { getUserByToken, useCredentials } from "../utils/api";
-import { useNavigate } from "react-router-dom";
 import { envs } from "../config/env/env.config";
-import TextArea from "antd/es/input/TextArea";
 
 const ProjectForm = () => {
   const [membersList, setMembersList] = useState([]);
@@ -114,88 +117,101 @@ const ProjectForm = () => {
 
   return (
     <Layout title="AddProject">
-      <div className="container col-12 col-md-6 mt-2 pb-5">
-        <h2 className="text-center">Crear Proyecto</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">Nombre</label>
-            <Input
-              type="text"
-              required
-              name="name"
-              value={inputs.name || ""}
-              onChange={handleChange}
-              minLength={1}
-              maxLength={20}
-              showCount
-            />
+      <div className="p-4">
+        <div
+          className="card"
+          style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+        >
+          <div className="container col-12 col-md-6 mt-2 pb-5">
+            <h2 className="text-center">Crear Proyecto</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Nombre</label>
+                <Input
+                  type="text"
+                  required
+                  name="name"
+                  value={inputs.name || ""}
+                  onChange={handleChange}
+                  minLength={1}
+                  maxLength={20}
+                  showCount
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Descripción</label>
+                <TextArea
+                  rows="4"
+                  name="description"
+                  value={inputs.description || ""}
+                  onChange={handleChange}
+                  minLength={1}
+                  maxLength={1000}
+                  showCount
+                  style={{ resize: "none" }}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Código</label>
+                <Input
+                  type="text"
+                  required
+                  name="code"
+                  value={inputs.code || ""}
+                  onChange={handleChange}
+                  minLength={1}
+                  maxLength={20}
+                  showCount
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Cliente</label>
+                <Select
+                  required
+                  options={customerOptions}
+                  onChange={(value) => handleChangeSelect("customer", value)}
+                  name="customer"
+                  isClearable
+                  placeholder="Seleccionar cliente..."
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Consultores</label>
+                <Select
+                  options={userOptions.filter((option) =>
+                    option.value.role.includes("consultor")
+                  )}
+                  isMulti
+                  name="consultors"
+                  onChange={(value) => handleChangeSelect("consultors", value)}
+                  placeholder="Seleccionar consultores..."
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Managers</label>
+                <Select
+                  options={userOptions.filter((option) =>
+                    option.value.role.includes("manager")
+                  )}
+                  isMulti
+                  name="managers"
+                  onChange={(value) => handleChangeSelect("managers", value)}
+                  placeholder="Seleccionar managers..."
+                />
+              </div>
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="ghost"
+                  colorVariant="danger"
+                >
+                  Crear proyecto
+                </Button>
+              </div>
+            </form>
           </div>
-          <div className="mb-3">
-            <label className="form-label">Descripción</label>
-            <TextArea
-              rows="4"
-              name="description"
-              value={inputs.description || ""}
-              onChange={handleChange}
-              minLength={1}
-              maxLength={1000}
-              showCount
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Código</label>
-            <Input
-              type="text"
-              required
-              name="code"
-              value={inputs.code || ""}
-              onChange={handleChange}
-              minLength={1}
-              maxLength={20}
-              showCount
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Cliente</label>
-            <Select
-              required
-              options={customerOptions}
-              onChange={(value) => handleChangeSelect("customer", value)}
-              name="customer"
-              isClearable
-              placeholder="Seleccionar cliente..."
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Consultores</label>
-            <Select
-              options={userOptions.filter((option) =>
-                option.value.role.includes("consultor")
-              )}
-              isMulti
-              name="consultors"
-              onChange={(value) => handleChangeSelect("consultors", value)}
-              placeholder="Seleccionar consultores..."
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Managers</label>
-            <Select
-              options={userOptions.filter((option) =>
-                option.value.role.includes("manager")
-              )}
-              isMulti
-              name="managers"
-              onChange={(value) => handleChangeSelect("managers", value)}
-              placeholder="Seleccionar managers..."
-            />
-          </div>
-          <input
-            type="submit"
-            className="btn btn-primary"
-            value={"Crear proyecto"}
-          />
-        </form>
+        </div>
       </div>
     </Layout>
   );
