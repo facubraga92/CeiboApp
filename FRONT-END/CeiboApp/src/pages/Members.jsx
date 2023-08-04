@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
-import { message, Select } from "antd";
-import Layout from "../components/layouts/Layout";
+
+import axios from "axios";
+
 import { Button, Modal } from "react-bootstrap";
-import { toast } from "react-toastify";
-const { Option } = Select;
-import { envs } from "../config/env/env.config";
-import { toastSuccess } from "../utils/api";
-import { Input, Table } from "@nextui-org/react";
+import { message, Select } from "antd";
+import { Input } from "@nextui-org/react";
 import { FiUserX } from "react-icons/fi";
-import { Button as ButtonNextUI } from "@nextui-org/react";
+
+import Layout from "../components/layouts/Layout";import { toast } from "react-toastify";
+import { toastSuccess } from "../utils/api";
+import { envs } from "../config/env/env.config";
+
+const { Option } = Select;
 
 const Members = () => {
   const user = useSelector((state) => state.user);

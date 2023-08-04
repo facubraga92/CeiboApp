@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
+
+import { FileSearchOutlined } from "@ant-design/icons";
 import { message, Modal, Button, Input } from "antd";
+
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
 
@@ -192,7 +196,7 @@ const Customers = () => {
         type="link"
         onClick={() => openProjectModal(customer.associatedProjects)}
       >
-        📋
+        <FileSearchOutlined style={{ color: "red", fontSize: "24px" }} />
       </Button>
     );
   };
@@ -232,11 +236,8 @@ const Customers = () => {
               </div>
             </nav>
 
-            <div className="table-responsive">
-              <table
-                style={{ maxWidth: "100%" }}
-                className="table table-striped"
-              >
+            <div className="table-responsive table-responsive-sm">
+              <table className="table table-striped">
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -313,22 +314,26 @@ const Customers = () => {
                         {editingCustomer &&
                         editingCustomer._id === customer._id ? (
                           <>
-                            <button
-                              className="btn btn-primary"
-                              onClick={() => saveChanges(customer._id)}
-                            >
-                              Guardar
-                            </button>
-                            <button
-                              className="btn btn-secondary"
-                              onClick={cancelEditing}
-                            >
-                              Cancelar
-                            </button>
+                            <div className="d-flex flex-column flex-sm-row">
+                              <div className="mb-2 mb-sm-0">
+                                <button
+                                  className="btn btn-danger mr-2"
+                                  onClick={() => saveChanges(customer._id)}
+                                >
+                                  Guardar
+                                </button>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={cancelEditing}
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            </div>
                           </>
                         ) : (
                           <button
-                            className="btn btn-primary"
+                            className="btn btn-danger"
                             onClick={() => startEditing(customer._id)}
                           >
                             Editar
@@ -402,20 +407,21 @@ const Customers = () => {
                 </div>
               </div>
             </Modal>
-
             <Modal
               title="Proyectos asociados al cliente:"
               open={projectModalVisible}
               onCancel={() => setProjectModalVisible(false)}
               footer={null}
+              bodyStyle={{ height: "400px", overflowY: "auto" }}
             >
-              {selectedProject && (
+              {selectedProject && selectedProject.length > 0 ? (
                 <ul>
-                  {selectedProject.map((projectId) => {
-                    const project = projects.find((p) => p._id === projectId);
-                    return <li key={projectId}>{project && project.name}</li>;
+                  {selectedProject.map((project) => {
+                    return <li key={project._id}>{project.name}</li>;
                   })}
                 </ul>
+              ) : (
+                <p>No hay proyectos asociados.</p>
               )}
             </Modal>
           </div>
