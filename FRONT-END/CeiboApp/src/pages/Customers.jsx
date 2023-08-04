@@ -402,20 +402,21 @@ const Customers = () => {
                 </div>
               </div>
             </Modal>
-
             <Modal
               title="Proyectos asociados al cliente:"
               open={projectModalVisible}
               onCancel={() => setProjectModalVisible(false)}
               footer={null}
+              bodyStyle={{ height: "400px", overflowY: "auto" }}
             >
-              {selectedProject && (
+              {selectedProject && selectedProject.length > 0 ? (
                 <ul>
-                  {selectedProject.map((projectId) => {
-                    const project = projects.find((p) => p._id === projectId);
-                    return <li key={projectId}>{project && project.name}</li>;
+                  {selectedProject.map((project) => {
+                    return <li key={project._id}>{project.name}</li>;
                   })}
                 </ul>
+              ) : (
+                <p>No hay proyectos asociados.</p>
               )}
             </Modal>
           </div>
