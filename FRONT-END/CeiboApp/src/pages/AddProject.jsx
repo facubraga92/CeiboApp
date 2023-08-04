@@ -134,7 +134,7 @@ const ProjectForm = () => {
                   value={inputs.name || ""}
                   onChange={handleChange}
                   minLength={1}
-                  maxLength={20}
+                  maxLength={40}
                   showCount
                 />
               </div>
