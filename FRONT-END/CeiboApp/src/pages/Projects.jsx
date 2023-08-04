@@ -167,17 +167,6 @@ const Projects = () => {
             <div className="row mt-2 mb-2">
               {projects.length > 0 && (
                 <div className="col-12 col-md-4">
-                  {user.role !== "socio" && (
-                    <div className="mb-1">
-                      <Input
-                        allowClear
-                        value={codeSearch}
-                        onChange={handleSearchByCode}
-                        addonBefore="Codigo"
-                        placeholder="Busqueda por codigo"
-                      />
-                    </div>
-                  )}
                   <div className="mr-1">
                     <Select
                       allowClear
@@ -253,8 +242,8 @@ const Projects = () => {
                               <div>
                                 <div>
                                   <p
-                                    className="font-weight-bold font-italic p-0 m-0 text-uppercase"
-                                    style={{ fontSize: "2rem" }}
+                                    className="font-weight-bold font-italic p-0 m-0 text-uppercase mr-1"
+                                    style={{ fontSize: "1rem" }}
                                   >
                                     #{e.code}
                                   </p>
