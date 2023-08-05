@@ -1,8 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import Layout from "../components/layouts/Layout";
-import axios from "axios";
-import Novedad from "../components/Novedad";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import axios from "axios";
+
+import { Select, Spin } from "antd";
+import { RiAddBoxLine, RiDeleteBin2Line } from "react-icons/ri";
+import { AiOutlineUser } from "react-icons/ai";
+import { BsArrowRepeat } from "react-icons/bs";
+import { Button, Collapse, Modal } from "react-bootstrap";
+import { BiRefresh } from "react-icons/bi";
+
+import Layout from "../components/layouts/Layout";
+import Novedad from "../components/Novedad";
 import {
   getAllClients,
   getUserByToken,
@@ -10,13 +19,8 @@ import {
   toastSuccess,
   useCredentials,
 } from "../utils/api";
-import { Input, Select, Spin } from "antd";
-import "../styles/projects.css";
-import { BiRefresh } from "react-icons/bi";
 import { envs } from "../config/env/env.config";
-import { RiAddBoxLine, RiDeleteBin2Line, RiEditBoxLine } from "react-icons/ri";
-import { Button, Collapse, Modal } from "react-bootstrap";
-import { AiOutlineUser } from "react-icons/ai";
+import "../styles/projects.css";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -30,6 +34,7 @@ const Projects = () => {
   const [idToDelete, setIdToDelete] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConsultors, setShowConsultors] = useState(false);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
 
   const { VITE_BACKEND_URL } = envs;
 
@@ -120,17 +125,27 @@ const Projects = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(clients);
-  // }, [clients]);
+  const handleRefreshProjects = () => {
+    setIsLoadingProjects(true);
+    axios
+      .get(
+        `${VITE_BACKEND_URL}/projects/getProjectsUser/${user.id}`,
+        useCredentials
+      )
+      .then((projects) => {
+        setProjects(groupProjectsByClient(projects.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoadingProjects(false);
+      });
+  };
 
   useEffect(() => {
     console.log(projects);
   }, [projects]);
-
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
 
   return (
     <Layout title="Projects">
@@ -160,7 +175,21 @@ const Projects = () => {
               <div className="col">
                 <div className="d-flex justify-content-end">
                   <span className="font-italic"></span>
-                  <BiRefresh size={30} />
+                  {isLoadingProjects ? (
+                    <BsArrowRepeat
+                      size={30}
+                      className="spin-icon"
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    />
+                  ) : (
+                    <BiRefresh
+                      size={30}
+                      onClick={handleRefreshProjects}
+                      style={{ cursor: "pointer" }}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -259,6 +288,10 @@ const Projects = () => {
                                         value="Borrar proyecto"
                                         name={e._id}
                                         className="btn btn-danger w-100"
+                                        style={{
+                                          marginBottom: "10px",
+                                          fontSize: "14px",
+                                        }}
                                         onClick={() => {
                                           setIdToDelete(e._id);
                                           setShowDeleteModal(true);
@@ -270,7 +303,8 @@ const Projects = () => {
                                         <input
                                           type="button"
                                           value="Agregar novedad"
-                                          className="btn btn-primary w-100"
+                                          className="btn btn-danger w-100"
+                                          style={{ fontSize: "14px" }}
                                           onClick={(e) =>
                                             setSelectedProject(e._id)
                                           }
@@ -308,7 +342,8 @@ const Projects = () => {
                                         <input
                                           type="button"
                                           value="Agregar novedad"
-                                          className="btn btn-primary w-100"
+                                          className="btn btn-danger w-100"
+                                          style={{ fontSize: "14px" }}
                                           onClick={(e) =>
                                             setSelectedProject(e._id)
                                           }
