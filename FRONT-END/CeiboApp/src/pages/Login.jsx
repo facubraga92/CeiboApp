@@ -14,7 +14,6 @@ import { Input } from "@nextui-org/react";
 const Login = () => {
   const [inputs, setInputs] = useState({});
   const [isFormOk, setIsFormOk] = useState(false);
-  const [disableInputs, setDisableInputs] = useState(false);
   const { VITE_BACKEND_URL } = envs;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,19 +38,6 @@ const Login = () => {
 
   const handleCallbackResponse = async (response) => {
     const userObject = await jwt_decode(response.credential);
-    const allowedDomain = "ceibo.digital";
-
-    /*
-
-      *** ESTO PARA SOLO PERMITIR DOMINIOS CEIBO.DIGITAL ***
-
-      if (userObject.email.split("@")[1] !== allowedDomain) {
-        toastError(`Solo para dominios de ${allowedDomain}`);
-        return; // cortar secuencia
-      }
-
-    */
-
     const { given_name, family_name, email, picture } = await userObject;
 
     const userState = {
