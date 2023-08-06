@@ -83,7 +83,6 @@ const Members = () => {
         }
       )
       .then(() => {
-        // Actualizar el estado local solo si la solicitud es exitosa
         setMembers((prevMembers) =>
           prevMembers.map((member) => {
             if (member._id === memberId) {
@@ -118,7 +117,6 @@ const Members = () => {
       })
       .then(() => {
         toastSuccess("Usuario eliminado!");
-        // Eliminar el usuario de los estados locales
         setMembers((prevMembers) =>
           prevMembers.filter((member) => member._id !== idDelete)
         );

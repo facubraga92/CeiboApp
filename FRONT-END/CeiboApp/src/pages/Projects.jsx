@@ -167,7 +167,8 @@ const Projects = () => {
                     <input
                       type="button"
                       value="Crear proyecto"
-                      className="btn btn-warning mt-2"
+                      className="btn btn-danger mt-2"
+                      style={{ fontSize: '16px'}}
                     />
                   </Link>
                 </div>
