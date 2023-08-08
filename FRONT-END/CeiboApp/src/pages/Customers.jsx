@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { FileSearchOutlined } from "@ant-design/icons";
-import { message, Modal, Button, Input } from "antd";
+import { message, Modal, Button, Input, Space } from "antd";
 
 import Layout from "../components/layouts/Layout";
 import { useCredentials } from "../utils/api";
@@ -217,9 +217,11 @@ const Customers = () => {
                 <div className="d-inline-flex" id="navbarSupportedContent">
                   <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                      <Button type="primary" onClick={openCreateModal}>
-                        Crear Cliente
-                      </Button>
+                      <Space wrap>
+                        <Button type="primary" danger onClick={openCreateModal}>
+                          Crear Cliente
+                        </Button>
+                      </Space>
                     </li>
                   </ul>
                   <form className="d-flex align-items-center">
@@ -365,9 +367,8 @@ const Customers = () => {
                 >
                   Cancelar
                 </Button>,
-                <Button
+                <Button type="primary" danger 
                   key="create"
-                  type="primary"
                   onClick={handleCreateCustomer}
                 >
                   Crear
