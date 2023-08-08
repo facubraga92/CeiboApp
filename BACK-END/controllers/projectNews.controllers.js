@@ -4,8 +4,6 @@ const getManagersRelevants = require("../utils/utils");
 const User = require("../schemas/User");
 const getPartnersAssociate = require("../utils/utilsPartners");
 
-
-
 exports.createNews = async (req, res) => {
   try {
     const { title, description, userId, associatedProject } = req.body;
@@ -149,9 +147,10 @@ exports.updateNews = async (req, res) => {
 };
 
 exports.deleteNews = async (req, res) => {
+  const newsId = req.params.id;
+
   try {
     const { id } = req.params;
-
     const news = await ProjectNews.findById(id);
 
     if (!news) {
@@ -160,15 +159,7 @@ exports.deleteNews = async (req, res) => {
         .json({ success: false, error: "Novedad no encontrada" });
     }
 
-    if (
-      req.user.role !== "consultor" ||
-      !news.userId.equals(req.user._id) ||
-      news.state !== "pendiente"
-    ) {
-      return res.status(403).json({ success: false, error: "Acceso denegado" });
-    }
-
-    await news.remove();
+    await ProjectNews.deleteOne({ _id: newsId });
 
     res
       .status(200)
