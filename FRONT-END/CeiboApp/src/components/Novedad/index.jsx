@@ -4,7 +4,7 @@ import { Input, Spin } from "antd";
 import "./Style.Novedad.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getCookieValue, useCredentials } from "../../utils/api";
+import { getCookieValue, toastSuccess, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
 import { envs } from "../../config/env/env.config";
 import { BsSave } from "react-icons/bs";
@@ -20,6 +20,8 @@ export default function Novedad({ news }) {
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [canModify, setCanModify] = useState({
     title: false,
@@ -142,6 +144,26 @@ export default function Novedad({ news }) {
     }
   };
 
+  const handleDeleteNews = async () => {
+    setIsDeleting(true);
+    try {
+      console.log("Deleting news item with ID:", data._id);
+
+      await axios
+        .delete(`${VITE_BACKEND_URL}/news/${data._id}`, useCredentials)
+        .then((res) => {
+          setShowDeleteConfirmation(false);
+          setIsDeleting(false);
+          toastSuccess("Novedad Eliminada correctamente");
+        });
+    } catch (error) {
+      console.error("Error deleting news item:", error);
+      setShowDeleteConfirmation(false);
+      setIsDeleting(false);
+      toast.error("Error al eliminar la novedad. Por favor, intenta de nuevo.");
+    }
+  };
+
   const descRef = useRef(null);
   const handleDesc = () => {
     return descRef.current.classList.toggle("text-truncate");
@@ -172,6 +194,16 @@ export default function Novedad({ news }) {
             <span>Titulo: </span>
             <span>{data?.title}</span>
           </p>
+          {((user.role === "manager" && data.state === "aprobada") ||
+            (["manager", "consultor"].includes(user.role) &&
+              data.state === "pendiente")) && (
+            <Button
+              variant="danger"
+              onClick={() => setShowDeleteConfirmation(true)}
+            >
+              Eliminar Novedad
+            </Button>
+          )}
         </div>
         <div className="card-body">
           <p className="text-truncate">{data?.description}</p>
@@ -500,6 +532,39 @@ export default function Novedad({ news }) {
             value="Aprobar y Notificar"
             className="btn btn-danger"
             onClick={handleApprove}
+          />
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showDeleteConfirmation}
+        onHide={() => setShowDeleteConfirmation(false)}
+        backdrop="static"
+        keyboard={false}
+        backdropClassName="bg-dark"
+      >
+        <Modal.Header closeButton>
+          <p className="lead">¿Estás seguro de eliminar la novedad?</p>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <p>Esta acción no se puede deshacer.</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-center">
+          <input
+            type="button"
+            value="Cancelar"
+            className="btn btn-warning"
+            onClick={() => setShowDeleteConfirmation(false)}
+          />
+          <input
+            type="button"
+            value="Eliminar"
+            className="btn btn-danger"
+            onClick={() => {
+              setShowDeleteConfirmation(false);
+              handleDeleteNews();
+            }}
           />
         </Modal.Footer>
       </Modal>
