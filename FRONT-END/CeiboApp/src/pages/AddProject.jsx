@@ -202,8 +202,8 @@ const ProjectForm = () => {
               <div className="d-flex justify-content-center mt-3">
                 <Button
                   type="submit"
-                  color="primary"
-                  variant="ghost"
+                  color="danger"
+                  variant="shadow"
                   colorVariant="danger"
                 >
                   Crear proyecto
