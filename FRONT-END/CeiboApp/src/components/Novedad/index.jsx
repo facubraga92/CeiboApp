@@ -151,7 +151,7 @@ export default function Novedad({ news }) {
 
       await axios
         .delete(`${VITE_BACKEND_URL}/news/${data._id}`, useCredentials)
-        .then((res) => {
+        .then(() => {
           setShowDeleteConfirmation(false);
           setIsDeleting(false);
           toastSuccess("Novedad Eliminada correctamente");
@@ -164,6 +164,10 @@ export default function Novedad({ news }) {
     }
   };
 
+
+  const handleSetNews = () => {
+    
+  }
   const descRef = useRef(null);
   const handleDesc = () => {
     return descRef.current.classList.toggle("text-truncate");
@@ -542,31 +546,45 @@ export default function Novedad({ news }) {
         keyboard={false}
         backdropClassName="bg-dark"
       >
-        <Modal.Header closeButton>
-          <p className="lead">¿Estás seguro de eliminar la novedad?</p>
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            <p>Esta acción no se puede deshacer.</p>
-          </div>
-        </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-center">
-          <input
-            type="button"
-            value="Cancelar"
-            className="btn btn-warning"
-            onClick={() => setShowDeleteConfirmation(false)}
-          />
-          <input
-            type="button"
-            value="Eliminar"
-            className="btn btn-danger"
-            onClick={() => {
-              setShowDeleteConfirmation(false);
-              handleDeleteNews();
-            }}
-          />
-        </Modal.Footer>
+        {!isDeleting ? (
+          <>
+            <Modal.Header closeButton>
+              <p className="lead">¿Estás seguro de eliminar la novedad?</p>
+            </Modal.Header>
+            <Modal.Body>
+              <div>
+                <p>Esta acción no se puede deshacer.</p>
+              </div>
+            </Modal.Body>
+            <Modal.Footer className="d-flex justify-content-center">
+              <input
+                type="button"
+                value="Cancelar"
+                className="btn btn-warning"
+                onClick={() => setShowDeleteConfirmation(false)}
+              />
+              <input
+                type="button"
+                value="Eliminar"
+                className="btn btn-danger"
+                onClick={() => {
+                  setShowDeleteConfirmation(false);
+                  handleDeleteNews();
+                }}
+              />
+            </Modal.Footer>
+          </>
+        ) : (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>Eliminando . . .</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="text-center">
+              <Spin size={40} />
+            </Modal.Body>
+            <Modal.Footer></Modal.Footer>
+          </>
+        )}
       </Modal>
     </>
   );
