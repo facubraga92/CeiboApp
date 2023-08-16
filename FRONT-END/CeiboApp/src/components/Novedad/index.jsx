@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
-import { Input, Spin } from "antd";
-import "./Style.Novedad.css";
+
 import axios from "axios";
-import { toast } from "react-toastify";
-import { getCookieValue, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
-import { envs } from "../../config/env/env.config";
+
+import { Input, Spin } from "antd";
+import { Modal, Button } from "react-bootstrap";
 import { BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
+import { toast } from "react-toastify";
 import { RiEditBoxLine } from "react-icons/ri";
+import { RiDeleteBin2Line } from "react-icons/ri";
+
+import { getCookieValue, toastSuccess, useCredentials } from "../../utils/api";
+import { envs } from "../../config/env/env.config";
+import "./Style.Novedad.css";
 
 const { TextArea } = Input;
 
@@ -20,6 +24,8 @@ export default function Novedad({ news }) {
   const [showModal, setShowModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [canModify, setCanModify] = useState({
     title: false,
@@ -142,6 +148,27 @@ export default function Novedad({ news }) {
     }
   };
 
+  const handleDeleteNews = async () => {
+    setIsDeleting(true);
+    try {
+      console.log("Deleting news item with ID:", data._id);
+
+      await axios
+        .delete(`${VITE_BACKEND_URL}/news/${data._id}`, useCredentials)
+        .then(() => {
+          setShowDeleteConfirmation(false);
+          setIsDeleting(false);
+          toastSuccess("Novedad Eliminada correctamente");
+          setData(null);
+        });
+    } catch (error) {
+      console.error("Error deleting news item:", error);
+      setShowDeleteConfirmation(false);
+      setIsDeleting(false);
+      toast.error("Error al eliminar la novedad. Por favor, intenta de nuevo.");
+    }
+  };
+
   const descRef = useRef(null);
   const handleDesc = () => {
     return descRef.current.classList.toggle("text-truncate");
@@ -158,6 +185,10 @@ export default function Novedad({ news }) {
     }, 100);
   };
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <>
       <div
@@ -167,11 +198,33 @@ export default function Novedad({ news }) {
         onClick={toggleShowModal}
         style={{ cursor: "pointer" }}
       >
-        <div className="card-header">
-          <p className="text-truncate">
-            <span>Titulo: </span>
-            <span>{data?.title}</span>
-          </p>
+        <div className="card-header" style={{ position: "relative" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <p className="text-truncate" style={{ margin: 0 }}>
+              <span> Titulo: </span>
+              <span>{data?.title}</span>
+            </p>
+            {((user.role === "manager" && data.state === "aprobada") ||
+              (["manager", "consultor"].includes(user.role) &&
+                data.state === "pendiente")) && (
+              <RiDeleteBin2Line
+                variant="danger"
+                onClick={() => setShowDeleteConfirmation(true)}
+                size={30}
+                style={{
+                  padding: "4px",
+                  cursor: "pointer",
+                  color: "red",
+                }}
+              />
+            )}
+          </div>
         </div>
         <div className="card-body">
           <p className="text-truncate">{data?.description}</p>
@@ -502,6 +555,53 @@ export default function Novedad({ news }) {
             onClick={handleApprove}
           />
         </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showDeleteConfirmation}
+        onHide={() => setShowDeleteConfirmation(false)}
+        backdrop="static"
+        keyboard={false}
+        backdropClassName="bg-dark"
+      >
+        {!isDeleting ? (
+          <>
+            <Modal.Header closeButton>
+              <p className="lead">¿Estás seguro de eliminar la novedad?</p>
+            </Modal.Header>
+            <Modal.Body>
+              <div>
+                <p>Esta acción no se puede deshacer.</p>
+              </div>
+            </Modal.Body>
+            <Modal.Footer className="d-flex justify-content-center">
+              <input
+                type="button"
+                value="Cancelar"
+                className="btn btn-warning"
+                onClick={() => setShowDeleteConfirmation(false)}
+              />
+              <input
+                type="button"
+                value="Eliminar"
+                className="btn btn-danger"
+                onClick={() => {
+                  setShowDeleteConfirmation(false);
+                  handleDeleteNews();
+                }}
+              />
+            </Modal.Footer>
+          </>
+        ) : (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>Eliminando . . .</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="text-center">
+              <Spin size={40} />
+            </Modal.Body>
+            <Modal.Footer></Modal.Footer>
+          </>
+        )}
       </Modal>
     </>
   );
