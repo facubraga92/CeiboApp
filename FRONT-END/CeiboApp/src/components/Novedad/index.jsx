@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
-import { Input, Spin } from "antd";
-import "./Style.Novedad.css";
+
 import axios from "axios";
-import { toast } from "react-toastify";
-import { getCookieValue, toastSuccess, useCredentials } from "../../utils/api";
 import jwt_decode from "jwt-decode";
-import { envs } from "../../config/env/env.config";
+
+import { Input, Spin } from "antd";
+import { Modal, Button } from "react-bootstrap";
 import { BsSave } from "react-icons/bs";
 import { FcCancel } from "react-icons/fc";
+import { toast } from "react-toastify";
 import { RiEditBoxLine } from "react-icons/ri";
+import { RiDeleteBin2Line } from "react-icons/ri";
+
+import { getCookieValue, toastSuccess, useCredentials } from "../../utils/api";
+import { envs } from "../../config/env/env.config";
+import "./Style.Novedad.css";
 
 const { TextArea } = Input;
 
@@ -155,6 +159,7 @@ export default function Novedad({ news }) {
           setShowDeleteConfirmation(false);
           setIsDeleting(false);
           toastSuccess("Novedad Eliminada correctamente");
+          setData(null);
         });
     } catch (error) {
       console.error("Error deleting news item:", error);
@@ -164,10 +169,6 @@ export default function Novedad({ news }) {
     }
   };
 
-
-  const handleSetNews = () => {
-    
-  }
   const descRef = useRef(null);
   const handleDesc = () => {
     return descRef.current.classList.toggle("text-truncate");
@@ -184,6 +185,10 @@ export default function Novedad({ news }) {
     }, 100);
   };
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <>
       <div
@@ -193,21 +198,33 @@ export default function Novedad({ news }) {
         onClick={toggleShowModal}
         style={{ cursor: "pointer" }}
       >
-        <div className="card-header">
-          <p className="text-truncate">
-            <span>Titulo: </span>
-            <span>{data?.title}</span>
-          </p>
-          {((user.role === "manager" && data.state === "aprobada") ||
-            (["manager", "consultor"].includes(user.role) &&
-              data.state === "pendiente")) && (
-            <Button
-              variant="danger"
-              onClick={() => setShowDeleteConfirmation(true)}
-            >
-              Eliminar Novedad
-            </Button>
-          )}
+        <div className="card-header" style={{ position: "relative" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <p className="text-truncate" style={{ margin: 0 }}>
+              <span> Titulo: </span>
+              <span>{data?.title}</span>
+            </p>
+            {((user.role === "manager" && data.state === "aprobada") ||
+              (["manager", "consultor"].includes(user.role) &&
+                data.state === "pendiente")) && (
+              <RiDeleteBin2Line
+                variant="danger"
+                onClick={() => setShowDeleteConfirmation(true)}
+                size={30}
+                style={{
+                  padding: "4px",
+                  cursor: "pointer",
+                  color: "red",
+                }}
+              />
+            )}
+          </div>
         </div>
         <div className="card-body">
           <p className="text-truncate">{data?.description}</p>
